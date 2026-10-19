@@ -1,0 +1,52 @@
+name: Bug report
+description: Something that does not work as described
+title: ''
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **If traffic leaks around Tor, the proxy or the kill switch, do not report it here.**
+        Follow [SECURITY.md](https://github.com/Gitguy268/archium/blob/HEAD/SECURITY.md) instead.
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What happens
+      description: What did you do, what happened, and what did you expect?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Network mode
+      options:
+        - Direct
+        - Tor
+        - Custom proxy
+    validations:
+      required: true
+
+  - type: input
+    id: versions
+    attributes:
+      label: Helium and macOS versions
+      placeholder: Helium 0.19.3.1, macOS 26.1
+    validations:
+      required: true
+
+  - type: textarea
+    id: console
+    attributes:
+      label: Anything in the extension's console?
+      description: chrome://extensions → Archium Home → "service worker" link. Paste anything red.
+      render: text
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before you send this
+      options:
+        - label: I searched the open and closed issues for this.

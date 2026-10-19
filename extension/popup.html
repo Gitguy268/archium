@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Archium</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <form id="form">
+    <fieldset>
+      <legend>Network</legend>
+      <label><input type="radio" name="mode" value="direct"> Direct</label>
+      <label><input type="radio" name="mode" value="tor"> Tor</label>
+      <div data-for="tor" class="row">
+        <label>Tor SOCKS port
+          <input name="torPort" type="number" min="1" max="65535" required>
+        </label>
+        <p class="hint">9050 for <code>brew install tor</code>, 9150 while Tor Browser is open.</p>
+      </div>
+
+      <label><input type="radio" name="mode" value="proxy"> Custom proxy</label>
+
+      <div data-for="proxy" class="row">
+        <label>Type
+          <select name="proxyScheme">
+            <option value="socks5">SOCKS5</option>
+            <option value="socks4">SOCKS4</option>
+            <option value="http">HTTP</option>
+            <option value="https">HTTPS</option>
+          </select>
+        </label>
+        <label>Host <input name="proxyHost" autocomplete="off"></label>
+        <label>Port <input name="proxyPort" type="number" min="1" max="65535"></label>
+      </div>
+      <p class="hint">If Tor or the proxy stops, pages fail to load instead of going direct.</p>
+    </fieldset>
+
+    <fieldset>
+      <legend>Leaks</legend>
+      <label><input type="checkbox" name="blockWebRTC"> Block WebRTC IP leaks</label>
+      <p class="hint">Always on while Tor or a proxy is active.</p>
+    </fieldset>
+
+    <fieldset>
+      <legend>Search</legend>
+      <label>Local SearXNG <input name="localSearch" type="url" required></label>
+      <label>Public fallback <input name="publicSearch" type="url" required></label>
+    </fieldset>
+
+    <p id="status" class="status" role="status"></p>
+  </form>
+  <script src="popup.js" type="module"></script>
+</body>
+</html>

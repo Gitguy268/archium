@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>New Tab</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="newtab.css">
+</head>
+<body>
+  <main>
+    <p class="mode" id="mode" hidden></p>
+    <time id="clock" class="clock"></time>
+    <p id="date" class="date"></p>
+
+    <form id="search" class="search" role="search">
+      <label for="q" class="visually-hidden">Search</label>
+      <input id="q" name="q" type="search" placeholder="Search privately" autocomplete="off" autofocus>
+    </form>
+
+    <section aria-labelledby="links-heading">
+      <h2 id="links-heading" class="visually-hidden">Quick links</h2>
+      <ul id="links" class="links"></ul>
+      <details class="add">
+        <summary>Add a link</summary>
+        <form id="add-link">
+          <label>Name <input name="title" required maxlength="40"></label>
+          <label>Address <input name="url" required type="url" placeholder="https://"></label>
+          <button type="submit">Add</button>
+        </form>
+      </details>
+    </section>
+  </main>
+  <script src="newtab.js" type="module"></script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Least privilege: nothing here needs to write.
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Unit tests, JSON, shellcheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+      - run: node --test extension/
+      - name: JSON files parse
+        run: for f in extension/*.json; do node -e 'JSON.parse(require("fs").readFileSync(process.argv[1]))' "$f" || exit 1; done
+      - run: shellcheck searxng/*.sh searxng/*.command services/*.sh branding/*.sh
+      # The browser itself is not built here: a Chromium build needs paid runners. See docs/roadmap.md.

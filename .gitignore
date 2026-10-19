@@ -1,0 +1,9 @@
+.DS_Store
+node_modules/
+test-results/
+services/helium-services/
+.env
+# copied in by the Pages workflow
+site/*.png
+site/logo.svg
+extension/_metadata/

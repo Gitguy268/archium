@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Archium: a privacy layer for Helium</title>
+  <meta name="description" content="Archium adds an offline new tab, local SearXNG search, a Tor switch with kill switch, a WebRTC leak block and a URL cleaner to the Helium browser.">
+  <link rel="icon" href="logo.svg" type="image/svg+xml">
+  <link rel="canonical" href="https://gitguy268.github.io/archium/">
+  <meta property="og:title" content="Archium">
+  <meta property="og:description" content="A privacy layer for the Helium browser.">
+  <meta property="og:image" content="https://gitguy268.github.io/archium/newtab-light.png">
+  <style>
+    :root {
+      --bg: #f6f3ee; --surface: #fff; --text: #1d1b22; --muted: #5f5a6b;
+      --border: #e2ddd5; --accent: #4b3a8c; --accent-text: #fff;
+      color-scheme: light dark;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      line-height: 1.55;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #15131b; --surface: #211e2a; --text: #ece8f4; --muted: #aaa4b8;
+              --border: #34303f; --accent: #a995f0; --accent-text: #15131b; }
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); }
+    main { max-width: 920px; margin: 0 auto; padding: 56px 16px 72px; }
+    header { text-align: center; }
+    header img { width: 96px; height: 96px; }
+    h1 { font-size: clamp(36px, 7vw, 56px); margin: 12px 0 4px; letter-spacing: -0.02em; }
+    .tagline { color: var(--muted); font-size: 19px; margin: 0 auto 24px; max-width: 34em; }
+    .status { display: inline-block; padding: 6px 14px; border-radius: 999px; background: var(--surface);
+              border: 1px solid var(--border); font-size: 14px; }
+    .cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin: 24px 0 40px; }
+    .cta a { padding: 10px 20px; border-radius: 10px; text-decoration: none; font-weight: 600;
+             border: 1px solid var(--border); color: inherit; background: var(--surface); }
+    .cta a.primary { background: var(--accent); color: var(--accent-text); border-color: transparent; }
+    .shot { width: 100%; height: auto; border-radius: 14px; border: 1px solid var(--border); display: block; }
+    h2 { margin: 48px 0 12px; font-size: 24px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+    .card h3 { margin: 0 0 4px; font-size: 16px; }
+    .card p { margin: 0; color: var(--muted); font-size: 15px; }
+    .from { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--accent); }
+    ol li { margin-bottom: 6px; }
+    code { font-size: .92em; background: var(--surface); border: 1px solid var(--border); border-radius: 5px; padding: 1px 5px; }
+    .note { border-left: 3px solid var(--accent); padding: 4px 14px; color: var(--muted); }
+    a { color: var(--accent); }
+    footer { margin-top: 56px; color: var(--muted); font-size: 14px; text-align: center; }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <img src="logo.svg" alt="">
+      <h1>Archium</h1>
+      <p class="tagline">A privacy layer for the Helium browser: an offline new tab, local search, a Tor switch with a kill switch, and a URL cleaner.</p>
+      <p class="status">Companion kit for stock Helium on macOS. It is not a separate browser download yet.</p>
+      <div class="cta">
+        <a class="primary" href="https://github.com/Gitguy268/archium#install">Install</a>
+        <a href="https://github.com/Gitguy268/archium">Source on GitHub</a>
+        <a href="https://github.com/Gitguy268/archium/blob/main/docs/threat-model.md">Threat model</a>
+      </div>
+    </header>
+
+    <picture>
+      <source srcset="newtab-dark.png" media="(prefers-color-scheme: dark)">
+      <img class="shot" src="newtab-light.png" width="2560" height="1520"
+           alt="The Archium new tab page: a large clock, a search box and a row of quick links, with a label saying Browsing through Tor">
+    </picture>
+
+    <h2>What you get</h2>
+    <div class="grid">
+      <div class="card"><span class="from">Archium</span><h3>Offline new tab</h3><p>Clock, search and quick links. It makes no network requests at all.</p></div>
+      <div class="card"><span class="from">Archium</span><h3>Local SearXNG</h3><p>Runs natively on your Mac without Docker, with a public instance as fallback.</p></div>
+      <div class="card"><span class="from">Archium</span><h3>Tor and proxy switch</h3><p>Route everything through your own Tor or any proxy with one click.</p></div>
+      <div class="card"><span class="from">Archium</span><h3>Kill switch</h3><p>If Tor drops, pages stop loading. Nothing falls back to a direct connection.</p></div>
+      <div class="card"><span class="from">Archium</span><h3>WebRTC leak block</h3><p>Stops WebRTC from revealing your local or real IP.</p></div>
+      <div class="card"><span class="from">Archium</span><h3>URL cleaner</h3><p>Strips <code>utm_*</code>, <code>fbclid</code>, <code>gclid</code> and similar, offline.</p></div>
+      <div class="card"><span class="from">Helium</span><h3>uBlock Origin built in</h3><p>Blocks ads, trackers and cookie banners out of the box.</p></div>
+      <div class="card"><span class="from">Helium</span><h3>Fingerprint noise</h3><p>Adds noise to canvas, audio and CPU core counts.</p></div>
+      <div class="card"><span class="from">Helium</span><h3>DNS over HTTPS</h3><p>Presets for Quad9, Cloudflare and NextDNS, plus any custom address.</p></div>
+    </div>
+
+    <h2>Install</h2>
+    <ol>
+      <li>Install <a href="https://github.com/imputnet/helium-macos/releases">Helium</a> and <a href="https://brew.sh">Homebrew</a>.</li>
+      <li>Clone <a href="https://github.com/Gitguy268/archium">the repository</a> and double-click <code>searxng/install.command</code>.</li>
+      <li>In Helium, open <code>chrome://extensions</code>, turn on Developer mode and load the <code>extension</code> folder.</li>
+      <li>Add <code>http://127.0.0.1:8888/search?q=%s</code> as a search engine and make it the default.</li>
+    </ol>
+    <p class="note">Tor through Archium hides your IP, but not your browser fingerprint. If you need anonymity, use Tor Browser.</p>
+
+    <footer>
+      GPL-3.0 © Lucas Van De Weerd. Built on <a href="https://github.com/imputnet/helium">Helium</a> and
+      <a href="https://github.com/ungoogled-software/ungoogled-chromium">ungoogled-chromium</a>; not affiliated with either.
+    </footer>
+  </main>
+</body>
+</html>

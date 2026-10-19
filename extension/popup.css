@@ -1,0 +1,55 @@
+body {
+  width: 320px;
+  padding: 12px;
+  font-size: 14px;
+}
+
+fieldset {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 0;
+  padding: 10px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+fieldset:first-of-type { border-top: 0; }
+
+legend {
+  font-weight: 600;
+  padding: 0;
+  margin-bottom: 6px;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding-left: 22px;
+}
+
+.row label,
+fieldset > label:has(input[type="url"]) {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.row input[type="number"] { width: 90px; }
+
+.hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.status {
+  margin: 6px 0 0;
+  min-height: 1em;
+  font-size: 12px;
+}
+
+.status.error { color: var(--danger); }
