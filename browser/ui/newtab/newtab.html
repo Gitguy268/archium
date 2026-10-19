@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>New Tab</title>
+  <link rel="stylesheet" href="/themes/base.css">
+  <link rel="stylesheet" href="/vendor/liquid-glass-web/liquid-glass.css">
+  <link rel="stylesheet" href="/newtab/newtab.css">
+</head>
+<body data-theme="normal">
+  <canvas id="wallpaper" class="wallpaper" aria-hidden="true"></canvas>
+  <main id="home" class="home">
+    <header class="win-caption" aria-hidden="true"><img src="/newtab/logo.svg" alt=""> Archium Home</header>
+    <div class="home-body">
+      <p class="mode" id="mode" hidden></p>
+      <div id="clock-card" class="clock-card">
+        <time id="clock" class="clock"></time>
+        <p id="date" class="date"></p>
+      </div>
+      <form id="search" class="search" role="search">
+        <label for="q" class="visually-hidden">Search</label>
+        <span class="search-icon" aria-hidden="true"></span>
+        <input id="q" name="q" type="search" placeholder="Search privately or enter an address" autocomplete="off" autofocus>
+        <button type="submit" class="search-go">Search</button>
+      </form>
+      <section aria-labelledby="links-heading">
+        <h2 id="links-heading" class="visually-hidden">Quick links</h2>
+        <ul id="links" class="links"></ul>
+        <details class="add">
+          <summary>Add a link</summary>
+          <form id="add-link">
+            <label>Name <input name="title" required maxlength="40"></label>
+            <label>Address <input name="url" required type="url" placeholder="https://"></label>
+            <button type="submit">Add</button>
+          </form>
+        </details>
+      </section>
+    </div>
+  </main>
+  <script type="module" src="/newtab/newtab.js"></script>
+</body>
+</html>

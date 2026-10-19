@@ -1,8 +1,17 @@
 # Roadmap
 
-## Now: companion kit (done)
+## Now: companion kit and Archium Browser (done)
 
-The Archium Home extension, the native SearXNG installer, self-hosted Helium services, the logo and the docs. Everything runs on a stock Helium release.
+- **Companion kit.** The Archium Home extension, the native SearXNG installer, self-hosted Helium services, the logo and the docs. Everything runs on a stock Helium release.
+- **Archium Browser** (`browser/`). An Electron shell you can run without compiling Chromium. It includes:
+  - Archium's protection in every session;
+  - Ghostery ad blocking;
+  - the Normal, Windows 98 and Liquid Glass looks;
+  - Glance;
+  - Focus Mode and ⌘K;
+  - a local MiniCPM-V assistant.
+
+  Still to come: a signed `.app` built with electron-builder, a downloads list, and profiles.
 
 ## Next: Archium builds
 

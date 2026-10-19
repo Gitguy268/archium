@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Archium</title>
+  <link rel="stylesheet" href="themes/base.css">
+  <link rel="stylesheet" href="chrome.css">
+  <link rel="stylesheet" href="themes/normal.css">
+  <link rel="stylesheet" href="themes/win98.css">
+  <link rel="stylesheet" href="themes/glass.css">
+</head>
+<body data-theme="normal" data-tabs="top">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+      <symbol id="i-forward" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
+      <symbol id="i-reload" viewBox="0 0 24 24"><path d="M19 12a7 7 0 1 1-2.05-4.95"/><path d="M19 4v4.5h-4.5"/></symbol>
+      <symbol id="i-stop" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+      <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+      <symbol id="i-close" viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17"/></symbol>
+      <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 4l2.4 5 5.4.6-4 3.7 1.1 5.4L12 16l-4.9 2.7 1.1-5.4-4-3.7 5.4-.6z"/></symbol>
+      <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6z"/></symbol>
+      <symbol id="i-lock" viewBox="0 0 24 24"><rect x="6" y="11" width="12" height="9" rx="2"/><path d="M9 11V8a3 3 0 0 1 6 0v3"/></symbol>
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></symbol>
+      <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M18.5 15.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/></symbol>
+      <symbol id="i-qr" viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6"/><rect x="14" y="4" width="6" height="6"/><rect x="4" y="14" width="6" height="6"/><path d="M14 14h2v2h-2zM18 18h2v2h-2zM14 18h2M18 14h2"/></symbol>
+      <symbol id="i-menu" viewBox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h14"/></symbol>
+      <symbol id="i-sidebar" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M10 5v14"/></symbol>
+      <symbol id="i-mask" viewBox="0 0 24 24"><path d="M3 10c3-2 15-2 18 0-.5 4-3 6-5.5 6-2 0-2.5-2-3.5-2s-1.5 2-3.5 2C6 16 3.5 14 3 10z"/></symbol>
+      <symbol id="i-glance" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><rect x="12" y="8" width="6" height="6" rx="1"/></symbol>
+      <symbol id="i-tor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="2"/></symbol>
+    </defs>
+  </svg>
+
+  <!-- Windows 98 caption bar; the other looks hide it. Drag area for the window. -->
+  <header id="caption" class="caption">
+    <img src="assets/logo.svg" alt="" class="caption-icon">
+    <span id="caption-title" class="caption-title">Archium</span>
+    <span class="caption-buttons">
+      <button class="cap" data-cmd="win-min" aria-label="Minimize"><span class="cap-min"></span></button>
+      <button class="cap" data-cmd="win-max" aria-label="Maximize"><span class="cap-max"></span></button>
+      <button class="cap" data-cmd="win-close" aria-label="Close"><span class="cap-close"></span></button>
+    </span>
+  </header>
+
+  <div id="top" class="top">
+    <div class="traffic-space"></div>
+    <div id="tabstrip" class="tabstrip" role="tablist" aria-label="Tabs"></div>
+    <button class="icon newtab-btn" data-cmd="new-tab" title="New tab (⌘T)" aria-label="New tab"><svg><use href="#i-plus"/></svg></button>
+    <div class="drag-fill"></div>
+  </div>
+
+  <nav id="toolbar" class="toolbar" aria-label="Navigation">
+    <div class="traffic-space side-only"></div>
+    <button id="back" class="icon nav" data-cmd="back" title="Back (⌘[)" aria-label="Back"><svg><use href="#i-back"/></svg><span class="label">Back</span></button>
+    <button id="forward" class="icon nav" data-cmd="forward" title="Forward (⌘])" aria-label="Forward"><svg><use href="#i-forward"/></svg><span class="label">Forward</span></button>
+    <button id="reload" class="icon nav" data-cmd="reload" title="Reload (⌘R)" aria-label="Reload"><svg><use href="#i-reload"/></svg><span class="label">Refresh</span></button>
+    <button class="icon nav home" data-cmd="home" title="New tab page" aria-label="Home"><svg><use href="#i-home"/></svg><span class="label">Home</span></button>
+
+    <form id="omnibox" class="omnibox" role="search" autocomplete="off">
+      <span class="address-label">A<u>d</u>dress</span>
+      <span id="site" class="site" title=""><svg><use href="#i-search"/></svg></span>
+      <input id="address" name="address" spellcheck="false" placeholder="Search privately or enter an address" aria-label="Address and search">
+      <button type="button" id="qr-btn" class="icon mini" data-cmd="share-qr" title="Share as QR code" aria-label="Share page as QR code"><svg><use href="#i-qr"/></svg></button>
+      <button type="button" id="star" class="icon mini" data-cmd="bookmark" title="Bookmark (⌘D)" aria-label="Bookmark this page"><svg><use href="#i-star"/></svg></button>
+      <button type="submit" class="go">Go</button>
+    </form>
+
+    <button id="shield" class="icon shield" data-cmd="settings" title="Blocked on this page" aria-label="Privacy"><svg><use href="#i-shield"/></svg><span id="blocked" class="badge" hidden></span></button>
+    <button id="mode-chip" class="chip" data-cmd="settings" hidden></button>
+    <button id="ai-btn" class="icon" data-cmd="assistant" title="Assistant (⇧⌘A)" aria-label="Assistant"><svg><use href="#i-spark"/></svg></button>
+    <button id="menu-btn" class="icon menu-btn" title="Menu" aria-label="Menu" aria-haspopup="menu"><svg><use href="#i-menu"/></svg><span class="start-label">Archium</span></button>
+  </nav>
+
+  <div id="banner" class="banner" role="alert" hidden></div>
+
+  <div id="findbar" class="findbar" hidden>
+    <input id="find" placeholder="Find in page" aria-label="Find in page">
+    <span id="find-count" class="find-count"></span>
+    <button class="icon mini" id="find-prev" aria-label="Previous match"><svg><use href="#i-back"/></svg></button>
+    <button class="icon mini" id="find-next" aria-label="Next match"><svg><use href="#i-forward"/></svg></button>
+    <button class="icon mini" id="find-close" aria-label="Close find"><svg><use href="#i-close"/></svg></button>
+  </div>
+
+  <div id="body" class="body">
+    <aside id="sidebar" class="sidebar" aria-label="Tabs">
+      <div id="sidetabs" class="sidetabs" role="tablist"></div>
+      <button class="side-new" data-cmd="new-tab"><svg><use href="#i-plus"/></svg> New Tab</button>
+    </aside>
+    <main id="page-slot" class="page-slot"></main>
+    <aside id="panel-slot" class="panel-slot" hidden></aside>
+  </div>
+
+  <footer id="statusbar" class="statusbar">
+    <span id="status-text" class="status-cell grow">Done</span>
+    <span id="status-blocked" class="status-cell"></span>
+    <span id="status-zone" class="status-cell zone">Internet</span>
+  </footer>
+
+  <!-- Overlays: the toolbar page goes on top of the web page while one is open. -->
+  <div id="scrim" class="scrim" hidden></div>
+
+  <div id="menu" class="menu popover" role="menu" hidden>
+    <button role="menuitem" data-cmd="new-tab"><span>New Tab</span><kbd>⌘T</kbd></button>
+    <button role="menuitem" data-cmd="new-window"><span>New Window</span><kbd>⌘N</kbd></button>
+    <button role="menuitem" data-cmd="new-private-tab"><span>New Private Tab</span><kbd>⇧⌘N</kbd></button>
+    <button role="menuitem" data-cmd="glance"><span>Glance</span><kbd>⌃⌥Space</kbd></button>
+    <hr>
+    <button role="menuitem" data-cmd="palette"><span>Commands…</span><kbd>⌘K</kbd></button>
+    <button role="menuitem" data-cmd="history"><span>History</span><kbd>⌘Y</kbd></button>
+    <button role="menuitem" data-cmd="bookmarks"><span>Bookmarks</span><kbd>⌥⌘B</kbd></button>
+    <button role="menuitem" data-cmd="downloads"><span>Downloads</span><kbd>⇧⌘J</kbd></button>
+    <hr>
+    <div class="menu-row" role="group" aria-label="Look">
+      <span>Look</span>
+      <span class="seg">
+        <button data-theme-pick="normal">Normal</button><button data-theme-pick="win98">98</button><button data-theme-pick="glass">Glass</button>
+      </span>
+    </div>
+    <button role="menuitem" data-cmd="tabs-position"><span>Tabs on Side / Top</span><kbd>⌘S</kbd></button>
+    <button role="menuitem" data-cmd="focus-mode"><span>Focus Mode</span><kbd>⇧⌘B</kbd></button>
+    <hr>
+    <button role="menuitem" data-cmd="settings"><span>Settings</span><kbd>⌘,</kbd></button>
+  </div>
+
+  <div id="palette" class="palette popover" role="dialog" aria-label="Commands" hidden>
+    <input id="palette-input" placeholder="Search tabs, bookmarks, history and commands" aria-label="Command search" autocomplete="off" spellcheck="false">
+    <ul id="palette-list" class="palette-list" role="listbox"></ul>
+  </div>
+
+  <div id="settings" class="dialog popover" role="dialog" aria-labelledby="settings-title" hidden>
+    <div class="dialog-title"><h2 id="settings-title">Settings</h2><button class="icon mini" data-close aria-label="Close"><svg><use href="#i-close"/></svg></button></div>
+    <form id="settings-form" class="dialog-body">
+      <fieldset>
+        <legend>Look</legend>
+        <label class="radio"><input type="radio" name="theme" value="normal"> Normal</label>
+        <label class="radio"><input type="radio" name="theme" value="win98"> Windows 98</label>
+        <label class="radio"><input type="radio" name="theme" value="glass"> Liquid Glass</label>
+        <label class="radio"><span>Tabs</span>
+          <select name="tabs"><option value="top">On top</option><option value="side">On the side</option><option value="hidden">Hidden</option></select>
+        </label>
+      </fieldset>
+      <fieldset>
+        <legend>Network</legend>
+        <label class="radio"><input type="radio" name="mode" value="direct"> Direct</label>
+        <label class="radio"><input type="radio" name="mode" value="tor"> Tor</label>
+        <label class="radio"><input type="radio" name="mode" value="proxy"> Proxy</label>
+        <div class="when-tor"><label>Tor port <input name="torPort" type="number" min="1" max="65535"></label><small>9050 for Homebrew's Tor, 9150 for Tor Browser.</small></div>
+        <div class="when-proxy">
+          <label>Type <select name="proxyScheme"><option>socks5</option><option>socks4</option><option>http</option><option>https</option></select></label>
+          <label>Host <input name="proxyHost" placeholder="127.0.0.1"></label>
+          <label>Port <input name="proxyPort" type="number" min="1" max="65535"></label>
+        </div>
+        <small>If Tor or the proxy stops, pages stop loading. They never fall back to a direct connection.</small>
+      </fieldset>
+      <fieldset>
+        <legend>Privacy</legend>
+        <label class="check"><input type="checkbox" name="adblock"> Block ads and trackers</label>
+        <label class="check"><input type="checkbox" name="blockWebRTC"> Block WebRTC leaks (always on with Tor or a proxy)</label>
+        <label class="check"><input type="checkbox" name="restoreSession"> Reopen normal tabs at launch</label>
+        <button type="button" id="clear-history">Clear history</button>
+      </fieldset>
+      <fieldset>
+        <legend>Search</legend>
+        <label>Local SearXNG <input name="localSearch" type="url"></label>
+        <label>Public fallback <input name="publicSearch" type="url"></label>
+      </fieldset>
+    </form>
+  </div>
+
+  <div id="qr" class="dialog popover qr-dialog" role="dialog" aria-labelledby="qr-title" hidden>
+    <div class="dialog-title"><h2 id="qr-title">Share page</h2><button class="icon mini" data-close aria-label="Close"><svg><use href="#i-close"/></svg></button></div>
+    <div class="dialog-body qr-body">
+      <canvas id="qr-canvas" width="264" height="264"></canvas>
+      <p id="qr-url" class="qr-url"></p>
+      <p class="hint">Scan with a phone camera. Made on this Mac; nothing is uploaded.</p>
+      <button type="button" id="qr-copy">Copy link</button>
+    </div>
+  </div>
+
+  <script type="module" src="chrome.js"></script>
+</body>
+</html>

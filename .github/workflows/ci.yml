@@ -26,7 +26,9 @@ jobs:
         with:
           node-version-file: .nvmrc
       - run: node --test extension/
+      # Pure modules only: these tests need neither Electron nor the npm install.
+      - run: node --test browser/test/*.test.js
       - name: JSON files parse
-        run: for f in extension/*.json; do node -e 'JSON.parse(require("fs").readFileSync(process.argv[1]))' "$f" || exit 1; done
-      - run: shellcheck searxng/*.sh searxng/*.command services/*.sh branding/*.sh
-      # The browser itself is not built here: a Chromium build needs paid runners. See docs/roadmap.md.
+        run: for f in extension/*.json browser/main/*.json browser/package.json; do node -e 'JSON.parse(require("fs").readFileSync(process.argv[1]))' "$f" || exit 1; done
+      - run: shellcheck searxng/*.sh searxng/*.command services/*.sh branding/*.sh browser/start.command
+      # No Helium build here: a Chromium build needs paid runners. See docs/roadmap.md.

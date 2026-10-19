@@ -4,9 +4,9 @@
 
 # Archium
 
-A privacy layer for the [Helium](https://github.com/imputnet/helium) browser: offline new tab, local search, a Tor switch with a kill switch, and a URL cleaner.
+A privacy layer for the [Helium](https://github.com/imputnet/helium) browser: offline new tab, local search, a Tor switch with a kill switch, and a URL cleaner. Plus **Archium Browser**, a runnable browser with the same protection, three looks, Glance and a local assistant.
 
-[Install](#install) · [Features](#features) · [Limits](#limits) · [Threat model](docs/threat-model.md) · [Roadmap](docs/roadmap.md) · [Contributing](CONTRIBUTING.md)
+[Archium Browser](#archium-browser) · [Install](#install) · [Features](#features) · [Limits](#limits) · [Threat model](docs/threat-model.md) · [Roadmap](docs/roadmap.md) · [Contributing](CONTRIBUTING.md)
 
 [![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-blue)](LICENSE)
 ![Platform: macOS](https://img.shields.io/badge/platform-macOS-lightgrey)
@@ -16,9 +16,38 @@ A privacy layer for the [Helium](https://github.com/imputnet/helium) browser: of
 
 </div>
 
-> **Status: companion kit.** Archium is not yet a browser you can download. Today it is an extension and a set of scripts that run on top of a stock [Helium](https://helium.computer) release. Archium's own builds (renamed app, icon and defaults) are planned in the [roadmap](docs/roadmap.md).
+> **Status: two ways to run it.**
+> - **Archium Browser** (`browser/`) is a Chromium shell you can run today. It has Archium's protection built in.
+> - **The companion kit** is an extension plus scripts for a stock [Helium](https://helium.computer) release.
+>
+> A real Helium build with Archium compiled in is planned in the [roadmap](docs/roadmap.md).
 
-## Features
+## Archium Browser
+
+Double-click `browser/start.command` (needs Node.js 20+). The first run installs about 350 MB.
+
+<table>
+<tr>
+<td><img src="docs/img/browser-normal.png" alt="Archium Browser in the Normal look: an article with the assistant panel summarizing it and describing a screenshot" width="270"></td>
+<td><img src="docs/img/browser-win98.png" alt="Archium Browser in the Windows 98 look: navy caption bar, coolbar buttons and a cloud desktop new tab page" width="270"></td>
+<td><img src="docs/img/browser-glass.png" alt="Archium Browser in the Liquid Glass look: glass capsules over an aurora wallpaper" width="270"></td>
+</tr>
+<tr><td align="center">Normal</td><td align="center">Windows 98</td><td align="center">Liquid Glass</td></tr>
+</table>
+
+<sub>The pictures come from the test suite. In Liquid Glass, the bars sit on native macOS glass over your desktop. The test can't capture that, so a plain backdrop stands in.</sub>
+
+| | |
+|---|---|
+| **Three looks** | **Normal** looks like Helium or Brave and follows light and dark mode. **Windows 98** brings a caption bar, a coolbar and a status bar. **Liquid Glass** uses native macOS glass with refracting controls |
+| **Glance** | ⌃⌥Space opens a small browser in the screen corner from any app |
+| **Assistant** | MiniCPM-V 4.7 1B on your Mac. It summarizes the page, answers questions about it and looks at screenshots. Private tabs are never read |
+| **Focus Mode, ⌘K, flexible tabs** | Only the page (⇧⌘B). One palette for tabs, history, bookmarks and commands. Tabs on top, on the side or hidden |
+| **Privacy** | Ghostery ad and tracker blocking, Archium's URL cleaner, Tor or a proxy with a kill switch in every session, a WebRTC block, local SearXNG |
+
+Glance, the page assistant and Focus Mode are ideas from [Web](https://github.com/nuance-dev/Web) by Nuanced. See [browser/README.md](browser/README.md) for shortcuts, the model and limits.
+
+## Features (companion kit for Helium)
 
 | Feature | How | Where |
 |---|---|---|
@@ -96,7 +125,8 @@ Helium can fetch filter lists, bangs and extensions through imputnet's servers. 
 ## Development
 
 ```sh
-node --test extension/                     # unit tests (no dependencies)
+node --test extension/ browser/test/*.test.js   # unit tests (no dependencies)
+cd browser && npm ci && npm run e2e        # Archium Browser end to end (Playwright)
 HELIUM=/Applications/Helium.app \
 PLAYWRIGHT=/path/to/node_modules/playwright/index.mjs \
 node tests/e2e.mjs                         # 11 end-to-end checks in a real Helium
@@ -114,6 +144,6 @@ CI runs the unit tests, JSON checks and shellcheck. It does not build a browser,
 
 ## Credits
 
-Archium builds on [Helium](https://github.com/imputnet/helium) by imputnet, which builds on [ungoogled-chromium](https://github.com/ungoogled-software/ungoogled-chromium). Search is [SearXNG](https://github.com/searxng/searxng). See [NOTICE](NOTICE). Archium is not affiliated with any of these projects, or with Google or the Tor Project.
+Archium builds on [Helium](https://github.com/imputnet/helium) by imputnet, which builds on [ungoogled-chromium](https://github.com/ungoogled-software/ungoogled-chromium). Search is [SearXNG](https://github.com/searxng/searxng). Archium Browser runs on [Electron](https://www.electronjs.org), blocks ads with [Ghostery's adblocker](https://github.com/ghostery/adblocker), and runs [MiniCPM-V](https://huggingface.co/openbmb/MiniCPM-V-4.7-1B-gguf) on [wllama](https://github.com/ngxson/wllama). See [NOTICE](NOTICE). Archium is not affiliated with any of these projects, or with Google or the Tor Project.
 
 GPL-3.0 © Lucas Van De Weerd. See [LICENSE](LICENSE).

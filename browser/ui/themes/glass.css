@@ -1,0 +1,77 @@
+/* Liquid Glass: the window itself is native glass (NSGlassEffectView, or vibrancy before
+   macOS 26), so the bars are left clear and the controls float on it as lit capsules.
+   Rim light and sheen follow kwlck/liquid-glass-web and xenitV1/liquid-glass-skill (MIT). */
+[data-theme="glass"] {
+  --fg: #101014;
+  --muted: rgb(16 16 20 / 0.6);
+  --frame-bg: transparent;
+  --toolbar-bg: transparent;
+  --surface: rgb(255 255 255 / 0.7);
+  --surface-2: rgb(255 255 255 / 0.4);
+  --border: rgb(255 255 255 / 0.55);
+  --hover: rgb(255 255 255 / 0.32);
+  --press: rgb(255 255 255 / 0.5);
+  --tab-active-bg: rgb(255 255 255 / 0.62);
+  --omni-bg: rgb(255 255 255 / 0.42);
+  --omni-focus-bg: rgb(255 255 255 / 0.78);
+  --radius: 14px;
+  --popover-bg: rgb(248 248 252 / 0.9);
+  --popover-shadow: 0 24px 60px rgb(10 10 30 / 0.3), inset 0 1px 0 rgb(255 255 255 / 0.95), inset 0 0 0 1px rgb(255 255 255 / 0.6);
+  --select-bg: rgb(91 69 184 / 0.16);
+  --rim: inset 0 1px 0.5px rgb(255 255 255 / 0.95), inset 0 -1px 0.5px rgb(255 255 255 / 0.35), inset 0 0 0 0.5px rgb(255 255 255 / 0.6), 0 4px 14px rgb(0 0 0 / 0.1);
+}
+@media (prefers-color-scheme: dark) {
+  [data-theme="glass"] {
+    --fg: #f6f6fa;
+    --muted: rgb(246 246 250 / 0.62);
+    --surface: rgb(40 40 50 / 0.72);
+    --surface-2: rgb(255 255 255 / 0.1);
+    --border: rgb(255 255 255 / 0.16);
+    --hover: rgb(255 255 255 / 0.1);
+    --press: rgb(255 255 255 / 0.18);
+    --tab-active-bg: rgb(255 255 255 / 0.18);
+    --omni-bg: rgb(255 255 255 / 0.1);
+    --omni-focus-bg: rgb(20 20 28 / 0.7);
+    --popover-bg: rgb(36 36 46 / 0.92);
+    --popover-shadow: 0 24px 60px rgb(0 0 0 / 0.55), inset 0 1px 0 rgb(255 255 255 / 0.25), inset 0 0 0 1px rgb(255 255 255 / 0.1);
+    --select-bg: rgb(168 152 242 / 0.22);
+    --rim: inset 0 1px 0.5px rgb(255 255 255 / 0.35), inset 0 -1px 0.5px rgb(255 255 255 / 0.08), inset 0 0 0 0.5px rgb(255 255 255 / 0.18), 0 4px 14px rgb(0 0 0 / 0.25);
+  }
+}
+
+[data-theme="glass"] .top { height: 44px; padding: 0 8px; }
+[data-theme="glass"] .tabstrip { gap: 4px; padding: 6px 0 4px; align-items: center; }
+[data-theme="glass"] .tab { height: 32px; border-radius: 16px; padding: 0 6px 0 12px; transition: background 0.15s; }
+[data-theme="glass"] .tab[aria-selected="true"] { box-shadow: var(--rim); }
+[data-theme="glass"] .tab-close { border-radius: 50%; }
+[data-theme="glass"] .newtab-btn { margin: 0 0 0 4px; border-radius: 50%; align-self: center; }
+
+[data-theme="glass"] .toolbar { padding: 4px 10px 8px; gap: 4px; }
+[data-theme="glass"] .icon { border-radius: 50%; min-width: 32px; height: 32px; }
+[data-theme="glass"] .icon:hover:not(:disabled) { box-shadow: var(--rim); }
+[data-theme="glass"] .icon.mini { min-width: 24px; height: 24px; }
+[data-theme="glass"] .omnibox { height: 38px; border-radius: 19px; border: 0; box-shadow: var(--rim); }
+[data-theme="glass"] .omnibox:focus-within { box-shadow: var(--rim), 0 0 0 2px rgb(91 69 184 / 0.5); }
+[data-theme="glass"] .chip { box-shadow: var(--rim); background: rgb(107 63 160 / 0.85); }
+[data-theme="glass"] .menu-btn { border-radius: 50%; }
+[data-theme="glass"] .findbar { margin: 0 10px 6px; border: 0; border-radius: 16px; background: var(--omni-bg); box-shadow: var(--rim); }
+[data-theme="glass"] .findbar input { border: 0; border-radius: 12px; }
+[data-theme="glass"] .banner { margin: 0 10px 6px; border-radius: 14px; }
+
+/* The page floats in the glass, rounded (main rounds the web view's corners to match). */
+[data-theme="glass"] .body { padding: 0 8px 8px; gap: 8px; }
+[data-theme="glass"] .sidebar { padding: 4px 0; }
+[data-theme="glass"] .tab.vertical { border-radius: 12px; }
+[data-theme="glass"] .side-new { border-radius: 12px; }
+[data-theme="glass"] .page-slot { border-radius: 12px; }
+[data-theme="glass"] .panel-slot { border-radius: 16px; }
+
+[data-theme="glass"] .popover { border-radius: 22px; }
+[data-theme="glass"] .menu { padding: 8px; }
+[data-theme="glass"] .menu button[role="menuitem"] { border-radius: 10px; }
+[data-theme="glass"] .seg { border-radius: 12px; }
+[data-theme="glass"] .seg button { border-radius: 10px; }
+[data-theme="glass"] .seg button[aria-pressed="true"] { box-shadow: var(--rim); background: var(--omni-focus-bg); }
+[data-theme="glass"] .palette-item { border-radius: 12px; }
+[data-theme="glass"] fieldset { border-radius: 16px; }
+[data-theme="glass"] .scrim.dim { background: rgb(10 5 25 / 0.18); }

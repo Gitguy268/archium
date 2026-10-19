@@ -1,10 +1,10 @@
 Archium
 Copyright (c) 2026 Lucas Van De Weerd. GPL-3.0, see LICENSE.
 
-Archium's own code (extension/, searxng/, services/run-local.sh, tests/,
-branding/, site/) and docs are licensed under the GPL-3.0. Archium runs on top
-of the projects below and does not copy their code; they keep their own
-licences. Archium is not affiliated with any of them, nor with Google or the
+Archium's own code (extension/, browser/, searxng/, services/run-local.sh,
+tests/, branding/, site/) and docs are licensed under the GPL-3.0. Archium runs
+on top of the projects below. Files copied from other projects are listed under
+VENDORED and keep their own licences. Archium is not affiliated with any of them, nor with Google or the
 Tor Project.
 
 RUNS ON TOP OF
@@ -24,6 +24,44 @@ Chromium — BSD-3-Clause and others
   Copyright (c) The Chromium Authors
   https://www.chromium.org
 
+Electron — MIT — Copyright (c) Electron contributors, GitHub Inc.
+  https://github.com/electron/electron
+  The engine of Archium Browser (browser/). Installed by npm.
+
+NPM DEPENDENCIES OF ARCHIUM BROWSER (installed by npm, not stored here)
+-----------------------------------------------------------------------
+@ghostery/adblocker-electron and its @ghostery packages — MPL-2.0
+  Copyright (c) 2017-present Ghostery GmbH
+  https://github.com/ghostery/adblocker
+  Used unmodified as a library. MPL-2.0 is compatible with the GPL-3.0; its
+  source stays available from the project above. Its prebuilt lists come from
+  EasyList, EasyPrivacy, uBlock Origin and others under their own licences.
+
+electron-liquid-glass — MIT — Copyright (c) Meridius Labs
+  https://github.com/Meridius-Labs/electron-liquid-glass
+  Native NSGlassEffectView glass for the Liquid Glass look (optional).
+
+VENDORED (copied into browser/ui/vendor/, each with its LICENSE)
+-----------------------------------------------------------------
+wllama — MIT — Copyright (c) Xuan Son Nguyen (ngxson)
+  https://github.com/ngxson/wllama
+  llama.cpp — MIT — Copyright (c) The ggml authors
+  A master build (1a5687ef7c) that runs MiniCPM-V 4.7 for the assistant.
+
+liquid-glass-web — MIT — Copyright (c) 2026 kwlck
+  https://github.com/kwlck/liquid-glass-web
+  SVG refraction on the Liquid Glass new tab page.
+
+QR Code generator — MIT — Copyright (c) Project Nayuki
+  https://github.com/nayuki/QR-Code-generator
+  "Share as QR code".
+
+DOWNLOADED BY ARCHIUM BROWSER (not stored in this repository)
+--------------------------------------------------------------
+MiniCPM-V 4.7 1B (GGUF) — Apache-2.0 — Copyright (c) OpenBMB
+  https://huggingface.co/openbmb/MiniCPM-V-4.7-1B-gguf
+  Downloaded on first use of the assistant, at a pinned revision.
+
 DOWNLOADED BY SCRIPTS (not stored in this repository)
 -----------------------------------------------------
 SearXNG — AGPL-3.0 — Copyright (c) SearXNG contributors
@@ -40,13 +78,37 @@ extension/url-cleaner.json lists widely documented tracking parameter names
 (utm_*, fbclid, gclid and similar). It is this project's own list; no filter
 list text is copied.
 
+IDEAS, NO CODE
+--------------
+Archium Browser takes ideas, not code, from these projects:
+- Web by Nuanced (nuance-dev/Web), MIT: Glance, a local assistant that reads
+  the page, Focus Mode, the command palette, tabs on top, on the side or
+  hidden, and private pages kept away from the assistant.
+- retro-404 (gaoryrt), zabdalimov/win98, MrRar/win98theme,
+  spitfirex86/FloatingToolbars, moeleak/win98, rtts/win98: no licence, so
+  ideas only, for the Windows 98 look.
+- chyinan/liquid-glass-music-player: no licence, ideas only.
+- Liquid-glass ideas from archisvaze/liquid-glass, ShengzhiWu/liquid-glass,
+  u7663394/LGGC-liquid-glass, kevinbism/liquid-glass-effect,
+  xenitV1/liquid-glass-skill, kayozxo/ulauncher-liquid-glass and
+  Weiqin-Mo/Liquid-Glass-HTML (all MIT): rim light, sheen, and glass that
+  needs detail behind it.
+- Windows 98 control patterns from azayrahmad/win98-web (MIT),
+  pollygon-dev/WIN98-template (Unlicense) and xero/windows98.website
+  (CC0-1.0), written afresh in browser/ui/themes/win98.css.
+- Gitguy268/QRcodeforeveryone (MIT, same author): sharing a page as a QR code.
+
 ASSETS
 ------
 branding/logo.svg, the icons generated from it and docs/img/*.png are this
 project's own work, GPL-3.0 with the project. The pages use system fonts only.
+Archium Browser's wallpapers are drawn by code (browser/ui/shared/wallpaper.js;
+the cloud sky comes from the author's MIT projects Qrer and Retrofind). No
+Microsoft fonts, icons, sounds or wallpapers are included.
 
 DEVELOPMENT TOOLS (not shipped)
 -------------------------------
-Playwright (Apache-2.0) drives Helium in tests/e2e.mjs. uv (MIT/Apache-2.0)
+Playwright (Apache-2.0) drives Helium in tests/e2e.mjs and Archium Browser in
+browser/test/e2e.mjs. uv (MIT/Apache-2.0)
 creates SearXNG's Python environment. mkcert (BSD-3-Clause) and Docker run
 the optional local services.

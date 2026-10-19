@@ -35,3 +35,14 @@ What Archium protects against, what it doesn't, and why. "Archium" here means st
 ## Reporting
 
 Found a way around any of this? Please report it privately; see [SECURITY.md](../SECURITY.md).
+
+## Archium Browser
+
+Archium Browser (`browser/`) gives the same protection in its own Chromium shell, with some differences:
+
+- **Every session is covered.** The proxy, the kill switch, the WebRTC block, the URL cleaner and ad blocking apply to normal tabs, private tabs, Glance, the assistant and the browser's own pages, including the block-list and model downloads.
+- **Nothing can switch it off.** No extension can disable it.
+- **No fingerprint noise.** Electron doesn't have Helium's canvas and audio noise, so fingerprinting is easier than in Helium.
+- **Updates.** Chromium security fixes arrive with Electron releases. Keep `npm update electron` current.
+- **The assistant runs locally.** Page text and screenshots stay on your Mac. Page text is passed to the model as quoted data. A small model can still be misled by text written into a page, but it has no tools: it can't click, type or browse.
+- **Web pages run sandboxed.** They get no preload and no Node. Only Archium's own `archium://app` pages can talk to the browser.

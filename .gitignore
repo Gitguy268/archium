@@ -7,3 +7,4 @@ services/helium-services/
 site/*.png
 site/logo.svg
 extension/_metadata/
+browser/test/screenshots/

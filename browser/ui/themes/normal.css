@@ -1,0 +1,27 @@
+/* Normal: a quiet Helium/Brave-style window. Most of it is base.css's tokens. */
+[data-theme="normal"] .tab[aria-selected="true"] { box-shadow: 0 -1px 0 var(--border) inset, 0 0 0 0.5px var(--border); }
+[data-theme="normal"] .tab[aria-selected="true"]::before,
+[data-theme="normal"] .tab[aria-selected="true"]::after {
+  /* The curved feet where the active tab meets the toolbar. */
+  content: "";
+  position: absolute;
+  bottom: 0;
+  width: 8px;
+  height: 8px;
+  background: radial-gradient(circle at var(--foot) , transparent 7.5px, var(--tab-active-bg) 8px);
+}
+[data-theme="normal"] .tab[aria-selected="true"]::before { left: -8px; --foot: 0 0; }
+[data-theme="normal"] .tab[aria-selected="true"]::after { right: -8px; --foot: 100% 0; }
+[data-theme="normal"] .tab:not([aria-selected="true"]) + .tab:not([aria-selected="true"])::before {
+  content: "";
+  position: absolute;
+  left: -1px;
+  top: 9px;
+  bottom: 9px;
+  width: 1px;
+  background: var(--border);
+}
+[data-theme="normal"] .toolbar { border-bottom: 1px solid var(--border); }
+[data-theme="normal"][data-tabs="side"] .sidebar { background: var(--frame-bg); border-right: 1px solid var(--border); }
+[data-theme="normal"][data-tabs="side"] .tab.vertical[aria-selected="true"] { background: var(--toolbar-bg); box-shadow: 0 1px 2px rgb(0 0 0 / 0.08); }
+[data-theme="normal"] .panel-slot { border-left: 1px solid var(--border); }

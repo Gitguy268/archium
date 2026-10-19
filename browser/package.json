@@ -1,0 +1,25 @@
+{
+  "name": "archium-browser",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Archium Browser: a privacy-first Chromium shell with Glance, local AI and three looks.",
+  "license": "GPL-3.0-only",
+  "author": "Lucas Van De Weerd",
+  "type": "module",
+  "main": "main/main.js",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test test/*.test.js",
+    "e2e": "node test/e2e.mjs"
+  },
+  "dependencies": {
+    "@ghostery/adblocker-electron": "2.20.1"
+  },
+  "optionalDependencies": {
+    "electron-liquid-glass": "1.1.1"
+  },
+  "devDependencies": {
+    "electron": "44.9.0"
+  }
+}

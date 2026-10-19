@@ -1,0 +1,174 @@
+/* Windows 98: grey bevels, a navy caption, an Internet Explorer 5 style coolbar and a status bar.
+   Bevels and caption colours come from Retrofind and Qrer (MIT); control patterns follow
+   azayrahmad/win98-web (MIT) and pollygon-dev/WIN98-template (Unlicense). No Microsoft
+   fonts, icons, sounds or wallpapers are included: Tahoma or Geneva stand in when present. */
+[data-theme="win98"] {
+  --font: Tahoma, "MS Sans Serif", Geneva, Verdana, sans-serif;
+  --font-size: 11px;
+  --fg: #000;
+  --muted: #404040;
+  --accent: #000080;
+  --accent-fg: #fff;
+  --danger: #a00000;
+  --face: #c0c0c0;
+  --frame-bg: var(--face);
+  --toolbar-bg: var(--face);
+  --surface: #fff;
+  --surface-2: var(--face);
+  --border: #808080;
+  --hover: transparent;
+  --press: transparent;
+  --tab-active-bg: var(--face);
+  --omni-bg: #fff;
+  --omni-focus-bg: #fff;
+  --radius: 0;
+  --popover-bg: var(--face);
+  --popover-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #dfdfdf, inset -2px -2px #808080, inset 2px 2px #fff, 2px 2px 0 rgb(0 0 0 / 0.35);
+  --select-bg: #000080;
+  --select-fg: #fff;
+  --raised: inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;
+  --raised-soft: inset -1px -1px #808080, inset 1px 1px #fff;
+  --sunken: inset -1px -1px #fff, inset 1px 1px #808080, inset -2px -2px #dfdfdf, inset 2px 2px #0a0a0a;
+  --sunken-soft: inset -1px -1px #fff, inset 1px 1px #808080;
+  color-scheme: light;
+}
+[data-theme="win98"] body, body[data-theme="win98"] { padding: 3px; box-shadow: var(--raised); }
+[data-theme="win98"] svg { stroke-width: 2; stroke-linecap: square; stroke-linejoin: miter; }
+[data-theme="win98"] :focus-visible { outline: 1px dotted #000; outline-offset: -4px; }
+
+[data-theme="win98"] .caption {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 20px;
+  padding: 0 2px 0 3px;
+  flex: none;
+  color: #fff;
+  font-weight: bold;
+  /* White text stays over the navy end; the light end only sits under the grey buttons. */
+  background: linear-gradient(90deg, #000080 0%, #000080 45%, #1084d0 100%);
+}
+[data-theme="win98"] .caption-icon { width: 16px; height: 16px; }
+[data-theme="win98"] .caption-title { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+[data-theme="win98"] .caption-buttons { display: flex; gap: 0; }
+[data-theme="win98"] .cap { position: relative; width: 16px; height: 14px; padding: 0; border: 0; background: var(--face); box-shadow: var(--raised); }
+[data-theme="win98"] .cap:active { box-shadow: var(--sunken); }
+[data-theme="win98"] .cap[data-cmd="win-close"] { margin-left: 2px; }
+[data-theme="win98"] .cap span { position: absolute; inset: 0; margin: auto; }
+[data-theme="win98"] .cap-min { width: 6px; height: 2px; top: 6px !important; background: #000; }
+[data-theme="win98"] .cap-max { width: 9px; height: 8px; border: 1px solid #000; border-top-width: 2px; }
+[data-theme="win98"] .cap-close::before, [data-theme="win98"] .cap-close::after { content: ""; position: absolute; left: 3px; top: 5px; width: 9px; height: 2px; background: #000; rotate: 45deg; }
+[data-theme="win98"] .cap-close::after { rotate: -45deg; }
+
+/* Tabs look like a Windows 98 tab control sitting on the page. */
+[data-theme="win98"] .top { height: 28px; padding: 2px 4px 0; order: 3; }
+[data-theme="win98"] .traffic-space { display: none; }
+[data-theme="win98"] .tabstrip { padding-top: 2px; gap: 0; }
+[data-theme="win98"] .tab {
+  height: 22px;
+  flex-basis: 180px;
+  padding: 0 4px 0 6px;
+  margin-right: -1px;
+  background: var(--face);
+  box-shadow: inset 1px 1px #fff, inset -1px 0 #0a0a0a, inset -2px 0 #808080;
+  border-radius: 0;
+}
+[data-theme="win98"] .tab[aria-selected="true"] { height: 25px; margin: 0 -2px 0 -2px; z-index: 1; font-weight: normal; }
+[data-theme="win98"] .tab[aria-selected="true"] .tab-title { text-decoration: underline dotted; text-underline-offset: 2px; }
+[data-theme="win98"] .tab-title { font-size: 11px; }
+[data-theme="win98"] .tab-close { opacity: 1; width: 14px; height: 13px; background: var(--face); box-shadow: var(--raised-soft); color: #000; border-radius: 0; }
+[data-theme="win98"] .tab-close:active { box-shadow: var(--sunken-soft); }
+[data-theme="win98"] .tab-close svg { width: 9px; height: 9px; stroke-width: 2.4; }
+[data-theme="win98"] .tab-icon.loading { border-color: #808080; border-top-color: #000080; }
+[data-theme="win98"] .newtab-btn { height: 20px; min-width: 22px; margin: 0 0 3px 6px; box-shadow: var(--raised); }
+[data-theme="win98"] .newtab-btn svg { width: 12px; height: 12px; }
+
+/* Coolbar: big flat buttons with labels that pop out on hover. */
+[data-theme="win98"] .toolbar { order: 2; flex-wrap: wrap; gap: 1px; padding: 2px 3px; border-bottom: 1px solid #808080; box-shadow: 0 1px #fff; }
+[data-theme="win98"] .toolbar .side-only { display: none !important; }
+[data-theme="win98"] .icon { border-radius: 0; color: #000; }
+[data-theme="win98"] .icon:hover:not(:disabled) { box-shadow: var(--raised-soft); }
+[data-theme="win98"] .icon:active:not(:disabled) { box-shadow: var(--sunken-soft); }
+[data-theme="win98"] .icon:disabled { opacity: 1; color: #808080; filter: drop-shadow(1px 1px 0 #fff); }
+[data-theme="win98"] .nav { flex-direction: column; gap: 1px; min-width: 50px; height: 40px; }
+[data-theme="win98"] .nav svg { width: 20px; height: 20px; }
+[data-theme="win98"] .nav .label { display: block; font-size: 11px; }
+[data-theme="win98"] .nav.home { display: inline-flex; }
+[data-theme="win98"] #back svg { color: #006400; }
+[data-theme="win98"] #forward svg { color: #006400; }
+[data-theme="win98"] #back:disabled svg, [data-theme="win98"] #forward:disabled svg { color: #808080; }
+[data-theme="win98"] .omnibox {
+  order: 10;
+  flex: 1 1 100%;
+  height: 24px;
+  margin: 2px 0 0;
+  padding: 0 0 0 4px;
+  gap: 4px;
+  background: transparent;
+  border: 0;
+  border-top: 1px solid #808080;
+  box-shadow: 0 -1px #fff inset;
+  border-radius: 0;
+}
+[data-theme="win98"] .omnibox:focus-within { background: transparent; border-color: #808080; }
+[data-theme="win98"] .address-label { display: block; padding-right: 2px; }
+[data-theme="win98"] .site { display: none; }
+[data-theme="win98"] .omnibox input { height: 20px; padding: 0 4px; background: #fff; box-shadow: var(--sunken); font: 12px Arial, Helvetica, sans-serif; }
+[data-theme="win98"] .omnibox .icon.mini { height: 20px; min-width: 22px; }
+[data-theme="win98"] .go { display: block; height: 20px; padding: 0 10px; border: 0; background: var(--face); box-shadow: var(--raised); }
+[data-theme="win98"] .go:active { box-shadow: var(--sunken); }
+[data-theme="win98"] .menu-btn { order: -1; height: 22px; margin-right: 6px; padding: 0 6px 0 3px; font-weight: bold; box-shadow: var(--raised) !important; }
+[data-theme="win98"] .menu-btn:active { box-shadow: var(--sunken) !important; }
+[data-theme="win98"] .menu-btn svg { display: none; }
+[data-theme="win98"] .menu-btn::before { content: ""; width: 16px; height: 16px; background: url("../assets/logo.svg") center / contain no-repeat; }
+[data-theme="win98"] .start-label { display: inline; }
+[data-theme="win98"] .toolbar > :is(.shield, #ai-btn, #mode-chip) { height: 40px; min-width: 36px; }
+[data-theme="win98"] .badge { border-radius: 0; background: #000080; color: #fff; }
+[data-theme="win98"] .chip { height: 22px; border-radius: 0; background: #000080; box-shadow: var(--raised); }
+[data-theme="win98"] .chip.error { background: #a00000; }
+[data-theme="win98"] #ai-btn.on { background: var(--face); color: #000080; box-shadow: var(--sunken-soft); }
+[data-theme="win98"] .banner { order: 4; background: #ffffe1; color: #000; border: 1px solid #000; margin: 2px 0; font-weight: normal; }
+[data-theme="win98"] .findbar { order: 4; background: var(--face); border-top: 0; }
+[data-theme="win98"] .findbar input { border: 0; border-radius: 0; box-shadow: var(--sunken); }
+
+/* The page sits in a sunken frame under the tabs. */
+[data-theme="win98"] .body { order: 5; padding: 2px; box-shadow: var(--sunken); background: #808080; }
+[data-theme="win98"] .sidebar { background: #fff; box-shadow: var(--sunken); margin-right: 2px; padding: 3px; }
+[data-theme="win98"] .tab.vertical { height: 20px; box-shadow: none; margin: 0; }
+[data-theme="win98"] .tab.vertical[aria-selected="true"] { height: 20px; margin: 0; background: #000080; color: #fff; }
+[data-theme="win98"] .tab.vertical[aria-selected="true"] .tab-title { text-decoration: none; }
+[data-theme="win98"] .side-new { height: 22px; border-radius: 0; color: #000; }
+[data-theme="win98"] .panel-slot { margin-left: 2px; }
+
+[data-theme="win98"] .statusbar { display: flex; order: 6; gap: 2px; height: 20px; padding-top: 2px; flex: none; }
+[data-theme="win98"] .status-cell { padding: 1px 6px; box-shadow: var(--sunken-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+[data-theme="win98"] .status-cell.grow { flex: 1; min-width: 0; }
+[data-theme="win98"] .zone { min-width: 110px; }
+[data-theme="win98"] .zone::before { content: "◍ "; color: #006400; }
+
+/* Menus and dialogs as classic windows. */
+[data-theme="win98"] .popover { border-radius: 0; padding: 3px; }
+[data-theme="win98"] .scrim.dim { background: transparent; }
+[data-theme="win98"] .menu { width: 230px; }
+[data-theme="win98"] .menu button[role="menuitem"] { height: 22px; border-radius: 0; padding: 0 8px 0 22px; }
+[data-theme="win98"] .menu kbd { color: inherit; font-size: 11px; }
+[data-theme="win98"] .menu hr { height: 2px; margin: 3px 1px; background: none; border-top: 1px solid #808080; border-bottom: 1px solid #fff; }
+[data-theme="win98"] .menu-row { height: 26px; padding-left: 22px; }
+[data-theme="win98"] .seg { padding: 0; background: none; gap: 2px; }
+[data-theme="win98"] .seg button { height: 20px; border-radius: 0; background: var(--face); box-shadow: var(--raised); font-size: 11px; }
+[data-theme="win98"] .seg button[aria-pressed="true"] { box-shadow: var(--sunken); background: #dfdfdf; }
+[data-theme="win98"] .palette input { height: 24px; margin: 4px; padding: 0 4px; box-shadow: var(--sunken); background: #fff; font-size: 12px; border: 0; }
+[data-theme="win98"] .palette-list { background: #fff; box-shadow: var(--sunken); margin: 0 4px 4px; padding: 2px; }
+[data-theme="win98"] .palette-group { color: #000; text-transform: none; letter-spacing: 0; padding: 4px; font-weight: bold; }
+[data-theme="win98"] .palette-item { height: 20px; border-radius: 0; padding: 0 4px; }
+[data-theme="win98"] .palette-item[aria-selected="true"] .palette-hint { color: #fff; }
+[data-theme="win98"] .dialog-title { height: 20px; margin: 0 0 4px; padding: 0 2px 0 4px; color: #fff; background: linear-gradient(90deg, #000080 0%, #000080 45%, #1084d0 100%); }
+[data-theme="win98"] .dialog-title h2 { font-size: 11px; }
+[data-theme="win98"] .dialog-title .icon.mini { width: 16px; min-width: 16px; height: 14px; padding: 0; background: var(--face); box-shadow: var(--raised); color: #000; }
+[data-theme="win98"] .dialog-title .icon.mini svg { width: 9px; height: 9px; stroke-width: 2.6; }
+[data-theme="win98"] .dialog-body { padding: 8px; }
+[data-theme="win98"] fieldset { border: 0; border-radius: 0; box-shadow: inset -1px -1px #fff, inset 1px 1px #808080, inset -2px -2px #808080, inset 2px 2px #fff; padding: 12px 10px 10px; }
+[data-theme="win98"] fieldset input:not([type="radio"], [type="checkbox"]), [data-theme="win98"] fieldset select { height: 21px; border: 0; border-radius: 0; box-shadow: var(--sunken); }
+[data-theme="win98"] .dialog button:not(.icon) { height: 23px; min-width: 75px; border: 0; border-radius: 0; background: var(--face); box-shadow: var(--raised); }
+[data-theme="win98"] .dialog button:not(.icon):active { box-shadow: var(--sunken); }
+[data-theme="win98"] .qr-body canvas { border-radius: 0; box-shadow: var(--sunken); padding: 2px; background: #fff; }

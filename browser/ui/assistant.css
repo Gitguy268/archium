@@ -1,0 +1,86 @@
+/* The assistant panel in the three looks. */
+html, body { height: 100%; background: transparent; }
+body { overflow: hidden; }
+.panel { display: flex; flex-direction: column; height: 100%; background: var(--surface); color: var(--fg); }
+.head { display: flex; align-items: center; gap: 10px; padding: 12px 10px 10px 14px; border-bottom: 1px solid var(--border); }
+.head > svg { color: var(--accent); }
+.head-text { flex: 1; min-width: 0; }
+.head h1 { margin: 0; font-size: 14px; }
+.head p { margin: 0; color: var(--muted); font-size: 11.5px; }
+.icon { display: grid; place-items: center; width: 28px; height: 28px; padding: 0; border: 0; border-radius: 7px; background: transparent; }
+.icon:hover { background: var(--hover); }
+.muted { color: var(--muted); }
+.setup { margin: 12px; padding: 12px 14px; border-radius: 12px; background: var(--surface-2); }
+.setup p { margin: 0 0 8px; }
+.setup progress { width: 100%; }
+button.primary, .actions button { height: 30px; padding: 0 14px; border: 0; border-radius: 8px; }
+button.primary { background: var(--accent); color: var(--accent-fg); font-weight: 600; }
+button:disabled { opacity: 0.45; }
+.log { flex: 1; margin: 0; padding: 12px; list-style: none; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; user-select: text; }
+.msg { max-width: 92%; padding: 8px 11px; border-radius: 12px; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.45; }
+.msg.user { align-self: flex-end; background: var(--accent); color: var(--accent-fg); border-bottom-right-radius: 4px; }
+.msg.assistant { align-self: flex-start; background: var(--surface-2); border-bottom-left-radius: 4px; }
+.msg.assistant.pending:empty::after { content: "Thinking…"; color: var(--muted); }
+.msg.error { align-self: stretch; background: rgb(192 53 43 / 0.12); color: var(--danger); }
+.actions { display: flex; gap: 6px; padding: 0 12px 8px; }
+.actions button { background: var(--surface-2); color: var(--fg); }
+.actions button:hover:not(:disabled) { background: var(--hover); }
+.ask { padding: 0 12px 12px; }
+.use-page { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; color: var(--muted); font-size: 12px; }
+.ask-row { display: flex; gap: 6px; align-items: flex-end; }
+.ask textarea { flex: 1; min-height: 40px; max-height: 140px; padding: 8px 10px; border: 1px solid var(--border); border-radius: 10px; background: var(--omni-focus-bg); resize: none; outline: 0; }
+.ask textarea:focus { border-color: var(--accent); }
+.ask .primary { height: 40px; }
+
+/* Windows 98 */
+[data-theme="win98"] {
+  --font: Tahoma, "MS Sans Serif", Geneva, Verdana, sans-serif;
+  --font-size: 11px;
+  --fg: #000; --muted: #404040; --accent: #000080; --accent-fg: #fff; --danger: #a00000;
+  --surface: #c0c0c0; --surface-2: #fff; --border: #808080; --hover: transparent; --omni-focus-bg: #fff;
+  --raised: inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;
+  --sunken: inset -1px -1px #fff, inset 1px 1px #808080, inset -2px -2px #dfdfdf, inset 2px 2px #0a0a0a;
+  color-scheme: light;
+}
+[data-theme="win98"] svg { stroke-width: 2; }
+[data-theme="win98"] .panel { padding: 3px; box-shadow: var(--raised); }
+[data-theme="win98"] .head { padding: 0 2px 0 4px; height: 20px; border: 0; color: #fff; background: linear-gradient(90deg, #000080 0%, #000080 45%, #1084d0 100%); }
+[data-theme="win98"] .head > svg { color: #ffff80; width: 14px; height: 14px; }
+[data-theme="win98"] .head-text { display: flex; align-items: baseline; gap: 8px; overflow: hidden; white-space: nowrap; }
+[data-theme="win98"] .head h1 { font-size: 11px; }
+[data-theme="win98"] .head p { color: #dfe6ff; font-size: 11px; overflow: hidden; text-overflow: ellipsis; }
+[data-theme="win98"] .head .icon { width: 16px; height: 14px; border-radius: 0; background: #c0c0c0; box-shadow: var(--raised); color: #000; }
+[data-theme="win98"] .head .icon svg { width: 9px; height: 9px; stroke-width: 2.6; }
+[data-theme="win98"] .setup { border-radius: 0; margin: 6px 2px; background: #ffffe1; border: 1px solid #000; }
+[data-theme="win98"] .log { margin: 4px 2px; background: #fff; box-shadow: var(--sunken); gap: 6px; padding: 8px; }
+[data-theme="win98"] .msg { border-radius: 0; padding: 2px 4px; max-width: 100%; }
+[data-theme="win98"] .msg.user { align-self: stretch; background: transparent; color: #000080; font-weight: bold; }
+[data-theme="win98"] .msg.user::before { content: "You: "; }
+[data-theme="win98"] .msg.assistant { align-self: stretch; background: transparent; }
+[data-theme="win98"] .msg.assistant::before { content: "Assistant: "; font-weight: bold; }
+[data-theme="win98"] .msg.error { background: transparent; }
+[data-theme="win98"] .actions { padding: 4px 2px; }
+[data-theme="win98"] button.primary, [data-theme="win98"] .actions button { height: 23px; min-width: 75px; border-radius: 0; background: #c0c0c0; color: #000; box-shadow: var(--raised); font-weight: normal; }
+[data-theme="win98"] button.primary:active, [data-theme="win98"] .actions button:active { box-shadow: var(--sunken); }
+[data-theme="win98"] .ask { padding: 2px; }
+[data-theme="win98"] .use-page { color: #000; font-size: 11px; }
+[data-theme="win98"] .ask textarea { border: 0; border-radius: 0; box-shadow: var(--sunken); font: 12px Arial, sans-serif; }
+[data-theme="win98"] .ask .primary { height: 40px; }
+
+/* Liquid Glass: the panel is a lit sheet over the window's native glass. */
+[data-theme="glass"] {
+  --surface: rgb(255 255 255 / 0.38);
+  --surface-2: rgb(255 255 255 / 0.55);
+  --border: rgb(255 255 255 / 0.5);
+  --hover: rgb(255 255 255 / 0.4);
+  --omni-focus-bg: rgb(255 255 255 / 0.7);
+  --rim: inset 0 1px 0.5px rgb(255 255 255 / 0.95), inset 0 0 0 0.5px rgb(255 255 255 / 0.6);
+}
+@media (prefers-color-scheme: dark) {
+  [data-theme="glass"] { --surface: rgb(30 30 40 / 0.45); --surface-2: rgb(255 255 255 / 0.1); --border: rgb(255 255 255 / 0.14); --hover: rgb(255 255 255 / 0.1); --omni-focus-bg: rgb(20 20 28 / 0.6); --rim: inset 0 1px 0.5px rgb(255 255 255 / 0.3), inset 0 0 0 0.5px rgb(255 255 255 / 0.15); }
+}
+[data-theme="glass"] .panel { border-radius: 16px; box-shadow: var(--rim); }
+[data-theme="glass"] .head { border-bottom: 0; }
+[data-theme="glass"] .msg { border-radius: 16px; box-shadow: var(--rim); }
+[data-theme="glass"] .setup, [data-theme="glass"] .actions button, [data-theme="glass"] button.primary { box-shadow: var(--rim); border-radius: 14px; }
+[data-theme="glass"] .ask textarea { border-radius: 16px; border: 0; box-shadow: var(--rim); }
