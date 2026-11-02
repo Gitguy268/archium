@@ -22,6 +22,29 @@ A privacy layer for the [Helium](https://github.com/imputnet/helium) browser: of
 >
 > A real Helium build with Archium compiled in is planned in the [roadmap](docs/roadmap.md).
 
+<!-- run-steps:start -->
+## Run it locally, step by step
+
+1. **Install [Node.js](https://nodejs.org) 22** or newer.
+
+2. **Get the code:**
+
+   ```sh
+   git clone https://github.com/Gitguy268/archium.git
+   cd archium
+   ```
+
+3. **Start Archium Browser:**
+
+   ```sh
+   cd browser
+   npm ci
+   npm start
+   ```
+
+4. **Quit** by closing the window. To use the extension in Helium instead, follow the Install section below.
+<!-- run-steps:end -->
+
 ## Archium Browser
 
 Double-click `browser/start.command` (needs Node.js 20+). The first run installs about 350 MB.
@@ -68,7 +91,7 @@ Glance, the page assistant and Focus Mode are ideas from [Web](https://github.co
 
 You need macOS on Apple silicon or Intel, [Helium](https://github.com/imputnet/helium-macos/releases), and [Homebrew](https://brew.sh).
 
-1. **Get the code.** Archium isn't on GitHub yet, so start from a copy of this folder.
+1. **Get the code.** Clone this repository: `git clone https://github.com/Gitguy268/archium.git`
 2. **Start local search.** Double-click `searxng/install.command`, or run:
    ```sh
    brew install uv
