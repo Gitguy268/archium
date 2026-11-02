@@ -22,6 +22,10 @@ A privacy layer for the [Helium](https://github.com/imputnet/helium) browser: of
 >
 > A real Helium build with Archium compiled in is planned in the [roadmap](docs/roadmap.md).
 
+<!-- live-links -->
+**Live:** [gitguy268.github.io/archium](https://gitguy268.github.io/archium/) · [archium-pied.vercel.app](https://archium-pied.vercel.app)
+<!-- /live-links -->
+
 <!-- run-steps:start -->
 ## Run it locally, step by step
 
