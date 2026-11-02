@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.DS_Store
+app/test/screenshots/*.png
+app/test/screenshots/*.webm
+app/test/privacy/results/
+*.log
+.env
+packaging/arch/src/
+packaging/arch/pkg/
+packaging/arch/*.pkg.tar.*
+packaging/arch/*.tar.gz
+.vercel/
+.env.*
+!.env.example

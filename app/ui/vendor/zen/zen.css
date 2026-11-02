@@ -1,0 +1,131 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+
+/* From Zen Browser (https://github.com/zen-browser/desktop, commit 6609acd4cc87e8ceaecb405df335d99f6ad8b2e7):
+ *   src/zen/common/styles/zen-theme.css      colour tokens
+ *   src/zen/glance/zen-glance.css            the Glance button column
+ *   src/zen/split-view/zen-split-view.css    split view gaps, outline and drop zone
+ *   src/zen/compact-mode/zen-compact-mode.css the floating sidebar background
+ *   src/zen/spaces/zen-workspaces.css        the current space indicator
+ * Modified for Hillium: XUL selectors and -moz- features replaced with Hillium's HTML
+ * elements and standard CSS; values kept. This file stays under the MPL-2.0. */
+
+:root {
+  --zen-border-radius: 7px;
+  --zen-element-separation: 8px;
+  --zen-big-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  --zen-branding-bg: light-dark(#f2f0e3, #171717);
+  --zen-native-inner-radius: max(5px, calc(var(--zen-border-radius) - var(--zen-element-separation) / 2));
+
+  /** Zen colors are generated automatically from the primary color */
+  --zen-colors-primary: light-dark(
+    color-mix(in srgb, var(--zen-primary-color) 50%, black 50%),
+    color-mix(in srgb, var(--zen-primary-color) 20%, var(--zen-branding-bg) 80%)
+  );
+  --zen-colors-secondary: light-dark(
+    color-mix(in srgb, var(--zen-colors-primary) 20%, white 80%),
+    color-mix(in srgb, var(--zen-primary-color) 30%, var(--zen-branding-bg) 70%)
+  );
+  --zen-colors-tertiary: light-dark(
+    color-mix(in srgb, var(--zen-primary-color) 2%, white 98%),
+    color-mix(in srgb, var(--zen-primary-color) 1%, var(--zen-branding-bg) 99%)
+  );
+  --zen-colors-border: light-dark(
+    color-mix(in srgb, var(--zen-colors-secondary) 50%, transparent),
+    color-mix(in srgb, var(--zen-colors-secondary) 20%, rgb(79, 79, 79))
+  );
+  --zen-toolbar-element-bg-hover: light-dark(rgba(0, 0, 0, 0.08), rgba(255, 255, 255, 0.1));
+  --zen-dialog-background: light-dark(#fafbff, #1c1c1c);
+}
+
+/* Glance: the round buttons beside the card */
+.zen-glance-sidebar-container {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  z-index: 999;
+  padding: 12px;
+  gap: 12px;
+  max-width: 56px;
+
+  & button {
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    background: color-mix(in srgb, light-dark(rgb(24, 24, 24), rgb(231, 231, 231)) 96%, var(--zen-primary-color));
+    transition:
+      background 0.05s ease,
+      scale 0.05s ease;
+    border: 0;
+    border-radius: 999px;
+    appearance: none;
+    box-shadow: 0 0 12px 1px rgba(0, 0, 0, 0.07);
+    padding: 8px;
+    color: light-dark(rgb(231, 231, 231), rgb(24, 24, 24));
+
+    &:hover {
+      background: light-dark(rgb(41, 41, 41), rgb(204, 204, 204));
+      scale: 1.02;
+    }
+
+    &:hover:active {
+      scale: 0.98;
+    }
+  }
+}
+
+.zen-glance-background {
+  box-shadow: var(--zen-big-shadow);
+  border-radius: var(--zen-native-inner-radius);
+}
+
+/* Split view */
+.zen-split-view-dropzone {
+  border-radius: var(--zen-native-inner-radius);
+  transition: inset ease-out 0.08s;
+  background-color: color-mix(in srgb, var(--zen-colors-secondary) 30%, transparent 70%);
+}
+
+.zen-split-active {
+  --zen-active-split-outline-color: light-dark(hsl(from var(--zen-primary-color) h s calc(l - 20)), color-mix(in srgb, var(--zen-primary-color) 70%, white));
+  outline: 2px solid var(--zen-active-split-outline-color);
+  outline-offset: 1px;
+}
+
+.zen-split-view-splitter {
+  position: absolute;
+  pointer-events: all;
+  cursor: ew-resize;
+}
+
+/* Compact mode: the floating sidebar */
+.zen-toolbar-background {
+  overflow: clip;
+  background: light-dark(#e9e9e9, #131313);
+  box-shadow: var(--zen-big-shadow);
+  outline: 1px solid rgba(255, 255, 255, 0.15);
+  outline-offset: -1px;
+  border-radius: var(--zen-native-inner-radius);
+}
+
+/* The current space, above its tabs */
+.zen-current-workspace-indicator {
+  --zen-workspace-indicator-height: 44px;
+  max-height: var(--zen-workspace-indicator-height);
+  min-height: var(--zen-workspace-indicator-height);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 10px;
+  font-weight: 600;
+  border-radius: var(--zen-border-radius);
+
+  & .zen-current-workspace-indicator-icon {
+    width: 16px;
+    text-align: center;
+  }
+}

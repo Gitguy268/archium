@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hillium</title>
+    <meta name="description" content="Hillium is an Arc and Zen style browser with Helium's privacy defaults, for Arch Linux and macOS." />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="hillium.svg" type="image/svg+xml" />
+    <style>
+      :root {
+        --bg: #f6f5fb;
+        --ink: #17171c;
+        --soft: #5e5e6b;
+        --card: #fff;
+        --line: rgba(0, 0, 0, 0.08);
+        --accent: #6d5cf0;
+        font: 17px/1.55 -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", "Cantarell", system-ui, sans-serif;
+        color-scheme: light dark;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #141418;
+          --ink: #ececf1;
+          --soft: #a1a1ad;
+          --card: #1e1e24;
+          --line: rgba(255, 255, 255, 0.09);
+          --accent: #a497ff;
+        }
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+      }
+      header {
+        padding: 72px 16px 24px;
+        text-align: center;
+        background: radial-gradient(80% 60% at 50% 0%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%);
+      }
+      header img {
+        width: 84px;
+        height: 84px;
+      }
+      h1 {
+        font-size: clamp(36px, 7vw, 56px);
+        letter-spacing: -0.03em;
+        margin: 12px 0 8px;
+      }
+      .lede {
+        color: var(--soft);
+        max-width: 620px;
+        margin: 0 auto 24px;
+      }
+      .buttons {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .buttons a {
+        padding: 10px 18px;
+        border-radius: 999px;
+        text-decoration: none;
+        font-weight: 600;
+        background: var(--card);
+        color: var(--ink);
+        box-shadow: 0 0 0 1px var(--line);
+      }
+      .buttons a.primary {
+        background: var(--accent);
+        color: #fff;
+        box-shadow: none;
+      }
+      main {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 0 16px 64px;
+      }
+      .shot {
+        width: 100%;
+        height: auto;
+        border-radius: 14px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+        display: block;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 14px;
+        margin: 40px 0;
+      }
+      .grid div {
+        background: var(--card);
+        border-radius: 14px;
+        padding: 18px 20px;
+        box-shadow: 0 0 0 1px var(--line);
+      }
+      .grid h2 {
+        font-size: 17px;
+        margin: 0 0 6px;
+      }
+      .grid p {
+        margin: 0;
+        color: var(--soft);
+        font-size: 15px;
+      }
+      pre {
+        background: var(--card);
+        border-radius: 12px;
+        padding: 16px;
+        overflow-x: auto;
+        box-shadow: 0 0 0 1px var(--line);
+        font-size: 14px;
+      }
+      footer {
+        text-align: center;
+        color: var(--soft);
+        font-size: 14px;
+        padding: 24px 16px 48px;
+      }
+      a {
+        color: var(--accent);
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <img src="hillium.svg" alt="" />
+      <h1>Hillium</h1>
+      <p class="lede">An Arc and Zen style browser with Helium's privacy defaults. Spaces, a liquid-glass command bar, Glance and split view. No ads, no trackers and nothing sent to Google. For Arch Linux and macOS.</p>
+      <p class="buttons">
+        <a class="primary" href="https://github.com/Gitguy268/hillium#install">Install</a>
+        <a href="https://github.com/Gitguy268/hillium">Source on GitHub</a>
+      </p>
+    </header>
+    <main>
+      <img class="shot" src="arc.png" alt="Hillium with the Arc look: sidebar with favourites, pinned and Today tabs, next to a page" width="1440" height="920" />
+      <section class="grid">
+        <div><h2>Spaces</h2><p>Each with its own colours, pinned tabs and folders. Swipe between them.</p></div>
+        <div><h2>Today tabs clear themselves</h2><p>Unpinned tabs go to the archive after the time you choose.</p></div>
+        <div><h2>Command bar</h2><p>⌘T searches every tab in every space, your history and every command, behind real refracting glass.</p></div>
+        <div><h2>Glance and split view</h2><p>⌥-click a link to peek at it. Put up to four pages side by side.</p></div>
+        <div><h2>Helium-style privacy</h2><p>Ghostery's blocker, clean links, HTTPS first, no third-party cookies, GPC, DNS over HTTPS.</p></div>
+        <div><h2>Four looks</h2><p>Arc, Zen, Liquid Glass and Retro 98.</p></div>
+        <div><h2>Bring your Arc</h2><p>Imports spaces, pinned tabs and favourites from Arc and Zen, and bookmarks from Chromium browsers.</p></div>
+        <div><h2>For agents too</h2><p>An opt-in CLI and MCP server, so AI apps can read and open tabs. Private windows stay out of it.</p></div>
+      </section>
+      <h2>Install on Arch Linux</h2>
+      <pre><code>git clone https://github.com/Gitguy268/hillium &amp;&amp; cd hillium/app
+npm ci &amp;&amp; npm run dist:linux
+cp dist/hillium-*.tar.gz ../packaging/arch/ &amp;&amp; cd ../packaging/arch
+makepkg -si</code></pre>
+      <p>On macOS, double-click <code>app/start.command</code>. More in the <a href="https://github.com/Gitguy268/hillium#readme">README</a>.</p>
+    </main>
+    <footer>MIT · Not affiliated with The Browser Company, Zen or imputnet · <a href="https://github.com/Gitguy268/hillium/blob/main/NOTICE">Credits</a></footer>
+  </body>
+</html>

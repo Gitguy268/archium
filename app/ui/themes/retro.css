@@ -1,0 +1,481 @@
+/* The Retro 98 look: grey 3D bevels, a navy caption bar across the window, a teal desktop
+   behind the page and the command bar as a "Run" dialog. Drawn with CSS only: no Windows
+   artwork, fonts or wallpapers are used. */
+:root {
+  --face: #c0c0c0;
+  --hi: #ffffff;
+  --lo: #808080;
+  --dk: #0a0a0a;
+  --navy: #000080;
+  --ink: #000;
+  --ink-soft: #3b3b3b;
+  --hover: transparent;
+  --radius: 0px;
+  --row-h: 22px;
+  --card-shadow: none;
+  --space-bg: var(--face) !important;
+  --font: "Pixelated MS Sans Serif", "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Geneva, Verdana, sans-serif;
+  font: 12px/1.25 var(--font);
+  -webkit-font-smoothing: none;
+  color-scheme: light;
+}
+
+body {
+  --hover: transparent;
+  --ink-soft: #3b3b3b;
+  grid-template-rows: 26px 1fr;
+  padding: 3px;
+  padding-left: 3px;
+  background: var(--face);
+  box-shadow:
+    inset -1px -1px var(--dk),
+    inset 1px 1px var(--face),
+    inset -2px -2px var(--lo),
+    inset 2px 2px var(--hi);
+  --space-bg: var(--face);
+}
+
+#backdrop {
+  background: var(--face) !important;
+}
+
+.bevel-out {
+  box-shadow:
+    inset -1px -1px var(--dk),
+    inset 1px 1px var(--hi),
+    inset -2px -2px var(--lo),
+    inset 2px 2px var(--face);
+}
+
+#retro-title {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  height: 22px;
+  margin: 1px 1px 3px;
+  padding: 0 3px 0 4px;
+  background: linear-gradient(90deg, var(--navy), #1084d0);
+  color: white;
+  font-weight: 700;
+  -webkit-app-region: drag;
+  z-index: 3;
+}
+
+body[data-platform="darwin"] #retro-title {
+  padding-left: 76px;
+}
+
+.retro-app {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.retro-logo {
+  width: 14px;
+  height: 14px;
+  background:
+    linear-gradient(135deg, #ff3b30 0 50%, transparent 50%) 0 0 / 7px 7px no-repeat,
+    linear-gradient(135deg, #34c759 0 50%, transparent 50%) 7px 0 / 7px 7px no-repeat,
+    linear-gradient(135deg, #007aff 0 50%, transparent 50%) 0 7px / 7px 7px no-repeat,
+    linear-gradient(135deg, #ffcc00 0 50%, transparent 50%) 7px 7px / 7px 7px no-repeat;
+}
+
+.retro-buttons {
+  display: flex;
+  gap: 2px;
+  -webkit-app-region: no-drag;
+}
+
+body[data-platform="darwin"] .retro-buttons {
+  display: none;
+}
+
+.retro-buttons button,
+.icon-btn,
+#url-site,
+#url-copy,
+.fav,
+.space-dot,
+#clear-today,
+footer .icon-btn,
+.panel .btn,
+.harmonies button,
+#permission button,
+#findbar .icon-btn {
+  background: var(--face);
+  color: #000;
+  border-radius: 0;
+  box-shadow:
+    inset -1px -1px var(--dk),
+    inset 1px 1px var(--hi),
+    inset -2px -2px var(--lo),
+    inset 2px 2px var(--face);
+}
+
+.retro-buttons button {
+  width: 16px;
+  height: 14px;
+  font: 700 11px/1 var(--font);
+  display: grid;
+  place-items: center;
+}
+
+.retro-buttons button:active,
+.icon-btn:active:not(:disabled),
+.fav:active,
+.space-dot.active,
+.harmonies button.on {
+  box-shadow:
+    inset -1px -1px var(--hi),
+    inset 1px 1px var(--dk),
+    inset -2px -2px var(--face),
+    inset 2px 2px var(--lo);
+}
+
+.window-controls,
+body.compact #sidebar::before {
+  display: none;
+}
+
+#sidebar {
+  grid-row: 2;
+  padding: 0 4px 0 3px;
+}
+
+#card {
+  grid-row: 2;
+}
+
+.top {
+  height: 34px;
+}
+
+body[data-platform="darwin"] .top {
+  padding-left: 0;
+}
+
+.icon-btn {
+  width: 24px;
+  height: 22px;
+}
+
+.icon-btn:hover:not(:disabled) {
+  background: var(--face);
+}
+
+svg {
+  stroke-width: 2;
+  shape-rendering: crispEdges;
+}
+
+#url {
+  height: 26px;
+  border-radius: 0;
+  background: white;
+  box-shadow:
+    inset -1px -1px var(--hi),
+    inset 1px 1px var(--lo),
+    inset -2px -2px var(--face),
+    inset 2px 2px var(--dk);
+  padding: 0 2px 0 3px;
+}
+
+#url-site,
+#url-copy {
+  width: 20px;
+  height: 18px;
+}
+
+#url-text,
+#url-text.has-url {
+  color: #000;
+}
+
+#favourites {
+  gap: 3px;
+}
+
+.fav {
+  height: 36px;
+}
+
+.fav.active {
+  background: #dfdfdf;
+}
+
+#space-pages {
+  background: white;
+  box-shadow:
+    inset -1px -1px var(--hi),
+    inset 1px 1px var(--lo),
+    inset -2px -2px var(--face),
+    inset 2px 2px var(--dk);
+  margin: 0;
+  padding: 3px;
+}
+
+.space-head {
+  color: #000;
+  background: var(--face);
+  min-height: 22px !important;
+  max-height: 22px !important;
+  border-radius: 0 !important;
+}
+
+.tab,
+.row,
+.folder-head {
+  border-radius: 0;
+  padding-left: 4px;
+  gap: 5px;
+}
+
+.tab:hover {
+  background: transparent;
+}
+
+.tab.active,
+.tab.active .title {
+  background: var(--navy);
+  color: white;
+  box-shadow: none;
+}
+
+.tab.active .icon-btn {
+  color: #000;
+}
+
+.tab.unloaded .title {
+  color: #000;
+}
+
+.tab .favicon,
+.letter {
+  border-radius: 0;
+}
+
+.divider .line {
+  background: none;
+  border-top: 1px solid var(--lo);
+  border-bottom: 1px solid var(--hi);
+  height: 2px;
+}
+
+.drop-before {
+  box-shadow: 0 -2px 0 0 var(--navy);
+}
+
+.drop-after {
+  box-shadow: 0 2px 0 0 var(--navy);
+}
+
+footer {
+  height: 34px;
+}
+
+.space-dot {
+  opacity: 1;
+  color: #000;
+}
+
+#page {
+  background: white;
+  box-shadow:
+    inset -1px -1px var(--hi),
+    inset 1px 1px var(--lo),
+    inset -2px -2px var(--face),
+    inset 2px 2px var(--dk);
+}
+
+body.overlay.has-page #page {
+  box-shadow: none;
+}
+
+/* The desktop: the teal of a fresh Windows 98 install */
+#empty {
+  background: #008080;
+  color: white;
+  border-radius: 0;
+  margin: 2px;
+}
+
+.clock {
+  font: 700 40px var(--font);
+  letter-spacing: 0;
+  text-shadow: 1px 1px #000;
+}
+
+#empty-search {
+  height: 26px;
+  border-radius: 0;
+  background: white;
+  color: #000;
+  box-shadow:
+    inset -1px -1px var(--hi),
+    inset 1px 1px var(--lo),
+    inset -2px -2px var(--face),
+    inset 2px 2px var(--dk);
+}
+
+.hint {
+  color: #e0ffff;
+}
+
+#findbar,
+#permission {
+  border-radius: 0;
+  background: var(--face);
+  color: #000;
+  height: 30px;
+  box-shadow:
+    inset -1px -1px var(--dk),
+    inset 1px 1px var(--hi),
+    inset -2px -2px var(--lo),
+    inset 2px 2px var(--face);
+}
+
+#findbar input {
+  background: white;
+  height: 20px;
+  padding: 0 4px;
+  box-shadow:
+    inset 1px 1px var(--lo),
+    inset -1px -1px var(--hi);
+}
+
+#scrim {
+  background: transparent;
+}
+
+/* The command bar is the Run dialog */
+#command,
+.panel {
+  border-radius: 0;
+  background: var(--face);
+  color: #000;
+  backdrop-filter: none;
+  box-shadow:
+    inset -1px -1px var(--dk),
+    inset 1px 1px var(--face),
+    inset -2px -2px var(--lo),
+    inset 2px 2px var(--hi),
+    4px 4px 0 rgba(0, 0, 0, 0.35);
+  animation: none;
+  padding: 3px;
+}
+
+.retro-dialog-title {
+  display: block;
+  height: 20px;
+  padding: 2px 6px;
+  background: linear-gradient(90deg, var(--navy), #1084d0);
+  color: white;
+  font-weight: 700;
+}
+
+.command-input {
+  height: 34px;
+  padding: 0 8px;
+}
+
+#command-input {
+  font: 12px var(--font);
+  background: white;
+  height: 22px;
+  padding: 0 4px;
+  box-shadow:
+    inset -1px -1px var(--hi),
+    inset 1px 1px var(--lo),
+    inset -2px -2px var(--face),
+    inset 2px 2px var(--dk);
+}
+
+#results {
+  background: white;
+  margin: 0 8px 8px;
+  padding: 2px;
+  box-shadow:
+    inset -1px -1px var(--hi),
+    inset 1px 1px var(--lo),
+    inset -2px -2px var(--face),
+    inset 2px 2px var(--dk);
+}
+
+#results .item {
+  height: 22px;
+  border-radius: 0;
+  gap: 6px;
+  padding: 0 4px;
+}
+
+#results .item.selected {
+  background: var(--navy);
+}
+
+.panel {
+  padding: 10px;
+}
+
+.panel input[type="text"] {
+  border-radius: 0;
+  border: 0;
+  background: white;
+  height: 22px;
+  box-shadow:
+    inset -1px -1px var(--hi),
+    inset 1px 1px var(--lo),
+    inset -2px -2px var(--face),
+    inset 2px 2px var(--dk);
+}
+
+.switch {
+  appearance: auto;
+  width: 13px;
+  height: 13px;
+  background: white;
+  border-radius: 0;
+}
+
+.switch::after {
+  display: none;
+}
+
+.wheel {
+  border-radius: 50%;
+}
+
+.preview {
+  border-radius: 0;
+}
+
+#glance-buttons button {
+  border-radius: 0;
+  background: var(--face);
+  color: #000;
+  box-shadow:
+    inset -1px -1px var(--dk),
+    inset 1px 1px var(--hi),
+    inset -2px -2px var(--lo),
+    inset 2px 2px var(--face);
+}
+
+#toast {
+  border-radius: 0;
+  background: #ffffe1;
+  color: #000;
+  backdrop-filter: none;
+  box-shadow: 1px 1px 0 #000;
+}
+
+kbd {
+  border-radius: 0;
+  background: none;
+  color: #000;
+}

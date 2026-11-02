@@ -1,0 +1,9 @@
+# Hillium
+
+> An Arc and Zen style web browser built on Electron, with Helium's privacy defaults. MIT. For Arch Linux and macOS.
+
+- [README](https://github.com/Gitguy268/hillium#readme): install, features, shortcuts, CLI and MCP
+- [Helium parity](https://github.com/Gitguy268/hillium/blob/main/docs/helium-parity.md): which privacy defaults are covered
+- [Architecture](https://github.com/Gitguy268/hillium/blob/main/docs/architecture.md)
+- [Security model](https://github.com/Gitguy268/hillium/blob/main/docs/security.md)
+- [Privacy test results](https://github.com/Gitguy268/hillium/blob/main/docs/privacy-results.md)

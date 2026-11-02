@@ -1,0 +1,72 @@
+Hillium
+Copyright (c) 2026 Lucas Van De Weerd. MIT, see LICENSE.
+
+Hillium is an Arc and Zen style browser built on Electron, with Helium's privacy
+defaults. It is not affiliated with The Browser Company (Arc, Dia), the Zen Browser
+project, imputnet (Helium), Brave, Vivaldi, Ghostery, Google or Microsoft. "Arc",
+"Zen", "Helium" and the other names here are their owners' trademarks and are used
+only to describe where ideas came from.
+
+Arc is closed source. Nothing from Arc's app was decompiled, copied or reused:
+Hillium's Arc-style features are rebuilt from how Arc behaves in public, and its Arc
+importer reads the user's own StorableSidebar.json, read-only.
+
+FILES COPIED FROM OTHER PROJECTS (each keeps its licence)
+--------------------------------------------------------
+Zen Browser — MPL-2.0 — Copyright (c) Zen Browser contributors
+  https://github.com/zen-browser/desktop (commit 6609acd4cc87e8ceaecb405df335d99f6ad8b2e7)
+  app/ui/vendor/zen/gradient.js  from src/zen/spaces/ZenGradientGenerator.mjs (colour
+                                  maths, space gradients, harmonies, the colour wheel)
+  app/ui/vendor/zen/zen.css       from src/zen/common/styles/zen-theme.css,
+                                  src/zen/glance/zen-glance.css,
+                                  src/zen/split-view/zen-split-view.css,
+                                  src/zen/compact-mode/zen-compact-mode.css,
+                                  src/zen/spaces/zen-workspaces.css
+  Both are modified (each file says how) and stay under the MPL-2.0; its text is in
+  app/ui/vendor/zen/LICENSE. Zen's own source is available from the link above.
+
+liquid-glass — MIT — Copyright (c) 2026 Archis Vaze
+  https://github.com/archisvaze/liquid-glass (commit fbeb99ef5e8dad2cbbc991ffc23e186a28dc01c4)
+  app/ui/vendor/glass/liquid-glass.js: the refraction profile, displacement and
+  specular maps and SVG filter, wrapped as a function. Licence in app/ui/vendor/glass/.
+
+RUNS ON
+-------
+Electron — MIT — Copyright (c) Electron contributors, GitHub Inc.
+  https://github.com/electron/electron
+  Chromium (BSD-3-Clause and others, Copyright (c) The Chromium Authors) comes with it.
+
+NPM DEPENDENCIES (installed by npm, not stored here)
+---------------------------------------------------
+@ghostery/adblocker-electron and its @ghostery packages — MPL-2.0
+  Copyright (c) 2017-present Ghostery GmbH — https://github.com/ghostery/adblocker
+  Used unmodified as a library. Its prebuilt lists come from EasyList, EasyPrivacy,
+  uBlock Origin and others under their own licences.
+tldts-experimental — MIT — Copyright (c) Rémi Berson — https://github.com/remusao/tldts
+electron-builder (build only) — MIT — https://github.com/electron-userland/electron-builder
+
+IDEAS, NO CODE
+--------------
+These projects shaped Hillium, but none of their code or assets is in it.
+  Helium (imputnet/helium, helium-linux) — GPL-3.0: the privacy defaults Hillium
+    copies at the Electron level (no Google services, built-in blocking, HTTPS first,
+    DoH presets). docs/helium-parity.md lists them.
+  ungoogled-chromium — BSD-3-Clause: Helium's base, and the idea of no Google traffic.
+  Arc (The Browser Company) — proprietary: spaces, favourites, pinned and Today tabs,
+    auto-archive, the command bar, Little Arc, Peek, Boosts and Zap, Air Traffic Control.
+  alfred-browser-tabs (epilande) — MIT: fuzzy search across every open tab.
+  OpenDia (aeonfun/opendia) — MIT: the browser tools offered to AI agents.
+  CLI-Anything (HKUDS) — Apache-2.0: a CLI with --json output for agents.
+  ArchiveBox — MIT: "archive this page" through its REST API.
+  privacytests.org (privacytests/privacytests) — MIT: what to test (docs/privacy-results.md).
+  Brave — MPL-2.0: the per-site shields panel and its blocked counter.
+  retro-404 (gaoryrt) — no licence: an error page as a Windows 98 dialog.
+  The Retro 98 look is drawn with CSS only: no Windows artwork, fonts or wallpapers.
+  LGGC-liquid-glass (u7663394) — MIT and liquid-glass-effect (kevinbism) — MIT:
+    compared before choosing archisvaze/liquid-glass for the glass.
+
+DATA
+----
+app/main/privacy/url-cleaner.json lists widely documented tracking parameter names
+(utm_*, fbclid, gclid and similar). It is this project's own list.
+Branding (branding/) is this project's own.

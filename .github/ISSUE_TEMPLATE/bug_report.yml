@@ -1,0 +1,51 @@
+name: Bug report
+description: Something that does not work as described
+title: ''
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **If a page can read Hillium's data, reach the agent socket or get around the privacy layer, do not report it here.**
+        Follow [SECURITY.md](https://github.com/Gitguy268/hillium/blob/HEAD/SECURITY.md) instead.
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What happens
+      description: What did you do, what happened, and what did you expect?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: look
+    attributes:
+      label: Look
+      options:
+        - Arc
+        - Zen
+        - Liquid Glass
+        - Retro 98
+
+  - type: input
+    id: versions
+    attributes:
+      label: Hillium version and system
+      placeholder: Hillium 0.1.0, Arch Linux (Wayland, GNOME 49) / macOS 27
+    validations:
+      required: true
+
+  - type: textarea
+    id: console
+    attributes:
+      label: Anything in the terminal?
+      description: Start Hillium from a terminal (`hillium` on Linux) and paste anything that looks like an error.
+      render: text
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before you send this
+      options:
+        - label: I searched the open and closed issues for this.

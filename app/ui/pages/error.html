@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="hillium-token" content="%%TOKEN%%" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Can't open this page</title>
+    <link rel="icon" href="/_/assets/icon.svg" />
+    <link rel="stylesheet" href="/_/pages/pages.css" />
+    <link rel="stylesheet" href="/_/pages/error.css" />
+    <script type="module" src="/_/pages/error.js"></script>
+  </head>
+  <body>
+    <div class="dialog" role="alertdialog" aria-labelledby="title">
+      <div class="caption"><span>Hillium</span><span class="x" aria-hidden="true">×</span></div>
+      <div class="content">
+        <div class="glyph" aria-hidden="true">!</div>
+        <div>
+          <h1 id="title">Can't open this page</h1>
+          <p id="detail"></p>
+          <p class="muted" id="code"></p>
+        </div>
+      </div>
+      <div class="buttons">
+        <button id="http" hidden>Continue on http</button>
+        <button id="retry" class="primary">Try again</button>
+      </div>
+    </div>
+  </body>
+</html>

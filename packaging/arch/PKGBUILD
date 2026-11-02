@@ -1,0 +1,46 @@
+# Maintainer: Lucas Van De Weerd
+# Hillium for Arch Linux, from the electron-builder tarball (Electron bundled, so it doesn't
+# follow Arch's versioned electron package). For a local build, put
+# hillium-<version>-x64.tar.gz or -arm64.tar.gz from `npm run dist:linux` next to this file,
+# or run ../../app/test/arch/run.sh, which does it for you.
+pkgname=hillium-bin
+pkgver=0.1.0
+pkgrel=1
+pkgdesc="Arc and Zen style web browser with Helium's privacy defaults"
+arch=('x86_64' 'aarch64')
+url="https://github.com/Gitguy268/hillium"
+license=('MIT' 'MPL-2.0')
+depends=('gtk3' 'nss' 'alsa-lib' 'libxss' 'libxtst' 'libxrandr' 'libxkbcommon' 'mesa' 'libsecret' 'xdg-utils' 'hicolor-icon-theme')
+optdepends=('libnotify: desktop notifications'
+            'pipewire: screen sharing on Wayland'
+            'archivebox: keep copies of pages (Settings › ArchiveBox)'
+            'nodejs: run hillium-cli with your own Node')
+provides=('hillium')
+conflicts=('hillium')
+options=('!strip' '!debug')
+source=('hillium.sh' 'hillium-cli.sh' 'hillium.desktop')
+source_x86_64=("hillium-${pkgver}-x64.tar.gz")
+source_aarch64=("hillium-${pkgver}-arm64.tar.gz")
+sha256sums=('SKIP' 'SKIP' 'SKIP')
+# Local builds: the tarball is made on your machine. Releases pin real checksums here.
+sha256sums_x86_64=('SKIP')
+sha256sums_aarch64=('SKIP')
+
+package() {
+  local dir
+  dir="$(find "$srcdir" -maxdepth 1 -type d -name 'hillium-*' | head -n1)"
+  install -d "$pkgdir/opt/hillium"
+  cp -a "$dir"/. "$pkgdir/opt/hillium/"
+  # Arch kernels allow unprivileged user namespaces, so Chromium's sandbox needs no setuid helper.
+  chmod 0755 "$pkgdir/opt/hillium/chrome-sandbox"
+
+  install -Dm755 "$srcdir/hillium.sh" "$pkgdir/usr/bin/hillium"
+  install -Dm755 "$srcdir/hillium-cli.sh" "$pkgdir/usr/bin/hillium-cli"
+  install -Dm644 "$srcdir/hillium.desktop" "$pkgdir/usr/share/applications/hillium.desktop"
+  for size in 16 32 48 64 128 256 512; do
+    install -Dm644 "$pkgdir/opt/hillium/resources/icons/${size}x${size}.png" \
+      "$pkgdir/usr/share/icons/hicolor/${size}x${size}/apps/hillium.png" 2>/dev/null || true
+  done
+  install -Dm644 "$pkgdir/opt/hillium/resources/LICENSE" "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+  install -Dm644 "$pkgdir/opt/hillium/resources/NOTICE" "$pkgdir/usr/share/licenses/$pkgname/NOTICE"
+}

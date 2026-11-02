@@ -1,0 +1,124 @@
+/* The Liquid Glass look: the space's colours drift slowly behind everything, and the
+   address, command bar, popovers and toasts refract them (ui/vendor/glass). */
+:root {
+  --panel-bg: light-dark(rgba(255, 255, 255, 0.22), rgba(30, 30, 38, 0.3));
+  --active-bg: rgba(255, 255, 255, 0.34);
+  --active-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.55), 0 4px 14px rgba(0, 0, 0, 0.12);
+  --hover: rgba(255, 255, 255, 0.14);
+  --card-shadow: 0 10px 36px rgba(0, 0, 0, 0.22), 0 0 0 0.5px rgba(255, 255, 255, 0.4);
+  --radius: 14px;
+}
+
+body {
+  --hover: rgba(255, 255, 255, 0.14);
+}
+
+body[data-ink="light"] {
+  --active-bg: rgba(255, 255, 255, 0.18);
+}
+
+#backdrop .blob {
+  display: block;
+  position: absolute;
+  width: 60vmax;
+  height: 60vmax;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.75;
+  animation: drift 26s ease-in-out infinite alternate;
+}
+
+#backdrop .b1 {
+  background: var(--blob1);
+  left: -20vmax;
+  top: -20vmax;
+}
+
+#backdrop .b2 {
+  background: var(--blob2);
+  right: -25vmax;
+  top: 10vh;
+  animation-duration: 32s;
+  animation-direction: alternate-reverse;
+}
+
+#backdrop .b3 {
+  background: var(--blob3);
+  left: 10vw;
+  bottom: -30vmax;
+  animation-duration: 38s;
+}
+
+@keyframes drift {
+  to {
+    transform: translate(12vmax, 8vmax) scale(1.15);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #backdrop .blob {
+    animation: none;
+  }
+}
+
+#url {
+  background: rgba(255, 255, 255, 0.16);
+  box-shadow:
+    inset 0 0.5px 0 rgba(255, 255, 255, 0.7),
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.3),
+    0 6px 18px rgba(0, 0, 0, 0.1);
+}
+
+.fav {
+  background: rgba(255, 255, 255, 0.16);
+  box-shadow: inset 0 0.5px 0 rgba(255, 255, 255, 0.6);
+}
+
+#command {
+  border-radius: 22px;
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.4);
+}
+
+#command .command-input input,
+#results {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+#results .item.selected {
+  background: rgba(255, 255, 255, 0.35);
+  color: inherit;
+  box-shadow: inset 0 0.5px 0 rgba(255, 255, 255, 0.8);
+}
+
+body.compact #sidebar::before {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(30px) saturate(1.8);
+}
+
+/* The sidebar floats as a sheet of glass over the drifting colour. */
+body {
+  padding-left: 10px;
+}
+
+#sidebar {
+  margin-right: 10px;
+  padding: 0 8px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.35),
+    0 12px 40px rgba(0, 0, 0, 0.16);
+}
+
+#resizer {
+  left: calc(var(--sidebar-w) + 6px);
+}
+
+#backdrop .blob {
+  opacity: 0.95;
+  filter: blur(60px) saturate(1.4);
+}

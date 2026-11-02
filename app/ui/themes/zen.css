@@ -1,0 +1,51 @@
+/* The Zen look: calmer colour, Zen's radius and spacing, a slimmer sidebar and the
+   address as part of the sidebar rather than a pill. */
+:root {
+  --radius: var(--zen-native-inner-radius, 7px);
+  --row-h: 32px;
+  --card-shadow: var(--zen-big-shadow);
+  --active-bg: color-mix(in srgb, white 55%, transparent);
+}
+
+body[data-ink="light"] {
+  --active-bg: color-mix(in srgb, white 14%, transparent);
+}
+
+#url {
+  height: 34px;
+  border-radius: var(--zen-border-radius);
+  background: transparent;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 12%, transparent);
+  margin-bottom: 8px;
+}
+
+.fav {
+  height: 42px;
+  border-radius: var(--zen-border-radius);
+}
+
+.tab,
+.row,
+.folder-head {
+  border-radius: var(--zen-border-radius);
+  padding-left: 8px;
+}
+
+.tab.active {
+  box-shadow: none;
+}
+
+.space-head {
+  font-size: 12px;
+  letter-spacing: 0.01em;
+}
+
+#command,
+.panel {
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--zen-dialog-background) 88%, transparent);
+}
+
+#results .item {
+  border-radius: 8px;
+}

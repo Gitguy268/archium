@@ -1,0 +1,125 @@
+{
+  "name": "hillium",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Hillium: an Arc and Zen style browser with Helium's privacy defaults, built on Electron.",
+  "license": "MIT",
+  "author": "Lucas Van De Weerd",
+  "homepage": "https://github.com/Gitguy268/hillium",
+  "type": "module",
+  "main": "main/main.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test test/*.test.js",
+    "e2e": "node test/e2e.mjs",
+    "lint": "node test/lint.mjs",
+    "dist:mac": "electron-builder --mac dir --arm64 && node build/sign.mjs",
+    "dist:linux": "electron-builder --linux tar.gz --x64 --arm64",
+    "privacy": "node test/privacy/run.mjs",
+    "dist:appimage": "electron-builder --linux AppImage --x64 --arm64"
+  },
+  "dependencies": {
+    "@ghostery/adblocker-electron": "2.20.1",
+    "tldts-experimental": "7.4.18"
+  },
+  "devDependencies": {
+    "electron": "44.9.0",
+    "electron-builder": "26.17.0"
+  },
+  "build": {
+    "appId": "org.hillium.browser",
+    "productName": "Hillium",
+    "executableName": "hillium",
+    "copyright": "Copyright (c) 2026 Lucas Van De Weerd. MIT, with MPL-2.0 files from Zen in ui/vendor/zen.",
+    "artifactName": "hillium-${version}-${arch}.${ext}",
+    "asar": false,
+    "npmRebuild": false,
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "main/**",
+      "preload/**",
+      "ui/**",
+      "package.json",
+      "!test/**",
+      "!dist/**"
+    ],
+    "extraResources": [
+      {
+        "from": "../cli",
+        "to": "cli"
+      },
+      {
+        "from": "../LICENSE",
+        "to": "LICENSE"
+      },
+      {
+        "from": "../NOTICE",
+        "to": "NOTICE"
+      },
+      {
+        "from": "../branding/icons",
+        "to": "icons"
+      }
+    ],
+    "protocols": [
+      {
+        "name": "Web page",
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "role": "Viewer"
+      }
+    ],
+    "mac": {
+      "icon": "../branding/hillium.icns",
+      "category": "public.app-category.productivity",
+      "identity": null,
+      "target": [
+        {
+          "target": "dir",
+          "arch": [
+            "arm64"
+          ]
+        }
+      ],
+      "extendInfo": {
+        "CFBundleDocumentTypes": [
+          {
+            "CFBundleTypeName": "HTML document",
+            "CFBundleTypeRole": "Viewer",
+            "LSHandlerRank": "Default",
+            "LSItemContentTypes": [
+              "public.html",
+              "public.xhtml"
+            ]
+          }
+        ],
+        "NSCameraUsageDescription": "Websites you allow can use the camera.",
+        "NSMicrophoneUsageDescription": "Websites you allow can use the microphone."
+      }
+    },
+    "linux": {
+      "icon": "../branding/icons",
+      "category": "Network",
+      "synopsis": "Arc and Zen style browser with Helium's privacy defaults",
+      "maintainer": "Lucas Van De Weerd",
+      "desktop": {
+        "entry": {
+          "Name": "Hillium",
+          "GenericName": "Web Browser",
+          "Categories": "Network;WebBrowser;",
+          "MimeType": "text/html;application/xhtml+xml;x-scheme-handler/http;x-scheme-handler/https;",
+          "StartupWMClass": "Hillium",
+          "Keywords": "web;browser;internet;arc;zen;"
+        }
+      }
+    }
+  }
+}
