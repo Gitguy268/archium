@@ -10,31 +10,25 @@
 <body data-theme="normal">
   <canvas id="wallpaper" class="wallpaper" aria-hidden="true"></canvas>
   <main id="home" class="home">
-    <header class="win-caption" aria-hidden="true"><img src="/newtab/logo.svg" alt=""> Archium Home</header>
+    <header class="win-caption" aria-hidden="true"><img src="/newtab/logo.svg" alt=""> Archium</header>
     <div class="home-body">
       <p class="mode" id="mode" hidden></p>
-      <div id="clock-card" class="clock-card">
-        <time id="clock" class="clock"></time>
-        <p id="date" class="date"></p>
-      </div>
       <form id="search" class="search" role="search">
-        <label for="q" class="visually-hidden">Search</label>
-        <span class="search-icon" aria-hidden="true"></span>
-        <input id="q" name="q" type="search" placeholder="Search privately or enter an address" autocomplete="off" autofocus>
+        <label for="q" class="visually-hidden">Search or enter address</label>
+        <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg>
+        <input id="q" name="q" type="search" placeholder="Search or enter address" autocomplete="off" autofocus>
         <button type="submit" class="search-go">Search</button>
       </form>
       <section aria-labelledby="links-heading">
-        <h2 id="links-heading" class="visually-hidden">Quick links</h2>
+        <h2 id="links-heading" class="visually-hidden">Shortcuts</h2>
         <ul id="links" class="links"></ul>
-        <details class="add">
-          <summary>Add a link</summary>
-          <form id="add-link">
-            <label>Name <input name="title" required maxlength="40"></label>
-            <label>Address <input name="url" required type="url" placeholder="https://"></label>
-            <button type="submit">Add</button>
-          </form>
-        </details>
       </section>
+      <form id="add-link" class="add" hidden>
+        <label>Name <input name="title" required maxlength="40"></label>
+        <label>Address <input name="url" required type="url" placeholder="https://"></label>
+        <button type="submit">Add</button>
+        <button type="button" id="add-cancel">Cancel</button>
+      </form>
     </div>
   </main>
   <script type="module" src="/newtab/newtab.js"></script>

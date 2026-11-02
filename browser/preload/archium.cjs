@@ -1,4 +1,4 @@
-// The only bridge into Archium's own pages (toolbar, Glance, assistant). Web pages never get it.
+// The only bridge into Archium's own pages (toolbar, assistant). Web pages never get it.
 const { contextBridge, ipcRenderer } = require("electron");
 
 const EVENTS = new Set(["state", "command", "found", "model-progress", "ask"]);

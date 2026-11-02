@@ -2,16 +2,20 @@
   "name": "archium-browser",
   "version": "0.1.0",
   "private": true,
-  "description": "Archium Browser: a privacy-first Chromium shell with Glance, local AI and three looks.",
+  "description": "Archium Browser: a privacy-first Chromium browser with Zen-style side tabs, a local assistant and three looks.",
   "license": "GPL-3.0-only",
   "author": "Lucas Van De Weerd",
   "type": "module",
   "main": "main/main.js",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "start": "electron .",
     "test": "node --test test/*.test.js",
-    "e2e": "node test/e2e.mjs"
+    "e2e": "node test/e2e.mjs",
+    "dist": "electron-builder --mac dir --arm64 && node build/sign.mjs",
+    "install-app": "node build/install.mjs"
   },
   "dependencies": {
     "@ghostery/adblocker-electron": "2.20.1"
@@ -20,6 +24,85 @@
     "electron-liquid-glass": "1.1.1"
   },
   "devDependencies": {
-    "electron": "44.9.0"
+    "electron": "44.9.0",
+    "electron-builder": "26.17.0"
+  },
+  "build": {
+    "appId": "org.archium.browser",
+    "productName": "Archium",
+    "copyright": "Lucas Van De Weerd. GPL-3.0-only.",
+    "asar": false,
+    "npmRebuild": false,
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "main/**",
+      "preload/**",
+      "ui/**",
+      "package.json",
+      "!test/**",
+      "!dist/**",
+      "!build/**"
+    ],
+    "extraResources": [
+      {
+        "from": "../extension/lib.js",
+        "to": "extension/lib.js"
+      },
+      {
+        "from": "../extension/url-cleaner.json",
+        "to": "extension/url-cleaner.json"
+      },
+      {
+        "from": "../extension/package.json",
+        "to": "extension/package.json"
+      },
+      {
+        "from": "../branding/logo-512.png",
+        "to": "branding/logo-512.png"
+      }
+    ],
+    "protocols": [
+      {
+        "name": "Web page",
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "role": "Viewer"
+      }
+    ],
+    "mac": {
+      "icon": "../branding/Archium.icns",
+      "category": "public.app-category.productivity",
+      "identity": null,
+      "target": [
+        {
+          "target": "dir",
+          "arch": [
+            "arm64"
+          ]
+        }
+      ],
+      "extendInfo": {
+        "CFBundleDocumentTypes": [
+          {
+            "CFBundleTypeName": "HTML document",
+            "CFBundleTypeRole": "Viewer",
+            "LSHandlerRank": "Default",
+            "LSItemContentTypes": [
+              "public.html",
+              "public.xhtml"
+            ]
+          }
+        ],
+        "NSCameraUsageDescription": "Websites you allow can use the camera.",
+        "NSMicrophoneUsageDescription": "Websites you allow can use the microphone.",
+        "NSLocationUsageDescription": "Websites you allow can know your location.",
+        "NSLocationWhenInUseUsageDescription": "Websites you allow can know your location."
+      }
+    }
   }
 }

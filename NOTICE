@@ -81,9 +81,24 @@ list text is copied.
 IDEAS, NO CODE
 --------------
 Archium Browser takes ideas, not code, from these projects:
-- Web by Nuanced (nuance-dev/Web), MIT: Glance, a local assistant that reads
-  the page, Focus Mode, the command palette, tabs on top, on the side or
-  hidden, and private pages kept away from the assistant.
+- Zen Browser (zen-browser/desktop), MPL-2.0: the sidebar that holds the
+  navigation buttons, the address field and the tabs; pinned tabs as a grid
+  of icons above the tab list; compact mode, where the sidebar slides in from
+  the window's edge; the page shown as a rounded card; the address field
+  floating over the page while you type.
+- Brave (brave/brave-browser), MPL-2.0: a per-site switch to turn blocking
+  off, with the count of blocked requests next to it.
+- Firefox (mozilla-firefox/firefox) and Waterfox (BrowserWorks/waterfox),
+  mainly MPL-2.0 (see toolkit/content/license.html in each): the settings
+  page laid out as sections with a side list, the bookmarks toolbar toggle,
+  inline completion in the address bar, asking before closing a window with
+  several tabs, and reading bookmarks from places.sqlite.
+- ungoogled-chromium (ungoogled-software/ungoogled-chromium), BSD-3-Clause:
+  its --close-confirmation and --popups-to-tabs switches. Archium Browser
+  does the same in its own code, since Electron's Chromium lacks the patches.
+- Web by Nuanced (nuance-dev/Web), MIT: a local assistant that reads the
+  page, the command palette, tabs on top or on the side, and private pages
+  kept away from the assistant.
 - retro-404 (gaoryrt), zabdalimov/win98, MrRar/win98theme,
   spitfirex86/FloatingToolbars, moeleak/win98, rtts/win98: no licence, so
   ideas only, for the Windows 98 look.
@@ -109,6 +124,6 @@ Microsoft fonts, icons, sounds or wallpapers are included.
 DEVELOPMENT TOOLS (not shipped)
 -------------------------------
 Playwright (Apache-2.0) drives Helium in tests/e2e.mjs and Archium Browser in
-browser/test/e2e.mjs. uv (MIT/Apache-2.0)
+browser/test/e2e.mjs. electron-builder (MIT) packages Archium.app. uv (MIT/Apache-2.0)
 creates SearXNG's Python environment. mkcert (BSD-3-Clause) and Docker run
 the optional local services.

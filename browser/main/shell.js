@@ -1,11 +1,13 @@
 // One browser window: the toolbar page (archium://app/chrome.html) fills the window, the
 // active tab's page sits in the rectangle the toolbar reports, and the assistant panel
 // sits beside it. Only the active tab's view is attached; the rest stay alive off-screen.
-import { BaseWindow, WebContentsView, Menu, clipboard, nativeImage } from "electron";
+import { BaseWindow, WebContentsView, Menu, clipboard, nativeImage, nativeTheme } from "electron";
 import { fileURLToPath } from "node:url";
 import { fallbackUrl } from "../../extension/lib.js";
 import { sessions, blockedCount, resetBlocked, proxyStatus, noteLoadError, clearProxyError } from "./sessions.js";
-import { getSettings, getBookmarks, addHistory } from "./store.js";
+import { getSettings, getBookmarks, toggleBookmark, addHistory, getFavicon, setFavicon, blockingOff } from "./store.js";
+import { downloadSummary } from "./downloads.js";
+import { accentColor } from "./pages.js";
 import { EXTRACT } from "./page-text.js";
 import { toUrl } from "./url.js";
 
@@ -34,18 +36,28 @@ const securePrefs = (extra) => ({
   ...extra,
 });
 
+const hostOf = (url) => {
+  try {
+    return new URL(url).host;
+  } catch {
+    return "";
+  }
+};
+const FAVICON_MAX_BYTES = 96 * 1024;
+
 export class Shell {
-  constructor({ urls = [], onClosed }) {
+  // entries: [{ url, pinned }] to open. hooks: { spawn(entries), broadcast() } from main.
+  constructor({ entries = [], onClosed, hooks }) {
     this.tabs = [];
     this.activeId = null;
     this.closedTabs = [];
     this.layout = { page: { x: 0, y: 80, width: 800, height: 600 }, panel: null };
     this.overlay = false;
-    this.focusMode = false;
     this.assistantOpen = false;
     this.assistant = null;
     this.glassId = null;
     this.hoverUrl = "";
+    this.hooks = hooks;
 
     this.win = new BaseWindow({
       width: 1280,
@@ -78,9 +90,9 @@ export class Shell {
       onClosed(this);
     });
 
-    if (urls.length) for (const url of urls) this.createTab(url, { background: true });
-    else this.createTab(NEWTAB);
-    if (!this.activeId) this.activate(this.tabs[0].id);
+    for (const e of entries) this.createTab(e.url, { background: true, pinned: e.pinned });
+    if (!this.tabs.some((t) => !t.pinned)) this.createTab(NEWTAB, { background: true });
+    if (!this.activeId) this.activate(this.tabs.find((t) => !t.pinned)?.id ?? this.tabs[0].id);
   }
 
   // Archium's own pages may never navigate away or open windows.
@@ -108,14 +120,24 @@ export class Shell {
     return wc === this.ui.webContents || wc === this.assistant?.webContents;
   }
 
+  tab(id) {
+    return this.tabs.find((t) => t.id === id);
+  }
+
+  get pinnedCount() {
+    return this.tabs.filter((t) => t.pinned).length;
+  }
+
   // --- tabs -----------------------------------------------------------------
 
-  createTab(url = NEWTAB, { private: isPrivate = false, background = false, index } = {}) {
+  createTab(url = NEWTAB, { private: isPrivate = false, background = false, index, pinned = false } = {}) {
     const view = new WebContentsView({
       webPreferences: securePrefs({ session: isPrivate ? sessions.private : sessions.tabs, spellcheck: true }),
     });
-    const tab = { id: nextTabId++, view, private: isPrivate, title: "New Tab", url, favicon: "", loading: true };
+    const tab = { id: nextTabId++, view, private: isPrivate, pinned: pinned && !isPrivate, title: "New Tab", url, favicon: "", loading: true, audible: false, muted: false };
     const wc = view.webContents;
+    // archium:// pages may link to each other; web pages may not reach them at all.
+    const fromOwnPage = () => wc.getURL().startsWith("archium://");
 
     wc.on("page-title-updated", (_, title) => {
       tab.title = title;
@@ -123,8 +145,8 @@ export class Shell {
       this.push();
     });
     wc.on("page-favicon-updated", (_, favicons) => {
-      tab.favicon = favicons.find((f) => /^(https?|data):/.test(f)) ?? "";
-      this.push();
+      const icon = favicons.find((f) => /^(https?|data):/.test(f));
+      if (icon) void this.cacheFavicon(tab, icon);
     });
     wc.on("did-start-loading", () => {
       tab.loading = true;
@@ -135,13 +157,14 @@ export class Shell {
       this.push();
     });
     // The new tab page is transparent so the window's look shows through; everything else,
-    // error pages included, gets white. Set when a navigation starts, since a failed one never commits.
+    // error pages included, gets an opaque background. Set when a navigation starts, since a
+    // failed one never commits.
     wc.on("did-start-navigation", (details) => {
-      if (details.isMainFrame && !details.isSameDocument) view.setBackgroundColor(details.url.startsWith(NEWTAB) ? "#00000000" : "#ffffff");
+      if (details.isMainFrame && !details.isSameDocument) view.setBackgroundColor(this.backgroundFor(details.url));
     });
     wc.on("did-navigate", (_, navUrl) => {
       tab.url = navUrl;
-      tab.favicon = "";
+      tab.favicon = tab.private ? "" : getFavicon(hostOf(navUrl));
       resetBlocked(wc.id);
       clearProxyError();
       if (!tab.private) addHistory({ url: navUrl, title: wc.getTitle() });
@@ -163,6 +186,19 @@ export class Shell {
       noteLoadError(code);
       this.push();
     });
+    wc.on("will-navigate", (e, target) => {
+      if (target.startsWith("archium:") && !fromOwnPage()) e.preventDefault();
+    });
+    wc.on("will-frame-navigate", (e) => {
+      if (!e.isMainFrame && e.url.startsWith("archium:")) e.preventDefault();
+    });
+    wc.on("will-redirect", (e, target) => {
+      if (target.startsWith("archium:")) e.preventDefault();
+    });
+    wc.on("audio-state-changed", (e) => {
+      tab.audible = e.audible;
+      this.push();
+    });
     wc.on("update-target-url", (_, target) => {
       if (tab.id !== this.activeId) return;
       this.hoverUrl = target;
@@ -170,7 +206,7 @@ export class Shell {
     });
     wc.on("found-in-page", (_, result) => this.ui.webContents.send("found", result));
     wc.setWindowOpenHandler(({ url: target, disposition }) => {
-      if (/^(https?|archium):/.test(target)) {
+      if (/^https?:/.test(target) || (target.startsWith("archium:") && fromOwnPage())) {
         const at = this.tabs.indexOf(tab) + 1;
         this.createTab(target, { private: tab.private, background: disposition === "background-tab", index: at });
       }
@@ -188,17 +224,48 @@ export class Shell {
       this.place();
     });
 
-    view.setBackgroundColor(url.startsWith(NEWTAB) ? "#00000000" : "#ffffff");
-    if (index == null) this.tabs.push(tab);
-    else this.tabs.splice(index, 0, tab);
+    view.setBackgroundColor(this.backgroundFor(url));
+    // Pinned tabs come first; others never go in front of them.
+    const at = tab.pinned ? this.pinnedCount : index == null ? this.tabs.length : Math.max(index, this.pinnedCount);
+    this.tabs.splice(at, 0, tab);
     wc.loadURL(url).catch(() => {});
     if (!background || !this.activeId) this.activate(tab.id);
     else this.push();
     return tab;
   }
 
+  backgroundFor(url) {
+    if (url.startsWith(NEWTAB)) return "#00000000";
+    if (url.startsWith("archium:")) return nativeTheme.shouldUseDarkColors ? "#1c1c1e" : "#ffffff";
+    return "#ffffff";
+  }
+
+  // The site's icon, copied once from the HTTP cache into favicons.json as a data: URL, so the
+  // tab strip, history and the new tab page never fetch it again.
+  async cacheFavicon(tab, iconUrl) {
+    if (tab.private) return;
+    const host = hostOf(tab.url);
+    if (!host) return;
+    let dataUrl = iconUrl.startsWith("data:") ? iconUrl : "";
+    if (!dataUrl) {
+      try {
+        const res = await tab.view.webContents.session.fetch(iconUrl, { cache: "force-cache" });
+        const type = res.headers.get("content-type")?.split(";")[0] ?? "";
+        const bytes = Buffer.from(await res.arrayBuffer());
+        if (!res.ok || !/^image\//.test(type) || bytes.length > FAVICON_MAX_BYTES) return;
+        dataUrl = `data:${type};base64,${bytes.toString("base64")}`;
+      } catch {
+        return;
+      }
+    }
+    if (dataUrl.length > FAVICON_MAX_BYTES * 1.4 || hostOf(tab.url) !== host) return;
+    setFavicon(host, dataUrl);
+    tab.favicon = dataUrl;
+    this.push();
+  }
+
   activate(id) {
-    const next = this.tabs.find((t) => t.id === id);
+    const next = this.tab(id);
     if (!next) return;
     const previous = this.active;
     if (previous && previous !== next) this.win.contentView.removeChildView(previous.view);
@@ -214,7 +281,7 @@ export class Shell {
     const i = this.tabs.findIndex((t) => t.id === id);
     if (i < 0) return;
     const [tab] = this.tabs.splice(i, 1);
-    if (!tab.private) this.closedTabs.push(tab.url);
+    if (!tab.private) this.closedTabs.push({ url: tab.url, pinned: tab.pinned, index: i });
     this.win.contentView.removeChildView(tab.view);
     tab.view.webContents.close();
     if (!this.tabs.length) return void this.win.close();
@@ -224,9 +291,17 @@ export class Shell {
     } else this.push();
   }
 
+  // focusId: the tab to show if the active one is among those closed.
+  closeTabs(ids, focusId) {
+    const keep = this.tabs.filter((t) => !ids.includes(t.id));
+    if (!keep.length) return;
+    if (!keep.some((t) => t.id === this.activeId)) this.activate(keep.find((t) => t.id === focusId)?.id ?? keep.at(-1).id);
+    for (const id of ids) this.closeTab(id);
+  }
+
   reopenTab() {
-    const url = this.closedTabs.pop();
-    if (url) this.createTab(url);
+    const closed = this.closedTabs.pop();
+    if (closed) this.createTab(closed.url, { pinned: closed.pinned, index: closed.index });
   }
 
   cycle(step) {
@@ -239,22 +314,98 @@ export class Shell {
     const i = this.tabs.findIndex((t) => t.id === id);
     if (i < 0 || to < 0 || to >= this.tabs.length) return;
     const [tab] = this.tabs.splice(i, 1);
-    this.tabs.splice(to, 0, tab);
+    const pinned = this.pinnedCount;
+    this.tabs.splice(tab.pinned ? Math.min(to, pinned) : Math.max(to, pinned), 0, tab);
     this.push();
   }
 
-  navigate(text) {
+  setPinned(id, on) {
+    const tab = this.tab(id);
+    if (!tab || tab.private || tab.pinned === on) return;
+    this.tabs.splice(this.tabs.indexOf(tab), 1);
+    tab.pinned = on;
+    this.tabs.splice(this.pinnedCount, 0, tab);
+    this.push();
+  }
+
+  setMuted(id, on) {
+    const tab = this.tab(id);
+    if (!tab) return;
+    tab.muted = on ?? !tab.muted;
+    tab.view.webContents.setAudioMuted(tab.muted);
+    this.push();
+  }
+
+  duplicate(id) {
+    const tab = this.tab(id);
+    if (tab) this.createTab(tab.url, { private: tab.private, index: this.tabs.indexOf(tab) + 1 });
+  }
+
+  moveToNewWindow(id) {
+    const tab = this.tab(id);
+    if (!tab || this.tabs.length < 2 || tab.private) return;
+    const url = tab.url;
+    this.closeTab(id);
+    this.hooks.spawn([{ url, pinned: false }]);
+  }
+
+  // Opens one of Archium's own pages, or switches to it if it's already open here.
+  openPage(host) {
+    const open = this.tabs.find((t) => t.url.startsWith(`archium://${host}/`));
+    if (open) return this.activate(open.id);
+    const blank = this.active?.url.startsWith(NEWTAB) && !this.active.private ? this.active : null;
+    if (blank) return void blank.view.webContents.loadURL(`archium://${host}/`);
+    this.createTab(`archium://${host}/`);
+  }
+
+  navigate(text, { newTab = false } = {}) {
     const url = toUrl(text, getSettings());
     if (!url) return;
-    const tab = this.active ?? this.createTab(url);
-    tab.view.webContents.loadURL(url).catch(() => {});
-    tab.view.webContents.focus();
+    if (newTab || !this.active) return void this.createTab(url, { private: Boolean(this.active?.private) });
+    this.active.view.webContents.loadURL(url).catch(() => {});
+    this.active.view.webContents.focus();
+  }
+
+  tabMenu(id) {
+    const tab = this.tab(id);
+    if (!tab) return;
+    const i = this.tabs.indexOf(tab);
+    const after = this.tabs.slice(i + 1).filter((t) => !t.pinned);
+    const others = this.tabs.filter((t) => t !== tab && !t.pinned);
+    const bookmarked = getBookmarks().some((b) => b.url === tab.url);
+    const side = getSettings().tabs === "side";
+    const web = /^https?:/.test(tab.url);
+    Menu.buildFromTemplate([
+      { label: "New Tab", click: () => this.createTab(NEWTAB, { index: i + 1 }) },
+      { type: "separator" },
+      { label: "Reload", click: () => tab.view.webContents.reload() },
+      { label: "Duplicate", click: () => this.duplicate(id) },
+      { label: tab.pinned ? "Unpin Tab" : "Pin Tab", enabled: !tab.private, click: () => this.setPinned(id, !tab.pinned) },
+      { label: tab.muted ? "Unmute Tab" : "Mute Tab", click: () => this.setMuted(id) },
+      { type: "separator" },
+      {
+        label: bookmarked ? "Remove Bookmark" : "Bookmark Tab",
+        enabled: web,
+        click: () => {
+          toggleBookmark({ url: tab.url, title: tab.title });
+          this.hooks.broadcast();
+        },
+      },
+      { label: "Copy Link", enabled: web, click: () => clipboard.writeText(tab.url) },
+      { label: "Move to New Window", enabled: this.tabs.length > 1 && !tab.private, click: () => this.moveToNewWindow(id) },
+      { type: "separator" },
+      { label: "Close Tab", click: () => this.closeTab(id) },
+      { label: "Close Other Tabs", enabled: others.length > 0, click: () => this.closeTabs(others.map((t) => t.id), id) },
+      { label: side ? "Close Tabs Below" : "Close Tabs to the Right", enabled: after.length > 0, click: () => this.closeTabs(after.map((t) => t.id)) },
+      { type: "separator" },
+      { label: "Reopen Closed Tab", enabled: this.closedTabs.length > 0, click: () => this.reopenTab() },
+    ]).popup({ window: this.win });
   }
 
   // --- layout ---------------------------------------------------------------
 
   // Bottom to top: toolbar page, active tab, assistant. During an overlay (⌘K, menus,
-  // settings) the toolbar page goes on top: its transparent parts show the page beneath.
+  // the address suggestions) the toolbar page goes on top: its clear parts show the page beneath.
   stack() {
     const views = this.win.contentView;
     const tab = this.active;
@@ -269,16 +420,17 @@ export class Shell {
   setLayout(layout) {
     const ok = (r) => r && [r.x, r.y, r.width, r.height].every(Number.isFinite);
     if (!ok(layout?.page)) return;
-    this.layout = { page: layout.page, panel: ok(layout.panel) ? layout.panel : null };
+    this.layout = { page: layout.page, panel: ok(layout.panel) ? layout.panel : null, radius: Number(layout.radius) || 0, buttons: layout.buttons !== false };
     this.place();
+    this.showWindowButtons();
   }
 
   place() {
     if (this.fullscreenTab) return;
     const round = (r) => ({ x: Math.round(r.x), y: Math.round(r.y), width: Math.max(0, Math.round(r.width)), height: Math.max(0, Math.round(r.height)) });
     this.active?.view.setBounds(round(this.layout.page));
-    // Liquid Glass frames the page with rounded corners; the other looks keep it square.
-    this.active?.view.setBorderRadius?.(getSettings().theme === "glass" && !this.focusMode ? 12 : 0);
+    // The toolbar page reports the page card's corner radius for the current look.
+    this.active?.view.setBorderRadius?.(Math.min(16, Math.max(0, Math.round(this.layout.radius ?? 0))));
     if (this.assistant && this.layout.panel) this.assistant.setBounds(round(this.layout.panel));
   }
 
@@ -312,11 +464,6 @@ export class Shell {
     else send();
   }
 
-  setFocusMode(on = !this.focusMode) {
-    this.focusMode = on;
-    this.push();
-  }
-
   // --- look -----------------------------------------------------------------
 
   // Liquid Glass puts native NSGlassEffectView glass (macOS 26+) behind the window's
@@ -324,13 +471,17 @@ export class Shell {
   // other looks simply paint over it.
   applyMaterial() {
     const glass = getSettings().theme === "glass";
-    // Windows 98 draws its own caption buttons.
-    this.win.setWindowButtonVisibility(getSettings().theme !== "win98" || this.win.isFullScreen());
+    this.showWindowButtons();
     if (glass && nativeGlass()) {
       if (this.glassId == null) {
         this.glassId = addNativeGlass(this.win, 0);
       }
     } else this.win.setVibrancy(glass ? "under-window" : null);
+  }
+
+  // Windows 98 draws its own caption buttons; compact mode hides them with the sidebar.
+  showWindowButtons() {
+    this.win.setWindowButtonVisibility(this.win.isFullScreen() || (getSettings().theme !== "win98" && this.layout.buttons !== false));
   }
 
   // --- page tools -----------------------------------------------------------
@@ -356,34 +507,56 @@ export class Shell {
   contextMenu(tab, p) {
     const wc = tab.view.webContents;
     const items = [];
+    const newTab = (url, opts) => this.createTab(url, { private: tab.private, background: true, index: this.tabs.indexOf(tab) + 1, ...opts });
     if (p.linkURL && /^https?:/.test(p.linkURL)) {
       items.push(
-        { label: "Open Link in New Tab", click: () => this.createTab(p.linkURL, { private: tab.private, background: true, index: this.tabs.indexOf(tab) + 1 }) },
+        { label: "Open Link in New Tab", click: () => newTab(p.linkURL) },
+        { label: "Open Link in New Window", enabled: !tab.private, click: () => this.hooks.spawn([{ url: p.linkURL, pinned: false }]) },
         { label: "Open Link in Private Tab", click: () => this.createTab(p.linkURL, { private: true }) },
+        { type: "separator" },
+        { label: "Save Link As…", click: () => wc.downloadURL(p.linkURL) },
         { label: "Copy Link", click: () => clipboard.writeText(p.linkURL) },
         { type: "separator" },
       );
     }
     if (p.mediaType === "image" && p.srcURL) {
-      items.push({ label: "Copy Image", click: () => wc.copyImageAt(p.x, p.y) }, { label: "Open Image in New Tab", click: () => this.createTab(p.srcURL) }, { type: "separator" });
-    }
-    if (p.selectionText) {
       items.push(
-        { role: "copy" },
-        { label: `Search for “${p.selectionText.slice(0, 24)}${p.selectionText.length > 24 ? "…" : ""}”`, click: () => this.createTab(toUrl(p.selectionText, getSettings()), { private: tab.private }) },
-        { label: "Ask the Assistant", click: () => this.ask({ kind: "selection", text: p.selectionText.slice(0, 4000) }) },
+        { label: "Open Image in New Tab", click: () => newTab(p.srcURL) },
+        { label: "Save Image As…", click: () => wc.downloadURL(p.srcURL) },
+        { label: "Copy Image", click: () => wc.copyImageAt(p.x, p.y) },
+        { label: "Copy Image Address", click: () => clipboard.writeText(p.srcURL) },
         { type: "separator" },
       );
     }
-    if (p.isEditable) items.push({ role: "cut" }, { role: "copy" }, { role: "paste" }, { role: "selectAll" }, { type: "separator" });
-    items.push(
-      { label: "Back", enabled: wc.navigationHistory.canGoBack(), click: () => wc.navigationHistory.goBack() },
-      { label: "Forward", enabled: wc.navigationHistory.canGoForward(), click: () => wc.navigationHistory.goForward() },
-      { label: "Reload", click: () => wc.reload() },
-      { type: "separator" },
-      { label: "Summarize Page", enabled: !tab.private, click: () => this.ask({ kind: "summarize" }) },
-      { label: "Inspect", click: () => wc.inspectElement(p.x, p.y) },
-    );
+    if (p.selectionText && !p.isEditable) {
+      const short = p.selectionText.trim().slice(0, 24) + (p.selectionText.trim().length > 24 ? "…" : "");
+      items.push(
+        { role: "copy" },
+        { label: `Search for “${short}”`, click: () => newTab(toUrl(p.selectionText, getSettings()), { background: false }) },
+        { label: "Ask Assistant About Selection", enabled: !tab.private, click: () => this.ask({ kind: "selection", text: p.selectionText.slice(0, 4000) }) },
+        { type: "separator" },
+      );
+    }
+    if (p.isEditable) {
+      for (const s of p.dictionarySuggestions ?? []) items.push({ label: s, click: () => wc.replaceMisspelling(s) });
+      if (p.misspelledWord) items.push({ label: "Add to Dictionary", click: () => wc.session.addWordToSpellCheckerDictionary(p.misspelledWord) }, { type: "separator" });
+      items.push({ role: "undo" }, { role: "redo" }, { type: "separator" }, { role: "cut" }, { role: "copy" }, { role: "paste" }, { role: "pasteAndMatchStyle" }, { role: "selectAll" }, { type: "separator" });
+    }
+    if (!p.linkURL && !p.selectionText && !p.isEditable && p.mediaType !== "image") {
+      items.push(
+        { label: "Back", enabled: wc.navigationHistory.canGoBack(), click: () => wc.navigationHistory.goBack() },
+        { label: "Forward", enabled: wc.navigationHistory.canGoForward(), click: () => wc.navigationHistory.goForward() },
+        { label: "Reload", click: () => wc.reload() },
+        { type: "separator" },
+        { label: "Save Page As…", enabled: /^https?:/.test(tab.url), click: () => wc.downloadURL(tab.url) },
+        { label: "Print…", click: () => wc.print() },
+        { label: "View Page Source", enabled: /^https?:/.test(tab.url), click: () => newTab(`view-source:${tab.url}`, { background: false }) },
+        { type: "separator" },
+        { label: "Summarize Page", enabled: !tab.private && /^https?:/.test(tab.url), click: () => this.ask({ kind: "summarize" }) },
+        { type: "separator" },
+      );
+    }
+    items.push({ label: "Inspect", click: () => wc.inspectElement(p.x, p.y) });
     Menu.buildFromTemplate(items).popup({ window: this.win });
   }
 
@@ -394,32 +567,30 @@ export class Shell {
     const wc = tab?.view.webContents;
     const s = getSettings();
     return {
-      tabs: this.tabs.map((t) => ({ id: t.id, title: t.title, url: t.url, favicon: t.favicon, loading: t.loading, private: t.private })),
+      tabs: this.tabs.map((t) => ({ id: t.id, title: t.title, url: t.url, favicon: t.favicon, loading: t.loading, private: t.private, pinned: t.pinned, audible: t.audible, muted: t.muted })),
       activeId: this.activeId,
       url: tab?.url.startsWith(NEWTAB) ? "" : tab?.url ?? "",
       canBack: wc?.navigationHistory.canGoBack() ?? false,
       canForward: wc?.navigationHistory.canGoForward() ?? false,
       bookmarked: Boolean(tab && getBookmarks().some((b) => b.url === tab.url)),
       blocked: wc ? blockedCount(wc.id) : 0,
+      blockingOff: Boolean(tab && blockingOff(tab.url)),
       hoverUrl: this.hoverUrl,
       zoom: wc ? Math.round(wc.getZoomFactor() * 100) : 100,
       status: proxyStatus(),
-      focusMode: this.focusMode,
       assistantOpen: this.assistantOpen,
       fullscreen: this.win.isFullScreen(),
+      accent: accentColor(),
+      downloads: downloadSummary(),
+      bookmarks: s.bookmarksBar ? getBookmarks().slice(0, 40).map((b) => ({ title: b.title, url: b.url, icon: getFavicon(hostOf(b.url)) })) : [],
       settings: {
         theme: s.theme,
         tabs: s.tabs,
+        compact: s.compact,
+        bookmarksBar: s.bookmarksBar,
         mode: s.mode,
-        torPort: s.torPort,
-        proxyScheme: s.proxyScheme,
-        proxyHost: s.proxyHost,
-        proxyPort: s.proxyPort,
-        blockWebRTC: s.blockWebRTC,
         adblock: s.adblock,
-        restoreSession: s.restoreSession,
-        localSearch: s.localSearch,
-        publicSearch: s.publicSearch,
+        searchSuggestions: s.searchSuggestions,
       },
       nativeGlass: nativeGlass(),
     };
@@ -438,16 +609,16 @@ export class Shell {
     });
   }
 
-  // Theme change: the window material, the toolbar, and every new tab page follow.
+  // Theme change: the window material, the toolbar, and every Archium page follow.
   refreshLook() {
     this.applyMaterial();
     this.place();
-    for (const t of this.tabs) if (t.url.startsWith(NEWTAB)) t.view.webContents.reload();
+    for (const t of this.tabs) if (t.url.startsWith("archium://")) t.view.webContents.reload();
     this.push();
   }
 
-  sessionUrls() {
-    return this.tabs.filter((t) => !t.private && /^https?:/.test(t.url)).map((t) => t.url);
+  sessionEntries() {
+    return this.tabs.filter((t) => !t.private && /^https?:/.test(t.url)).map((t) => ({ url: t.url, pinned: t.pinned }));
   }
 
   setZoom(delta) {

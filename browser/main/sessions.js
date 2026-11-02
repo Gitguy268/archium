@@ -4,7 +4,8 @@ import { app, dialog, session, webContents } from "electron";
 import { createDispatcher } from "./filter.js";
 import { sessionProxy, sessionWebRTC } from "./privacy.js";
 import { getBlocker, onHeadersReceived, enableCosmetics } from "./adblock.js";
-import { getSettings } from "./store.js";
+import { getSettings, siteOf, setSite, blockingOff } from "./store.js";
+import { watchDownloads } from "./downloads.js";
 
 export let sessions; // { tabs, private, ui, ai }
 const blockedBy = new Map(); // webContents id → requests blocked on its current page
@@ -15,10 +16,23 @@ export const blockedCount = (id) => blockedBy.get(id) ?? 0;
 export const resetBlocked = (id) => blockedBy.delete(id);
 export const proxyStatus = () => proxyError;
 
-// Asked once per site and session; the answer lasts until the browser quits.
-const PROMPTED = new Set(["media", "geolocation", "notifications", "midi", "clipboard-read"]);
+// Camera, microphone, location and notifications are asked once per site; normal tabs
+// remember the answer (changed in the site panel), private tabs only until Archium quits.
 const ALWAYS = new Set(["fullscreen", "clipboard-sanitized-write", "pointerLock"]);
-const answers = new Map();
+const SESSION_ONLY = new Set(["midi", "clipboard-read"]);
+const answers = new Map(); // private tabs and SESSION_ONLY kinds: key → true/false
+
+// Electron's permission (plus media types) → the keys the site panel stores.
+function siteKeys(permission, mediaTypes = []) {
+  if (permission === "media") {
+    const keys = [];
+    if (mediaTypes.includes("video")) keys.push("camera");
+    if (mediaTypes.includes("audio")) keys.push("microphone");
+    return keys.length ? keys : ["camera", "microphone"];
+  }
+  if (permission === "geolocation" || permission === "notifications") return [permission];
+  return null;
+}
 
 function permissionLabel(permission, details) {
   if (permission === "media") {
@@ -29,38 +43,67 @@ function permissionLabel(permission, details) {
   return { geolocation: "know your location", notifications: "show notifications", midi: "use MIDI devices", "clipboard-read": "read your clipboard" }[permission];
 }
 
+// "allow" | "block" | "ask" for this request, from what's stored.
+function stored(ses, origin, permission, mediaTypes) {
+  const keys = siteKeys(permission, mediaTypes);
+  if (!keys || ses === sessions.private) {
+    const v = answers.get(`${ses === sessions.private ? "p" : "n"}|${origin}|${permission}|${mediaTypes?.join() ?? ""}`);
+    return v == null ? "ask" : v ? "allow" : "block";
+  }
+  const site = siteOf(origin);
+  const values = keys.map((k) => site[k] ?? "ask");
+  if (values.includes("block")) return "block";
+  return values.every((v) => v === "allow") ? "allow" : "ask";
+}
+
+function remember(ses, origin, permission, mediaTypes, allow) {
+  const keys = siteKeys(permission, mediaTypes);
+  if (!keys || ses === sessions.private) return answers.set(`${ses === sessions.private ? "p" : "n"}|${origin}|${permission}|${mediaTypes?.join() ?? ""}`, allow);
+  for (const k of keys) setSite(origin, k, allow ? "allow" : "block");
+}
+
 function webPermissions(ses) {
+  const web = ses === sessions.tabs || ses === sessions.private;
   ses.setPermissionRequestHandler(async (wc, permission, callback, details) => {
     if (ALWAYS.has(permission)) return callback(true);
-    if (!PROMPTED.has(permission) || ses === sessions.ui || ses === sessions.ai) return callback(false);
+    if (!web || !(siteKeys(permission) || SESSION_ONLY.has(permission))) return callback(false);
     let origin;
     try {
       origin = new URL(details.requestingUrl).origin;
     } catch {
       return callback(false);
     }
-    const key = `${ses === sessions.private ? "p" : "n"}|${origin}|${permission}`;
-    if (answers.has(key)) return callback(answers.get(key));
+    const now = stored(ses, origin, permission, details.mediaTypes);
+    if (now !== "ask") return callback(now === "allow");
     const { response } = await dialog.showMessageBox({
       type: "question",
       buttons: ["Block", "Allow"],
       defaultId: 0,
       cancelId: 0,
       message: `Allow ${new URL(origin).host} to ${permissionLabel(permission, details)}?`,
-      detail: "Archium remembers your answer until you quit.",
+      detail: ses === sessions.private ? "Remembered until you quit Archium." : "You can change this later: click the icon left of the address.",
     });
-    answers.set(key, response === 1);
+    remember(ses, origin, permission, details.mediaTypes, response === 1);
     callback(response === 1);
   });
-  ses.setPermissionCheckHandler((wc, permission, origin) => {
+  ses.setPermissionCheckHandler((wc, permission, origin, details) => {
     if (ALWAYS.has(permission)) return true;
+    if (!web) return false;
     try {
-      return answers.get(`${ses === sessions.private ? "p" : "n"}|${new URL(origin).origin}|${permission}`) === true;
+      const types = details?.mediaType && details.mediaType !== "unknown" ? [details.mediaType] : undefined;
+      return stored(ses, new URL(origin).origin, permission, types) === "allow";
     } catch {
       return false;
     }
   });
   ses.setDevicePermissionHandler(() => false);
+}
+
+// The page a request belongs to: its own URL for a page load, otherwise the tab's.
+function siteUrl(details) {
+  if (details.resourceType === "mainFrame") return details.url;
+  if (details.webContentsId == null) return "";
+  return webContents.fromId(details.webContentsId)?.getURL() ?? "";
 }
 
 export function setupSessions(changed) {
@@ -73,12 +116,12 @@ export function setupSessions(changed) {
     ai: session.fromPartition("persist:archium-ai"),
   };
   // Look like Chrome: "Electron" and the app name in the user agent get pages blocked.
-  const ua = app.userAgentFallback.replace(/ (Electron|archium-browser)\/\S+/g, "");
+  const ua = app.userAgentFallback.replace(/ (Electron|archium-browser|Archium)\/\S+/g, "");
   app.userAgentFallback = ua;
 
   const dispatcher = createDispatcher({
     getSettings,
-    getBlocker: () => (getSettings().adblock ? getBlocker() : null),
+    getBlocker: (details) => (getSettings().adblock && !blockingOff(siteUrl(details)) ? getBlocker() : null),
     onBlocked: (details) => {
       if (details.webContentsId == null) return;
       blockedBy.set(details.webContentsId, blockedCount(details.webContentsId) + 1);
@@ -89,12 +132,14 @@ export function setupSessions(changed) {
     ses.setUserAgent(ua);
     ses.webRequest.onBeforeRequest(dispatcher);
     ses.webRequest.onHeadersReceived((details, callback) =>
-      getSettings().adblock ? onHeadersReceived(details, callback) : callback({}),
+      getSettings().adblock && !blockingOff(siteUrl(details)) ? onHeadersReceived(details, callback) : callback({}),
     );
     webPermissions(ses);
   }
   enableCosmetics(sessions.tabs);
   enableCosmetics(sessions.private);
+  watchDownloads(sessions.tabs);
+  watchDownloads(sessions.private, { isPrivate: true });
   return applyNetwork();
 }
 

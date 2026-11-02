@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Settings</title>
+  <link rel="stylesheet" href="/themes/base.css">
+  <link rel="stylesheet" href="/pages/page.css">
+</head>
+<body data-theme="normal">
+  <div class="page">
+    <nav class="nav" aria-label="Archium pages"></nav>
+    <main>
+      <h1>Settings</h1>
+      <form id="form" autocomplete="off">
+        <h2 id="appearance">Appearance</h2>
+        <div class="group">
+          <div class="row">
+            <div>Look</div>
+            <span class="seg">
+              <label><input type="radio" name="theme" value="normal">Normal</label>
+              <label><input type="radio" name="theme" value="glass">Liquid Glass</label>
+              <label><input type="radio" name="theme" value="win98">Windows 98</label>
+            </span>
+          </div>
+          <div class="row">
+            <div>Tabs<small>On the side, tabs, the address and the buttons share one sidebar.</small></div>
+            <span class="seg">
+              <label><input type="radio" name="tabs" value="side">Side</label>
+              <label><input type="radio" name="tabs" value="top">Top</label>
+            </span>
+          </div>
+          <div class="row">
+            <div>Compact mode<small>Hide the sidebar. Move the pointer to the left edge of the window to show it. ⌃⌥C</small></div>
+            <input type="checkbox" role="switch" name="compact">
+          </div>
+          <div class="row">
+            <div>Show bookmarks bar<small>⇧⌘B</small></div>
+            <input type="checkbox" role="switch" name="bookmarksBar">
+          </div>
+        </div>
+
+        <h2 id="startup">Startup</h2>
+        <div class="group">
+          <div class="row">
+            <div>Reopen tabs from last time<small>Pinned tabs always come back.</small></div>
+            <input type="checkbox" role="switch" name="restoreSession">
+          </div>
+          <div class="row">
+            <div>Default browser<small id="default-note"></small></div>
+            <button type="button" id="make-default">Make Default</button>
+          </div>
+        </div>
+
+        <h2 id="search">Search</h2>
+        <div class="group">
+          <div class="row">
+            <div>Search engine<small>Your SearXNG on this Mac. If it isn't running, searches go to the fallback.</small></div>
+            <input type="url" name="localSearch">
+          </div>
+          <div class="row">
+            <div>Fallback</div>
+            <input type="url" name="publicSearch">
+          </div>
+          <div class="row">
+            <div>Show search suggestions<small>What you type in the address bar goes to your SearXNG, which asks its suggestion service. Never in private tabs or through Tor.</small></div>
+            <input type="checkbox" role="switch" name="searchSuggestions">
+          </div>
+        </div>
+
+        <h2 id="privacy">Privacy and security</h2>
+        <div class="group">
+          <div class="row">
+            <div>Block ads and trackers<small>EasyList, EasyPrivacy and cookie notices, through Ghostery's blocker. Turn it off for one site from the icon left of the address.</small></div>
+            <input type="checkbox" role="switch" name="adblock">
+          </div>
+          <div class="row">
+            <div>Hide your IP address from WebRTC<small>Always on with Tor or a proxy.</small></div>
+            <input type="checkbox" role="switch" name="blockWebRTC">
+          </div>
+          <div class="row">
+            <div>Clear history</div>
+            <span><select id="clear-range"><option value="hour">Last hour</option><option value="day">Last 24 hours</option><option value="week">Last 7 days</option><option value="all">Everything</option></select> <button type="button" id="clear-history">Clear</button></span>
+          </div>
+          <div class="row">
+            <div>Cookies and site data<small>Signs you out of most sites.</small></div>
+            <button type="button" data-clear="cookies">Clear</button>
+          </div>
+          <div class="row">
+            <div>Cached pages and images</div>
+            <button type="button" data-clear="cache">Clear</button>
+          </div>
+        </div>
+
+        <h2 id="sites">Site permissions</h2>
+        <div class="group" id="sites-list"></div>
+
+        <h2 id="network">Network</h2>
+        <div class="group">
+          <div class="row">
+            <div>Connection</div>
+            <span class="seg">
+              <label><input type="radio" name="mode" value="direct">Direct</label>
+              <label><input type="radio" name="mode" value="tor">Tor</label>
+              <label><input type="radio" name="mode" value="proxy">Proxy</label>
+            </span>
+          </div>
+          <div class="row sub when-tor">
+            <div>Tor port<small>9050 for Homebrew's Tor, 9150 for Tor Browser.</small></div>
+            <input type="number" name="torPort" min="1" max="65535">
+          </div>
+          <div class="row sub when-proxy">
+            <div>Proxy</div>
+            <span>
+              <select name="proxyScheme"><option>socks5</option><option>socks4</option><option>http</option><option>https</option></select>
+              <input type="text" name="proxyHost" placeholder="127.0.0.1" style="width:130px">
+              <input type="number" name="proxyPort" min="1" max="65535">
+            </span>
+          </div>
+          <div class="row">
+            <small>If Tor or the proxy stops, pages stop loading. They never fall back to a direct connection.</small>
+          </div>
+        </div>
+
+        <h2 id="downloads">Downloads</h2>
+        <div class="group">
+          <div class="row">
+            <div>Save files to<small id="download-dir"></small></div>
+            <button type="button" id="choose-dir">Change…</button>
+          </div>
+          <div class="row">
+            <div>Ask where to save each file</div>
+            <input type="checkbox" role="switch" name="downloadAsk">
+          </div>
+        </div>
+
+        <h2 id="import">Import bookmarks</h2>
+        <div class="group" id="imports"></div>
+
+        <h2 id="about">About</h2>
+        <div class="group">
+          <div class="row"><div id="version"></div></div>
+          <div class="row"><small>Archium is free software under the GNU GPL 3.0. It runs on Electron, so Chromium updates arrive with Electron releases.</small></div>
+        </div>
+      </form>
+    </main>
+  </div>
+  <script type="module" src="/pages/settings.js"></script>
+</body>
+</html>

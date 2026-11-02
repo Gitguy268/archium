@@ -7,6 +7,7 @@ import { ElectronBlocker } from "@ghostery/adblocker-electron";
 import { createRequire } from "node:module";
 import { readFile, writeFile, stat } from "node:fs/promises";
 import { join } from "node:path";
+import { getSettings, blockingOff } from "./store.js";
 
 const PRELOAD = createRequire(import.meta.url).resolve("@ghostery/adblocker-electron-preload");
 const REFRESH_AFTER_MS = 7 * 24 * 3600 * 1000;
@@ -37,7 +38,10 @@ export async function startAdblock() {
     return null;
   }
   // Wrapped, so a refreshed engine takes over without re-registering.
-  ipcMain.handle("@ghostery/adblocker/inject-cosmetic-filters", (...a) => blocker.onInjectCosmeticFilters(...a));
+  // Sites with blocking switched off (or blocking off altogether) get no cosmetic filters.
+  ipcMain.handle("@ghostery/adblocker/inject-cosmetic-filters", (event, url, msg) =>
+    getSettings().adblock && !blockingOff(event.sender.getURL()) ? blocker.onInjectCosmeticFilters(event, url, msg) : undefined,
+  );
   ipcMain.handle("@ghostery/adblocker/is-mutation-observer-enabled", (...a) => blocker.onIsMutationObserverEnabled(...a));
   for (const ses of preloads.keys()) addPreload(ses);
   void refreshIfStale();

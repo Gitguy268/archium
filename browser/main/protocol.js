@@ -1,14 +1,18 @@
 // archium:// serves the browser's own pages. It is registered per session:
-//   archium://app/…     the toolbar, Glance and assistant pages (UI and AI sessions only)
-//   archium://app/models/…  the verified model files (AI session only; same origin as the
-//                           assistant, because custom schemes get no CORS)
-//   archium://newtab/…  the new tab page, in every session; it can read and edit its quick links
+//   archium://app/…        the toolbar and assistant pages (UI and AI sessions only)
+//   archium://app/models/… the verified model files (AI session only; same origin as the
+//                          assistant, because custom schemes get no CORS)
+//   archium://newtab/, settings/, history/, bookmarks/, downloads/
+//                          pages that open in tabs. Their data comes from POST /api/<name>,
+//                          which only the page itself may call (see api-guard.js).
 import { protocol, net } from "electron";
 import { join, normalize, sep } from "node:path";
 import { pathToFileURL, fileURLToPath } from "node:url";
 import { FILES, modelDir, isModelReady } from "./model.js";
+import { apiAllowed, withToken } from "./api-guard.js";
 
 export const UI_DIR = fileURLToPath(new URL("../ui/", import.meta.url));
+export const PAGES = ["newtab", "settings", "history", "bookmarks", "downloads"];
 
 protocol.registerSchemesAsPrivileged([
   {
@@ -27,7 +31,8 @@ const APP_CSP = [
   "frame-src 'none'",
   "object-src 'none'",
 ].join("; ");
-const NEWTAB_CSP = "default-src 'self'; img-src 'self' data: https: http:; style-src 'self' 'unsafe-inline'; object-src 'none'";
+// Tab pages load nothing from the network: favicons arrive as data: URLs.
+const PAGE_CSP = "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'";
 
 const TYPES = {
   ".html": "text/html; charset=utf-8",
@@ -54,9 +59,13 @@ async function serveFile(full, csp, extra = {}) {
   return new Response(res.body, { status: 200, headers });
 }
 
-// hosts: which of "app", "models" (app/models/), "newtab" this session may load. newtab gets the
-// newtab/, themes/ and vendor glass files plus its small JSON API.
-export function registerProtocol(ses, hosts, newtabApi) {
+// Files each tab page may load, besides its own.
+const PAGE_FILES = /^\/(pages|themes|shared|assets)\//;
+const NEWTAB_FILES = /^\/(newtab|themes|shared|assets|vendor\/liquid-glass-web)\//;
+
+// hosts: which of "app", "models" and the PAGES this session may load.
+// api: { [host]: { [name]: async (body) => json } } for the tab pages.
+export function registerProtocol(ses, hosts, api = {}) {
   ses.protocol.handle("archium", async (req) => {
     const url = new URL(req.url);
     const host = url.hostname;
@@ -79,20 +88,30 @@ export function registerProtocol(ses, hosts, newtabApi) {
       });
     }
 
-    // newtab
-    if (url.pathname === "/state.json" || url.pathname === "/links") {
-      // Only the page itself may call this; web pages get no CORS headers and fail the Origin check.
-      const origin = req.headers.get("origin");
-      if (req.method !== "GET" && origin !== "archium://newtab") return new Response("Forbidden", { status: 403 });
-      if (req.method === "POST" && url.pathname === "/links") {
-        if (req.headers.get("content-type") !== "application/json") return new Response("Bad request", { status: 400 });
-        return Response.json(newtabApi.setLinks(await req.json()));
+    // A tab page: its data API, or its files.
+    if (url.pathname.startsWith("/api/")) {
+      const fn = api[host]?.[url.pathname.slice(5)];
+      const check = { method: req.method, token: req.headers.get("x-archium-token"), contentType: req.headers.get("content-type") };
+      if (!fn || !apiAllowed(check, host)) return new Response("Forbidden", { status: 403 });
+      let body = {};
+      try {
+        body = (await req.json()) ?? {};
+      } catch {
+        return new Response("Bad request", { status: 400 });
       }
-      return Response.json(newtabApi.state());
+      try {
+        return Response.json((await fn(body)) ?? null);
+      } catch (e) {
+        return Response.json({ error: e.message }, { status: 500 });
+      }
     }
-    const path = url.pathname === "/" ? "/newtab/newtab.html" : url.pathname;
-    if (!/^\/(newtab|themes|vendor\/liquid-glass-web|shared)\//.test(path)) return new Response("Not found", { status: 404 });
+    const path = url.pathname === "/" ? (host === "newtab" ? "/newtab/newtab.html" : `/pages/${host}.html`) : url.pathname;
+    if (!(host === "newtab" ? NEWTAB_FILES : PAGE_FILES).test(path)) return new Response("Not found", { status: 404 });
     const full = inside(UI_DIR, path);
-    return full ? serveFile(full, NEWTAB_CSP) : new Response("Forbidden", { status: 403 });
+    if (!full) return new Response("Forbidden", { status: 403 });
+    if (!full.endsWith(".html")) return serveFile(full, PAGE_CSP);
+    const res = await net.fetch(pathToFileURL(full).href);
+    if (!res.ok) return new Response("Not found", { status: 404 });
+    return new Response(withToken(await res.text(), host), { headers: { "content-type": TYPES[".html"], "content-security-policy": PAGE_CSP, "cache-control": "no-store" } });
   });
 }

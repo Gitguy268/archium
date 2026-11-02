@@ -1,50 +1,54 @@
 # Archium Browser
 
-A Chromium browser shell for macOS with Archium's privacy features built in, three looks (Normal, Windows 98, Liquid Glass), Glance, and a local assistant running MiniCPM-V 4.7 1B. It runs today without compiling Chromium: Electron supplies the engine, and Archium draws its own tabs and toolbar.
+A Chromium browser for macOS with Archium's privacy features built in. Tabs, the address field and the buttons live in a sidebar, as in Zen, and the page sits next to it as a card. You can also put the tabs on top for a Chrome-style window, or switch to the Windows 98 or Liquid Glass look. Electron supplies the engine, so it runs without compiling Chromium.
 
-## Run it
-
-Double-click `start.command`. The first run installs Electron and the ad blocker (about 350 MB, needs Node.js 20 or later). Or:
+## Install
 
 ```sh
 npm ci
-npm start
+npm run dist          # builds dist/mac-arm64/Archium.app (unsigned, signed ad hoc)
+npm run install-app   # copies it to /Applications
 ```
 
-Your data lives in `~/Library/Application Support/Archium Browser`. Local search uses the SearXNG from `../searxng/install.sh` at `127.0.0.1:8888`. When it isn't running, searches go to the public fallback.
+Then choose Archium under System Settings › Desktop & Dock › Default web browser, or click **Make Default** in Archium's settings.
+
+To run it from this folder instead, double-click `start.command`, or run `npm start`. The first run installs Electron and the ad blocker (about 350 MB, needs Node.js 20 or later). Running from source can't be the default browser.
+
+Your data lives in `~/Library/Application Support/Archium Browser`. Search uses the SearXNG from `../searxng/install.sh` at `127.0.0.1:8888`. When it isn't running, searches go to the public fallback.
 
 ## What's in it
 
 | | |
 |---|---|
-| **Looks** | Normal follows macOS light and dark. Windows 98 has a caption bar, an IE-style coolbar, tab-control tabs, a status bar and a cloud desktop on the new tab page. Liquid Glass puts native macOS glass (`NSGlassEffectView`, or vibrancy on macOS before 26) behind the tabs and toolbar, and refracting glass over a wallpaper on the new tab page. Switch looks in the ☰ menu, ⌘K, View → Look or Settings |
-| **Glance** | ⌃⌥Space from any app opens a small browser in the screen corner. Pin it, or open the page in a tab |
-| **Assistant** | ⇧⌘A. MiniCPM-V 4.7 1B on this Mac (WebGPU, or the CPU). It can summarize the page, answer questions about it, explain a selection, and look at a screenshot of the page. Private tabs are never read |
-| **Tabs** | On top, on the side (⌘S), or hidden (⇧⌘S). Private tabs (⇧⌘N) use a separate in-memory session |
-| **Focus Mode** | ⇧⌘B shows only the page. ⌘L brings the address field back |
-| **⌘K** | Open tabs, bookmarks, history and every command |
-| **Privacy** | Ghostery's ad blocker with EasyList, EasyPrivacy and the cookie-notice lists. Archium's URL cleaner. Tor or a proxy with a kill switch, applied to every session. A WebRTC leak block. Permission prompts for camera, microphone, location and notifications |
-| **Share as QR** | The QR button in the address field turns the page address into a QR code, made on this Mac |
+| **Sidebar** | Back, forward, reload and the address at the top. Pinned tabs as a grid of icons, then your tabs, then New Tab. Drag a tab onto the grid to pin it |
+| **Compact mode** | ⌃⌥C hides the sidebar. Move the pointer to the window's left edge and it slides back in |
+| **Address bar** | Suggestions from open tabs, bookmarks and history as you type, and the site's address completed in place. Search suggestions from your SearXNG are opt-in |
+| **Tabs** | Right-click for pin, mute, duplicate, move to a new window and close others. A speaker icon on tabs playing sound. Tabs on top (Chrome style) if you prefer |
+| **Site panel** | Click the icon left of the address: the connection, camera, microphone, location and notification permissions, and a switch to turn blocking off for that site |
+| **Pages** | Settings, History, Bookmarks and Downloads open as tabs (⌘, ⌘Y ⌥⌘B ⇧⌘J) |
+| **Downloads** | Files go straight to Downloads, or ask each time. A progress ring on the downloads button |
+| **Import** | Bookmarks from Chrome, Brave, Edge, Helium, Vivaldi, Firefox, Zen, Waterfox and LibreWolf, from Settings |
+| **Privacy** | Ghostery's ad blocker with EasyList, EasyPrivacy and the cookie-notice lists. Archium's URL cleaner. Tor or a proxy with a kill switch for every tab. A WebRTC leak block. Private tabs (⇧⌘N) in a separate in-memory session |
+| **Assistant** | ⇧⌘A, or the speech-bubble button. MiniCPM-V 4.7 1B on this Mac: it summarizes the page, answers questions about it and describes a screenshot. Private tabs are never read |
+| **Looks** | Normal follows macOS light, dark and accent colour. Liquid Glass puts native glass behind the sidebar. Windows 98 has a caption bar, a coolbar and a status bar |
 
 <details>
 <summary><b>Keyboard shortcuts</b></summary>
 
 | Action | Shortcut |
 |---|---|
-| Glance | ⌃⌥Space |
-| Commands | ⌘K |
 | New tab / window / private tab | ⌘T / ⌘N / ⇧⌘N |
 | Close / reopen tab | ⌘W / ⇧⌘T |
 | Address | ⌘L |
-| Tabs on side or top / show or hide | ⌘S / ⇧⌘S |
-| Focus Mode | ⇧⌘B |
-| Find | ⌘F |
-| Bookmark / show bookmarks | ⌘D / ⌥⌘B |
-| History | ⌘Y |
-| Assistant / summarize / look at page | ⇧⌘A / ⇧⌘U / ⇧⌘L |
-| Next / previous tab, tab 1–9 | ⌃Tab / ⇧⌃Tab, ⌘1–⌘9 |
-| Downloads folder | ⇧⌘J |
-| Settings | ⌘, |
+| Next / previous tab, tab 1–9 | ⌃Tab / ⇧⌃Tab (or ⌥⌘→ / ⌥⌘←), ⌘1–⌘9 |
+| Compact mode | ⌃⌥C |
+| Bookmarks bar | ⇧⌘B |
+| Bookmark / bookmarks | ⌘D / ⌥⌘B |
+| History / downloads / settings | ⌘Y / ⇧⌘J / ⌘, |
+| Find / print / save page | ⌘F / ⌘P / ⌘S |
+| Commands | ⌘K |
+| Assistant / summarize / describe page | ⇧⌘A / ⇧⌘U / ⇧⌘L |
+| View source / developer tools | ⌥⌘U / ⌥⌘I |
 
 </details>
 
@@ -66,36 +70,29 @@ The [int4 checkpoint](https://huggingface.co/openbmb/MiniCPM-V-4.7-1B-int4) is a
 <summary><b>How it fits together</b></summary>
 
 - **`main/`** is the Electron main process.
-  - `shell.js`: one window. A toolbar page fills it, and the active tab's view sits in the rectangle the toolbar reports.
-  - `glance.js`: the Glance window.
+  - `shell.js`: one window. The toolbar page fills it, and the active tab's view sits in the rectangle the toolbar page reports.
   - `sessions.js`: proxy, permissions and the request filter for every session.
   - `filter.js`: the single `onBeforeRequest` dispatcher. The order is Ghostery, then the URL cleaner, then the Tor search redirect.
-  - `adblock.js`: Ghostery, with lists fetched through the proxied session and cached.
-  - `model.js`: the model download.
-  - `protocol.js`: `archium://`.
-- **`ui/`** holds Archium's own pages:
-  - `chrome.html`: tabs, toolbar, menus, ⌘K, settings;
-  - `assistant.html`;
-  - `glance.html`;
-  - `newtab/`.
-  - They load from `archium://app/` with a strict CSP and get one small IPC bridge (`preload/archium.cjs`). Web pages never get a preload or Node.
-- **Reused from the extension.** `../extension/lib.js` (proxy, WebRTC, search fallback) and `../extension/url-cleaner.json` are imported directly, so the extension and the browser stay in step.
-- **Popovers.** While one is open (⌘K, the menu, settings), the toolbar page moves above the web page. Its clear areas let the page show through under the scrim.
+  - `suggest.js`: address bar ranking. `importers.js`: bookmark import. `downloads.js`: downloads.
+  - `protocol.js` and `pages.js`: `archium://` and the data behind its pages.
+- **`ui/`** holds Archium's own pages: `chrome.html` (sidebar, toolbar, popovers), `assistant.html`, `newtab/` and `pages/` (settings, history, bookmarks, downloads).
+- **Archium pages in tabs.** They run in the web session without Node or a preload. Each gets a per-launch token in its HTML, and its data endpoints refuse requests without it, so web pages can't read or change them. Web pages also can't navigate to, open or frame `archium://` pages.
+- **Reused from the extension.** `../extension/lib.js` (proxy, WebRTC, search fallback) and `../extension/url-cleaner.json` are imported directly, so the extension and the browser stay in step. The packaged app carries copies in its Resources folder.
+- **Popovers.** While one is open, the toolbar page moves above the web page. Its background gets holes where the page and the assistant are, so they show through.
 
 </details>
 
 ## Limits
 
 - **It's Electron, not Helium.** There's no fingerprint noise, and Chromium updates arrive with Electron releases. Use Tor Browser if you need anonymity.
-- **No Chrome extensions.** Ghostery stands in for uBlock Origin.
-- **Not packaged or signed yet.** It runs from this folder.
-- **Liquid Glass is native glass on macOS 26 and later.** Earlier macOS gets vibrancy. Native glass sits behind the bars. The web page itself is never made see-through.
-- **Downloads.** They use the standard save dialog and go to the folder you pick. There's no downloads list yet.
+- **No Chrome extensions, saved passwords or sync.**
+- **Unsigned.** The app is signed ad hoc, so macOS may ask you to confirm the first launch (right-click › Open).
+- **Liquid Glass is native glass on macOS 26 and later.** Earlier macOS gets vibrancy.
 
 ## Development
 
 ```sh
-npm test       # unit tests: filter, proxy mapping, address parsing, model pin
+npm test       # unit tests: filter, proxy, address parsing, suggestions, import, page API, model pin
 npm run e2e    # Playwright drives the real app; writes screenshots to test/screenshots/
 ```
 

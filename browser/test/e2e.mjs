@@ -4,7 +4,7 @@
 //   AI=1 npm run e2e       also loads the real MiniCPM-V model and asks it about a page
 import { createRequire } from "node:module";
 import { createServer } from "node:http";
-import { mkdirSync, writeFileSync, mkdtempSync, rmSync, copyFileSync, existsSync } from "node:fs";
+import { mkdirSync, writeFileSync, mkdtempSync, rmSync, copyFileSync, existsSync, readFileSync } from "node:fs";
 import { tmpdir, homedir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -19,6 +19,11 @@ mkdirSync(shots, { recursive: true });
 // A local site: a page with a tracker script and a link carrying tracking parameters.
 const server = createServer((req, res) => {
   res.setHeader("content-type", "text/html");
+  if (req.url.startsWith("/file.txt")) {
+    res.setHeader("content-type", "text/plain");
+    res.setHeader("content-disposition", 'attachment; filename="archium-e2e.txt"');
+    return res.end("downloaded by the Archium e2e test\n");
+  }
   if (req.url.startsWith("/article")) {
     return res.end(`<!doctype html><title>Archium test article</title><main><h1>Lighthouses</h1>
       <p>A lighthouse is a tower with a bright lamp that guides ships at night and warns them of rocks.</p>
@@ -39,6 +44,7 @@ const site = `http://news.example.com:${server.address().port}`;
 // A fresh profile each run. The compiled block lists are copied in when this Mac has them,
 // so the run needs no internet.
 const userData = mkdtempSync(join(tmpdir(), "archium-e2e-"));
+const downloadDir = mkdtempSync(join(tmpdir(), "archium-e2e-dl-"));
 const cachedEngine = join(homedir(), "Library", "Application Support", "Archium Browser", "adblock-engine.bin");
 if (existsSync(cachedEngine)) copyFileSync(cachedEngine, join(userData, "adblock-engine.bin"));
 const app = await playwright._electron.launch({
@@ -82,6 +88,8 @@ const assert = (ok, message) => {
   if (!ok) throw new Error(message);
 };
 const ui = () => until(() => app.windows().find((w) => w.url() === "archium://app/chrome.html"), "the toolbar page");
+const tabPage = (prefix) => until(() => app.windows().find((w) => w.url().startsWith(prefix)), prefix);
+const activeEval = (code) => main((_, c) => [...globalThis.__archium.shells][0].active.view.webContents.executeJavaScript(c), code);
 
 try {
   await ui();
@@ -155,28 +163,139 @@ try {
     assert(!(await main(() => [...globalThis.__archium.shells][0].overlay)), "overlay stayed on");
   });
 
-  await check("tabs move to the side and back", async () => {
-    await run("tabs-position");
+  await check("tabs move to the top and back to the side", async () => {
     const page = await ui();
-    await page.waitForSelector("#sidebar .tab");
     await run("tabs-position");
+    await page.waitForSelector('body[data-layout="classic"] #tabstrip .tab');
+    await run("tabs-position");
+    await page.waitForSelector('body[data-layout="zen"] #side-head #omnibox');
   });
 
-  await check("Focus Mode shows only the page", async () => {
-    await run("focus-mode");
-    await until(async () => (await main(() => [...globalThis.__archium.shells][0].layout.page.y)) === 0, "the page at the top");
-    await run("focus-mode");
-    await until(async () => (await main(() => [...globalThis.__archium.shells][0].layout.page.y)) > 0, "the toolbar back");
+  await check("compact mode hides the sidebar and the left edge brings it back", async () => {
+    const page = await ui();
+    const left = () => main(() => [...globalThis.__archium.shells][0].layout.page.x);
+    const wide = await left();
+    await run("compact");
+    await until(async () => (await left()) < wide - 100, `the page widened (from x=${wide})`).catch(async (e) => {
+      throw new Error(`${e.message}; now x=${await left()}, body: ${await page.evaluate(() => [...document.body.attributes].map((a) => a.name).join(" "))}`);
+    });
+    await page.mouse.move(3, 300);
+    await page.waitForSelector("body[data-reveal] #sidebar");
+    assert(await main(() => [...globalThis.__archium.shells][0].overlay), "the revealed sidebar isn't above the page");
+    await page.mouse.move(700, 300);
+    await page.waitForSelector("body:not([data-reveal])");
+    await run("compact");
+    await until(async () => (await left()) === wide, "the sidebar back");
   });
 
-  await check("Glance opens in the corner and moves its page to a tab", async () => {
-    await run("glance");
-    const glance = await until(() => app.windows().find((w) => w.url() === "archium://app/glance.html"), "Glance");
-    await until(() => main(() => globalThis.__archium.glance.win?.isVisible()), "Glance visible");
-    await main((_, url) => globalThis.__archium.glance.navigate(url), `${site}/article`);
-    await until(() => main(() => globalThis.__archium.glance.page.webContents.getURL().includes("/article")), "Glance page");
-    await glance.click("#open");
-    await until(async () => (await shell()).urls.some((u) => u === `${site}/article`), "the page in a tab");
+  await check("address bar suggests and completes a visited site", async () => {
+    const page = await ui();
+    const host = new URL(site).host;
+    await page.click("#address");
+    await page.keyboard.type("news.ex", { delay: 30 });
+    await page.waitForSelector("#suggest:not([hidden]) .suggest-item");
+    const value = await page.inputValue("#address");
+    assert(value === host, `inline completion gave “${value}”`);
+    const kinds = await page.$$eval(".suggest-item .suggest-label", (els) => els.map((e) => e.textContent));
+    assert(kinds.some((k) => k.includes("Archium test")), `suggestions: ${kinds.join(" | ")}`);
+    writeFileSync(join(shots, "suggestions.png"), await composeWindow(app));
+    await page.keyboard.press("Enter");
+    await until(async () => (await shell()).url === `${site}/`, "the completed address");
+    assert(!(await main(() => [...globalThis.__archium.shells][0].overlay)), "overlay stayed on after Enter");
+  });
+
+  await check("pin, mute, close other tabs, and pinned tabs are saved", async () => {
+    await run("new-tab", `${site}/article?n=2`);
+    await run("new-tab", `${site}/article?n=3`);
+    await until(async () => (await shell()).tabs.length === 3, "3 tabs");
+    const third = (await shell()).tabs[2].id;
+    await main((_, id) => [...globalThis.__archium.shells][0].setPinned(id, true), third);
+    let s = await shell();
+    assert(s.tabs[0].id === third && s.tabs[0].pinned, "the pinned tab didn't move first");
+    await (await ui()).waitForSelector(`#essentials .tab[data-id="${third}"]`);
+    await main((_, id) => [...globalThis.__archium.shells][0].setMuted(id, true), third);
+    assert(await main((_, id) => [...globalThis.__archium.shells][0].tab(id).view.webContents.isAudioMuted(), third), "not muted");
+    const entries = await main(() => [...globalThis.__archium.shells][0].sessionEntries());
+    assert(entries.some((e) => e.pinned && e.url.includes("n=3")), "the pinned tab isn't in the session");
+    const keep = s.tabs[1].id;
+    await main((_, id) => { const sh = [...globalThis.__archium.shells][0]; sh.closeTabs(sh.tabs.filter((t) => t.id !== id && !t.pinned).map((t) => t.id), id); }, keep);
+    s = await shell();
+    assert(s.tabs.length === 2 && s.activeId === keep, `after closing others: ${s.tabs.length} tabs`);
+    await main((_, id) => [...globalThis.__archium.shells][0].setPinned(id, false), third);
+    await main((_, id) => [...globalThis.__archium.shells][0].closeTab(id), third);
+  });
+
+  await check("blocking can be switched off for one site", async () => {
+    const origin = new URL(site).origin;
+    await main((_, url) => [...globalThis.__archium.shells][0].navigate(url), `${site}/`);
+    await until(async () => (await shell()).blocked >= 2, "trackers blocked first");
+    const page = await ui();
+    await run("site-info");
+    await page.waitForSelector("#siteinfo:not([hidden]) .si-switch input:checked");
+    writeFileSync(join(shots, "site-panel.png"), await composeWindow(app));
+    await page.click("#siteinfo .si-switch input");
+    await until(async () => (await shell()).blockingOff, "blocking off for the site");
+    await until(async () => !(await shell()).loading, "the reload");
+    await wait(800);
+    assert((await shell()).blocked === 0, "requests still blocked with blocking off");
+    await page.keyboard.press("Escape");
+    await main((_, o) => globalThis.__archium.pages.settings.clearSite({ origin: o }), origin);
+  });
+
+  await check("site permissions are stored and answer permission queries", async () => {
+    const origin = new URL(site).origin;
+    await main((_, o) => globalThis.__archium.pages.settings.setSite({ origin: o, key: "geolocation", value: "allow" }), origin);
+    const state = await activeEval("navigator.permissions.query({ name: 'geolocation' }).then((p) => p.state)");
+    assert(state === "granted", `geolocation is ${state}`);
+    await main((_, o) => globalThis.__archium.pages.settings.clearSite({ origin: o }), origin);
+  });
+
+  await check("settings, history and bookmarks open as pages", async () => {
+    await run("bookmark");
+    await run("settings");
+    const settings = await tabPage("archium://settings/");
+    await settings.waitForSelector("#version:not(:empty)");
+    writeFileSync(join(shots, "settings.png"), await composeWindow(app));
+    await settings.click('label:has(input[name="bookmarksBar"])', { force: true }).catch(() => settings.check('input[name="bookmarksBar"]'));
+    await until(() => main(() => globalThis.__archium.getSettings().bookmarksBar), "the bookmarks bar setting");
+    await (await ui()).waitForSelector("#bookmarks-bar:not([hidden]) .bar-item");
+    await main(() => globalThis.__archium.setSettings({ bookmarksBar: false }));
+    await run("history");
+    const history = await tabPage("archium://history/");
+    await history.waitForSelector(".item a >> text=Archium test article");
+    await run("bookmarks");
+    const bookmarks = await tabPage("archium://bookmarks/");
+    await bookmarks.waitForSelector(".item a >> text=Archium test page");
+    for (let i = 0; i < 3; i++) await run("close-tab");
+  });
+
+  await check("downloads save to the folder and are listed", async () => {
+    await main((_, dir) => globalThis.__archium.setSettings({ downloadDir: dir }), downloadDir);
+    await run("new-tab", `${site}/file.txt`);
+    await until(() => existsSync(join(downloadDir, "archium-e2e.txt")) && readFileSync(join(downloadDir, "archium-e2e.txt"), "utf8").includes("e2e"), "the downloaded file");
+    await until(async () => (await shell()).downloads.recent[0]?.state === "completed", "a completed download");
+    await run("downloads");
+    const page = await tabPage("archium://downloads/");
+    await page.waitForSelector(".dl .name >> text=archium-e2e.txt");
+    writeFileSync(join(shots, "downloads.png"), await composeWindow(app));
+    await run("close-tab");
+  });
+
+  await check("web pages can't open or call Archium's own pages", async () => {
+    await main((_, url) => [...globalThis.__archium.shells][0].navigate(url), `${site}/`);
+    await until(async () => (await shell()).url === `${site}/`, "the test page");
+    const result = await activeEval(`fetch("archium://settings/api/get", { method: "POST", headers: { "content-type": "application/json" }, body: "{}" }).then((r) => r.status, (e) => "refused")`);
+    assert(result === "refused" || result === 403, `fetch answered ${result}`);
+    await activeEval(`location.href = "archium://history/"; window.open("archium://settings/"); 1`);
+    await wait(800);
+    const s = await shell();
+    assert(s.url === `${site}/` && !s.tabs.some((t) => t.url.startsWith("archium://settings") || t.url.startsWith("archium://history")), `got ${s.url}, tabs ${s.tabs.map((t) => t.url).join(" ")}`);
+  });
+
+  await check("links from other apps open in a tab", async () => {
+    await main((_, url) => globalThis.__archium.openExternal(url), `${site}/article?from=finder`);
+    await until(async () => (await shell()).urls.some((u) => u.includes("from=finder")), "the link in a tab");
+    await run("close-tab");
   });
 
   await check("private tabs stay out of history and the assistant", async () => {
@@ -261,6 +380,7 @@ try {
   await app.close().catch(() => {});
   server.close();
   rmSync(userData, { recursive: true, force: true });
+  rmSync(downloadDir, { recursive: true, force: true });
 }
 
 console.log(`\n${passed} passed, ${failed} failed. Screenshots: test/screenshots/`);

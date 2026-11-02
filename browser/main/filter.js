@@ -52,13 +52,14 @@ export function decide(details, settings) {
   return clean ? { redirectURL: clean } : {};
 }
 
-// blocker: something with onBeforeRequest(details, callback), or null while lists load.
+// getBlocker(details): something with onBeforeRequest(details, callback), or null while the
+// lists load, with blocking off, or for a site where it's switched off.
 // onBlocked(details) is told about every request the blocker cancels or redirects.
 export function createDispatcher({ getSettings, getBlocker, onBlocked = () => {} }) {
   return (details, callback) => {
     if (INTERNAL.test(details.url)) return callback({});
     const next = () => callback(decide(details, getSettings()));
-    const blocker = getBlocker();
+    const blocker = getBlocker(details);
     if (!blocker) return next();
     let answered = false;
     blocker.onBeforeRequest(details, (res) => {

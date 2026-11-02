@@ -1,53 +1,56 @@
-/* Tokens every page shares (toolbar, Glance, assistant, new tab). Each look overrides them
-   on [data-theme]; Normal is the default and follows the system's light or dark mode. */
+/* Tokens every page shares (toolbar, assistant, new tab, settings and the other tab pages).
+   Each look overrides them on [data-theme]; Normal is the default and follows the system's
+   light or dark mode. --accent is replaced at run time by the macOS accent colour. */
 :root {
   --font: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
   --font-size: 13px;
-  --fg: #1f1e24;
-  --muted: #6c6a76;
-  --accent: #5b45b8;
+  --fg: #1d1d1f;
+  --muted: #6e6e73;
+  --accent: #0a64d6;
   --accent-fg: #ffffff;
-  --danger: #c0352b;
-  --frame-bg: #e7e6ec;
-  --toolbar-bg: #ffffff;
+  --danger: #c4302b;
+  --frame-bg: #e8e8eb;
+  --toolbar-bg: #f6f6f7;
   --surface: #ffffff;
-  --surface-2: #f3f2f7;
-  --border: #dad8e0;
-  --hover: rgb(0 0 0 / 0.06);
+  --surface-2: #f2f2f4;
+  --border: #d2d2d7;
+  --hover: rgb(0 0 0 / 0.055);
   --press: rgb(0 0 0 / 0.1);
   --tab-bg: transparent;
   --tab-active-bg: #ffffff;
-  --omni-bg: #efeef4;
+  --omni-bg: rgb(0 0 0 / 0.055);
   --omni-focus-bg: #ffffff;
-  --radius: 8px;
+  --radius: 7px;
+  --page-radius: 8px;
   --popover-bg: #ffffff;
-  --popover-shadow: 0 12px 40px rgb(20 10 40 / 0.22), 0 0 0 1px rgb(0 0 0 / 0.06);
-  --select-bg: #ebe7fb;
-  --select-fg: #1f1e24;
+  --popover-shadow: 0 10px 32px rgb(0 0 0 / 0.16), 0 0 0 0.5px rgb(0 0 0 / 0.14);
+  --select-bg: color-mix(in srgb, var(--accent) 14%, transparent);
+  --select-fg: var(--fg);
+  --card-shadow: 0 0 0 0.5px rgb(0 0 0 / 0.12), 0 1px 4px rgb(0 0 0 / 0.08);
   color-scheme: light dark;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --fg: #ecebf2;
-    --muted: #a3a0b1;
-    --accent: #a898f2;
-    --accent-fg: #17151e;
-    --danger: #f2a49d;
-    --frame-bg: #1b1a21;
-    --toolbar-bg: #2a2832;
-    --surface: #24222b;
-    --surface-2: #2e2c36;
-    --border: #3a3743;
+    --fg: #ececee;
+    --muted: #9d9da3;
+    --accent: #4c9bff;
+    --accent-fg: #ffffff;
+    --danger: #ff7b72;
+    --frame-bg: #1c1c1e;
+    --toolbar-bg: #252528;
+    --surface: #232325;
+    --surface-2: #2c2c2f;
+    --border: #3a3a3d;
     --hover: rgb(255 255 255 / 0.07);
     --press: rgb(255 255 255 / 0.12);
-    --tab-active-bg: #2a2832;
-    --omni-bg: #1d1c23;
-    --omni-focus-bg: #15141a;
-    --popover-bg: #2a2832;
-    --popover-shadow: 0 12px 40px rgb(0 0 0 / 0.5), 0 0 0 1px rgb(255 255 255 / 0.08);
-    --select-bg: #3b3456;
-    --select-fg: #ecebf2;
+    --tab-active-bg: #2e2e31;
+    --omni-bg: rgb(255 255 255 / 0.07);
+    --omni-focus-bg: #2a2a2d;
+    --popover-bg: #2a2a2d;
+    --popover-shadow: 0 10px 32px rgb(0 0 0 / 0.5), 0 0 0 0.5px rgb(255 255 255 / 0.12);
+    --select-bg: color-mix(in srgb, var(--accent) 24%, transparent);
+    --card-shadow: 0 0 0 0.5px rgb(255 255 255 / 0.1), 0 1px 4px rgb(0 0 0 / 0.4);
   }
 }
 
@@ -55,7 +58,16 @@
 html, body { margin: 0; height: 100%; }
 body { font: var(--font-size) / 1.35 var(--font); color: var(--fg); }
 button, input, select, textarea { font: inherit; color: inherit; }
-svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; flex: none; }
 [hidden] { display: none !important; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+/* On/off switches (settings, the site panel). Windows 98 keeps plain checkboxes. */
+input[type="checkbox"][role="switch"] { appearance: none; position: relative; flex: none; width: 32px; height: 20px; margin: 0; border-radius: 10px; background: var(--border); transition: background 0.15s; }
+input[type="checkbox"][role="switch"]::before { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgb(0 0 0 / 0.3); transition: translate 0.15s; }
+input[type="checkbox"][role="switch"]:checked { background: var(--accent); }
+input[type="checkbox"][role="switch"]:checked::before { translate: 12px 0; }
+input[type="checkbox"][role="switch"]:disabled { opacity: 0.5; }
+[data-theme="win98"] input[type="checkbox"][role="switch"] { appearance: auto; width: 13px; height: 13px; background: none; }
+[data-theme="win98"] input[type="checkbox"][role="switch"]::before { content: none; }
