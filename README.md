@@ -12,6 +12,10 @@ It runs on Electron's Chromium rather than a Helium build. [docs/helium-parity.m
 
 <p align="center"><img src="docs/img/demo.gif" alt="Animated demo: the command bar finds a tab in another space, a link opens in Glance, two pages go side by side" width="900"></p>
 
+<!-- live-links -->
+**Live:** [gitguy268.github.io/hillium](https://gitguy268.github.io/hillium/) · [hillium.vercel.app](https://hillium.vercel.app)
+<!-- /live-links -->
+
 <!-- run-steps:start -->
 ## Run it locally, step by step
 
