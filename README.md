@@ -12,6 +12,31 @@ It runs on Electron's Chromium rather than a Helium build. [docs/helium-parity.m
 
 <p align="center"><img src="docs/img/demo.gif" alt="Animated demo: the command bar finds a tab in another space, a link opens in Glance, two pages go side by side" width="900"></p>
 
+<!-- run-steps:start -->
+## Run it locally, step by step
+
+1. **Install [Node.js](https://nodejs.org) 24** or newer.
+
+2. **Get the code:**
+
+   ```sh
+   git clone https://github.com/Gitguy268/hillium.git
+   cd hillium
+   ```
+
+3. **Start it:**
+
+   ```sh
+   cd app
+   npm ci
+   npm start
+   ```
+
+   On a Mac you can double-click `app/start.command` instead. The first run installs Electron.
+
+4. **Quit** with `Cmd+Q` on macOS or by closing the window.
+<!-- run-steps:end -->
+
 ## Install
 
 **Arch Linux**
