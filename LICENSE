@@ -19,10 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
----
-
-Exceptions: the files in app/ui/vendor/zen/ come from Zen Browser and stay under
-the Mozilla Public License 2.0 (app/ui/vendor/zen/LICENSE). The files in
-app/ui/vendor/glass/ keep their own MIT licence (app/ui/vendor/glass/LICENSE).
-See NOTICE.
