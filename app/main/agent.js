@@ -149,7 +149,7 @@ export function agentMethods(hub) {
     },
     "archive.add": async ({ id, url } = {}) => {
       const page = url ?? m.tab(target(id).tabId).url;
-      const result = await archive(hub.settings.archivebox, page, { fetchImpl: (u, init) => hub.session("persist:hillium").fetch(u, init) });
+      const result = await archive(hub.settings.archivebox, page, { fetchImpl: (u, init) => hub.session("persist:archium").fetch(u, init) });
       hub.stores.library.data.snapshots.unshift(result);
       hub.stores.library.save();
       return result;

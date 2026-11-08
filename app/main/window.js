@@ -1,4 +1,4 @@
-// One Hillium window: the window UI (sidebar, command bar, Glance frame) in a transparent
+// One Archium window: the window UI (sidebar, command bar, Glance frame) in a transparent
 // view that fills the window, and the active tab's view in the card rectangle that the UI
 // reports. Split view shows up to four tab views side by side.
 //
@@ -13,7 +13,7 @@ import { fileURLToPath } from "node:url";
 const PRELOAD = fileURLToPath(new URL("../preload/chrome.cjs", import.meta.url));
 const GAP = 8;
 
-export class HilliumWindow {
+export class ArchiumWindow {
   constructor(hub, { model, isPrivate = false, spaceId, bounds, uiSession }) {
     this.hub = hub;
     this.model = model;
@@ -36,7 +36,7 @@ export class HilliumWindow {
       minWidth: 640,
       minHeight: 420,
       show: false,
-      title: isPrivate ? "Hillium (Private)" : "Hillium",
+      title: isPrivate ? "Archium (Private)" : "Archium",
       backgroundColor: nativeTheme.shouldUseDarkColors ? "#1b1b1f" : "#ecebf2",
       ...(mac ? { titleBarStyle: "hidden", trafficLightPosition: { x: 16, y: 16 } } : { frame: false }),
       autoHideMenuBar: true,
@@ -49,7 +49,7 @@ export class HilliumWindow {
     this.ui.setBackgroundColor("#00000000");
     this.base.contentView.addChildView(this.ui);
     this.fitUi();
-    this.ui.webContents.loadURL(`hillium://chrome/${isPrivate ? "?private=1" : ""}`);
+    this.ui.webContents.loadURL(`archium://chrome/${isPrivate ? "?private=1" : ""}`);
     this.ui.webContents.on("before-input-event", (event, input) => hub.onInput(this, event, input, this.ui.webContents));
     this.ui.webContents.on("will-navigate", (e) => e.preventDefault());
     this.ui.webContents.setWindowOpenHandler(() => ({ action: "deny" }));

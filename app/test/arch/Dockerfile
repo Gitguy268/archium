@@ -1,4 +1,4 @@
-# Arch Linux with what Hillium needs at run time, plus Xvfb and Node for the e2e suite.
+# Arch Linux with what Archium needs at run time, plus Xvfb and Node for the e2e suite.
 FROM archlinux:base-devel
 # pacman's download sandbox needs seccomp, which amd64 emulation on Apple silicon lacks.
 RUN sed -i 's/^\[options\]/[options]\nDisableSandbox/' /etc/pacman.conf \

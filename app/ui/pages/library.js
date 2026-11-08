@@ -1,4 +1,4 @@
-// hillium://library: archived tabs, history, downloads, ArchiveBox snapshots and Boosts.
+// archium://library: archived tabs, history, downloads, ArchiveBox snapshots and Boosts.
 import { api, h, $, when, host } from "./api.js";
 
 const SECTIONS = [
@@ -94,7 +94,7 @@ function downloadsView() {
 
 function snapshotsView() {
   if (!data.archivebox) {
-    return [h("div", { class: "card" }, h("div", { class: "empty" }, "Set up ArchiveBox in Settings to keep copies of pages. ", h("a", { href: "hillium://settings/" }, "Settings")))];
+    return [h("div", { class: "card" }, h("div", { class: "empty" }, "Set up ArchiveBox in Settings to keep copies of pages. ", h("a", { href: "archium://settings/" }, "Settings")))];
   }
   return [
     list(

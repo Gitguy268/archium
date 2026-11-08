@@ -1,5 +1,5 @@
 name: Feature request
-description: An idea for Hillium
+description: An idea for Archium
 title: ''
 labels:
   - enhancement
@@ -16,6 +16,6 @@ body:
     id: idea
     attributes:
       label: Your idea
-      description: How could Hillium help? If it's from Arc or Zen, say which feature. Say if it needs a network request.
+      description: How could Archium help? If it's from Arc or Zen, say which feature. Say if it needs a network request.
     validations:
       required: true

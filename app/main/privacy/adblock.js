@@ -27,7 +27,7 @@ export async function startAdblock({ allowCosmetics } = {}) {
   try {
     blocker = await ElectronBlocker.fromPrebuiltFull(fetchList, { path: cachePath(), read: readFile, write: writeFile });
   } catch (e) {
-    console.warn(`[hillium] ad blocker lists unavailable: ${e.message}`);
+    console.warn(`[archium] ad blocker lists unavailable: ${e.message}`);
     return null;
   }
   ipcMain.handle("@ghostery/adblocker/inject-cosmetic-filters", (event, url, msg) =>

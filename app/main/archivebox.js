@@ -10,7 +10,7 @@ export function normalizeBase(url) {
 const headers = (token) => ({ "content-type": "application/json", accept: "application/json", "X-ArchiveBox-API-Key": token });
 
 // fetchImpl is Electron's session fetch in the app and a stub in the tests.
-export async function archive(config, pageUrl, { fetchImpl = fetch, tag = "hillium" } = {}) {
+export async function archive(config, pageUrl, { fetchImpl = fetch, tag = "archium" } = {}) {
   if (!config?.url) throw new Error("Set your ArchiveBox address in Settings first");
   if (!/^https?:/.test(pageUrl)) throw new Error("Only web pages can be archived");
   const base = normalizeBase(config.url);

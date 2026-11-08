@@ -34,7 +34,7 @@ test("decide: pings cancelled, navigations cleaned and upgraded, subresources le
   assert.deepEqual(decide({ url: "http://example.com/?gclid=1", resourceType: "mainFrame" }, settings(), upgraded), { redirectURL: "https://example.com/" });
   assert.ok(upgraded.has("https://example.com/"));
   assert.deepEqual(decide({ url: "https://cdn.example/a.js?utm_x=1", resourceType: "script" }, settings()), {});
-  assert.deepEqual(decide({ url: "hillium://settings/", resourceType: "mainFrame" }, settings()), {});
+  assert.deepEqual(decide({ url: "archium://settings/", resourceType: "mainFrame" }, settings()), {});
 });
 
 test("third parties get no cookies, a trimmed referer, GPC and no high-entropy hints", () => {

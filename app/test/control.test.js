@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { connect } from "node:net";
 import { startControl, tokenPath, socketPath } from "../main/control.js";
-import { request, handleMcp, toolList, userDataDir } from "../../cli/hillium.mjs";
+import { request, handleMcp, toolList, userDataDir } from "../../cli/archium.mjs";
 
 const ask = (path, line) =>
   new Promise((resolve, reject) => {
@@ -23,7 +23,7 @@ const ask = (path, line) =>
   });
 
 test("the control socket wants the token, and is private to this user", async () => {
-  const dir = mkdtempSync(join(tmpdir(), "hillium-"));
+  const dir = mkdtempSync(join(tmpdir(), "archium-"));
   const control = startControl({ userData: dir, methods: { "tabs.list": () => [{ id: "1" }], boom: () => { throw new Error("nope"); } } });
   await new Promise((r) => setTimeout(r, 100));
   try {
@@ -42,15 +42,15 @@ test("the control socket wants the token, and is private to this user", async ()
   await assert.rejects(request("tabs.list", {}, { dir }), /isn't running|agent access/);
 });
 
-test("the CLI looks where Electron keeps Hillium's data", () => {
-  assert.equal(userDataDir({ XDG_CONFIG_HOME: "/x" }, "linux"), "/x/Hillium");
-  assert.equal(userDataDir({ HILLIUM_USER_DATA: "/y" }, "darwin"), "/y");
-  assert.match(userDataDir({}, "darwin"), /Library\/Application Support\/Hillium$/);
+test("the CLI looks where Electron keeps Archium's data", () => {
+  assert.equal(userDataDir({ XDG_CONFIG_HOME: "/x" }, "linux"), "/x/Archium");
+  assert.equal(userDataDir({ ARCHIUM_USER_DATA: "/y" }, "darwin"), "/y");
+  assert.match(userDataDir({}, "darwin"), /Library\/Application Support\/Archium$/);
 });
 
 test("MCP: initialize, list tools, call one, report errors as tool errors", async () => {
   const init = await handleMcp({ jsonrpc: "2.0", id: 1, method: "initialize", params: { protocolVersion: "2025-06-18" } });
-  assert.equal(init.result.serverInfo.name, "hillium");
+  assert.equal(init.result.serverInfo.name, "archium");
   assert.equal(init.result.protocolVersion, "2025-06-18");
   assert.equal(await handleMcp({ jsonrpc: "2.0", method: "notifications/initialized" }), null);
   const list = await handleMcp({ jsonrpc: "2.0", id: 2, method: "tools/list" });

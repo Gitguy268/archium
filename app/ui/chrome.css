@@ -1,4 +1,4 @@
-/* Hillium's window UI, in the Arc look. The other looks (themes/*.css) override tokens and a
+/* Archium's window UI, in the Arc look. The other looks (themes/*.css) override tokens and a
    few shapes. The page itself is a separate view that sits on the #page rectangle. */
 
 :root {

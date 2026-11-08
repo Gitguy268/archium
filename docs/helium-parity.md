@@ -1,10 +1,10 @@
 # Helium parity
 
-Hillium runs on Electron's Chromium, not on a Helium build (see [roadmap.md](roadmap.md)). It applies Helium's defaults at the Electron level instead. This page lists each one, where it lives and how it's checked.
+Archium runs on Electron's Chromium, not on a Helium build (see [roadmap.md](roadmap.md)). It applies Helium's defaults at the Electron level instead. This page lists each one, where it lives and how it's checked.
 
-| Helium / ungoogled-chromium | Hillium | Where | Checked by |
+| Helium / ungoogled-chromium | Archium | Where | Checked by |
 |---|---|---|---|
-| No Google services (Safe Browsing, sync, field trials, component updater, translate) | Electron ships none of them. Hillium turns off domain reliability, background networking and hyperlink-auditing pings, and the Hunspell dictionary download from Google in every session | `main/main.js` | e2e: the network log of a whole run has no Google host |
+| No Google services (Safe Browsing, sync, field trials, component updater, translate) | Electron ships none of them. Archium turns off domain reliability, background networking and hyperlink-auditing pings, and the Hunspell dictionary download from Google in every session | `main/main.js` | e2e: the network log of a whole run has no Google host |
 | uBlock Origin built in | Ghostery's engine with EasyList, EasyPrivacy, uBlock Origin's lists and cookie notices, network and cosmetic filtering | `main/privacy/adblock.js`, `filter.js` | e2e: a tracker script is cancelled and an ad slot hidden |
 | Tracking parameters stripped (uBO's `removeparam`) | 68 parameter names and prefixes removed from every navigation | `main/privacy/url-cleaner.json` | unit + e2e |
 | HTTPS by default | HTTPS first, with a page that offers http when a site has no HTTPS | `filter.js`, `ui/pages/error.*` | unit + e2e |
@@ -20,4 +20,4 @@ Hillium runs on Electron's Chromium, not on a Helium build (see [roadmap.md](roa
 | Fingerprinting protection (Helium's noise patches) | **Not done.** Electron can't add Chromium's fingerprint noise without patching Chromium | – | – |
 | Chromium security updates | Follow Electron's releases (Dependabot watches them) | `app/package.json` | – |
 
-The only outside hosts a whole e2e run touched were `raw.githubusercontent.com` (Ghostery's prebuilt lists, cached for a week) and `dns.quad9.net` (secure DNS). On Linux the log also shows `0.0.0.0`: Chromium still asks for a spell-check dictionary, at the address Hillium gives it instead of Google's, which goes nowhere.
+The only outside hosts a whole e2e run touched were `raw.githubusercontent.com` (Ghostery's prebuilt lists, cached for a week) and `dns.quad9.net` (secure DNS). On Linux the log also shows `0.0.0.0`: Chromium still asks for a spell-check dictionary, at the address Archium gives it instead of Google's, which goes nowhere.

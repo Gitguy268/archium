@@ -6,7 +6,7 @@ import { glass } from "./vendor/glass/liquid-glass.js";
 import { rank } from "./shared/fuzzy.js";
 import { looksLikeUrl, prettyUrl, ENGINES } from "./shared/omni.js";
 
-const api = window.hillium;
+const api = window.archium;
 const $ = (s) => document.querySelector(s);
 const mac = api.platform === "darwin";
 const isPrivate = new URLSearchParams(location.search).has("private");
@@ -28,7 +28,7 @@ const el = (tag, cls, html) => {
   return e;
 };
 const icon = (name) => `<svg><use href="#i-${name}" /></svg>`;
-const call = (channel, ...args) => api.invoke(`hillium:${channel}`, ...args);
+const call = (channel, ...args) => api.invoke(`archium:${channel}`, ...args);
 
 function letterFor(t) {
   const host = (() => {
@@ -74,7 +74,7 @@ function setFavicon(holder, t) {
   } else {
     img?.remove();
     if (!letter) holder.prepend((letter = el("span", "letter")));
-    letter.textContent = t.url?.startsWith("hillium:") ? "H" : letterFor(t);
+    letter.textContent = t.url?.startsWith("archium:") ? "H" : letterFor(t);
   }
 }
 
@@ -166,7 +166,7 @@ addEventListener("resize", reportLayout);
 
 // ---- rendering ----
 
-api.on("hillium:state", (next) => {
+api.on("archium:state", (next) => {
   const prevSpace = state?.spaceId;
   state = next;
   render(prevSpace);
@@ -239,14 +239,14 @@ function render(prevSpace) {
   $("#url-text").classList.toggle("has-url", Boolean(active));
   $("#url-text").title = active?.url ?? "";
   $("#url-copy").hidden = !active;
-  const secure = active && /^(https|hillium):/.test(active.url);
+  const secure = active && /^(https|archium):/.test(active.url);
   $("#url-site").innerHTML = icon(!active ? "search" : secure ? "lock" : "unlock");
   if (active?.blocked) $("#url-site").dataset.blocked = String(active.blocked > 99 ? "99+" : active.blocked);
   else delete $("#url-site").dataset.blocked;
   $("#btn-back").disabled = !active?.canGoBack;
   $("#btn-forward").disabled = !active?.canGoForward;
-  $("#retro-caption").textContent = active ? `${active.title} - Hillium` : "Hillium";
-  document.title = active ? `${active.title} – Hillium` : "Hillium";
+  $("#retro-caption").textContent = active ? `${active.title} - Archium` : "Archium";
+  document.title = active ? `${active.title} – Archium` : "Archium";
 
   renderFavourites();
   renderSpace(space, prevSpace);
@@ -529,7 +529,7 @@ $("#sidebar").addEventListener("mouseleave", () => {
 
 // ---- drag and drop ----
 
-const DRAG_TYPE = "application/x-hillium-tab";
+const DRAG_TYPE = "application/x-archium-tab";
 
 document.addEventListener("dragstart", (e) => {
   const tab = e.target.closest?.(".tab, .fav");
@@ -908,7 +908,7 @@ $("#find-input").addEventListener("keydown", (e) => {
 $("#find-next").addEventListener("click", () => call("find", { text: $("#find-input").value, forward: true, findNext: true }));
 $("#find-prev").addEventListener("click", () => call("find", { text: $("#find-input").value, forward: false, findNext: true }));
 $("#find-close").addEventListener("click", closeFind);
-api.on("hillium:found", (r) => {
+api.on("archium:found", (r) => {
   $("#find-count").textContent = r.matches ? `${r.activeMatchOrdinal}/${r.matches}` : $("#find-input").value ? "0/0" : "";
 });
 
@@ -927,7 +927,7 @@ const PERMISSION_TEXT = {
   "window-management": "manage windows on your displays",
 };
 
-api.on("hillium:permission", (req) => {
+api.on("archium:permission", (req) => {
   ui.permissions.push(req);
   showPermission();
 });
@@ -1014,7 +1014,7 @@ function openSitePanel() {
     host = new URL(t.url).hostname;
   } catch {}
   const site = state.site ?? { adblock: true, cookies: true };
-  const secure = t.url.startsWith("https:") || t.url.startsWith("hillium:");
+  const secure = t.url.startsWith("https:") || t.url.startsWith("archium:");
   const title = Object.assign(el("h3"), { textContent: host || prettyUrl(t.url) });
   const conn = Object.assign(el("div", "muted"), { textContent: secure ? "Connection is secure." : "Connection is not secure: others on the network can see this page." });
   const blocked = Object.assign(el("div", "muted"), { textContent: `${t.blocked || 0} ads and trackers blocked on this page.` });
@@ -1146,7 +1146,7 @@ function openSpaceEditor(spaceId, anchor, { fresh = false } = {}) {
 
 // ---- messages from main ----
 
-api.on("hillium:command", ({ id }) => {
+api.on("archium:command", ({ id }) => {
   if (id === "new-tab") openCommand("new");
   else if (id === "edit-url") openCommand(activeTabInfo() ? "edit" : "new");
   else if (id === "find") (ui.find ? $("#find-input").focus() : openFind());
@@ -1154,7 +1154,7 @@ api.on("hillium:command", ({ id }) => {
 });
 
 let toastTimer = null;
-api.on("hillium:toast", ({ text, error }) => {
+api.on("archium:toast", ({ text, error }) => {
   const t = $("#toast");
   t.textContent = text;
   t.classList.toggle("error", Boolean(error));

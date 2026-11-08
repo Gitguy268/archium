@@ -7,8 +7,8 @@ body:
   - type: markdown
     attributes:
       value: |
-        **If a page can read Hillium's data, reach the agent socket or get around the privacy layer, do not report it here.**
-        Follow [SECURITY.md](https://github.com/Gitguy268/hillium/blob/HEAD/SECURITY.md) instead.
+        **If a page can read Archium's data, reach the agent socket or get around the privacy layer, do not report it here.**
+        Follow [SECURITY.md](https://github.com/Gitguy268/archium/blob/HEAD/SECURITY.md) instead.
 
   - type: textarea
     id: what
@@ -31,8 +31,8 @@ body:
   - type: input
     id: versions
     attributes:
-      label: Hillium version and system
-      placeholder: Hillium 0.1.0, Arch Linux (Wayland, GNOME 49) / macOS 27
+      label: Archium version and system
+      placeholder: Archium 0.1.0, Arch Linux (Wayland, GNOME 49) / macOS 27
     validations:
       required: true
 
@@ -40,7 +40,7 @@ body:
     id: console
     attributes:
       label: Anything in the terminal?
-      description: Start Hillium from a terminal (`hillium` on Linux) and paste anything that looks like an error.
+      description: Start Archium from a terminal (`archium` on Linux) and paste anything that looks like an error.
       render: text
 
   - type: checkboxes

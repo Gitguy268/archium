@@ -1,4 +1,4 @@
-// Runs in every web page's isolated world (never in hillium:// pages' main world).
+// Runs in every web page's isolated world (never in archium:// pages' main world).
 // - Tells pages about Global Privacy Control before their scripts run.
 // - ⌥-click on a link opens it in Glance instead of navigating.
 // - Other link clicks are noted, so a pinned tab can tell a click from a redirect.
@@ -20,10 +20,10 @@ window.addEventListener(
     if (!event.isTrusted || event.button !== 0) return;
     const link = event.target instanceof Element ? event.target.closest("a[href]") : null;
     if (!link || !/^https?:/.test(link.href)) return;
-    if (!event.altKey) return ipcRenderer.send("hillium:link-click", link.href);
+    if (!event.altKey) return ipcRenderer.send("archium:link-click", link.href);
     event.preventDefault();
     event.stopImmediatePropagation();
-    ipcRenderer.send("hillium:glance-link", link.href);
+    ipcRenderer.send("archium:glance-link", link.href);
   },
   true,
 );

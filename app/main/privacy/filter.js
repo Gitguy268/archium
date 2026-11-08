@@ -9,7 +9,7 @@ const LIST = JSON.parse(readFileSync(new URL("./url-cleaner.json", import.meta.u
 const EXACT = new Set(LIST.filter((p) => !p.endsWith("*")).map((p) => p.toLowerCase()));
 const PREFIXES = LIST.filter((p) => p.endsWith("*")).map((p) => p.slice(0, -1).toLowerCase());
 
-const INTERNAL = /^(hillium|devtools|chrome|chrome-extension|data|blob|file|about):/;
+const INTERNAL = /^(archium|devtools|chrome|chrome-extension|data|blob|file|about):/;
 const DOCUMENTS = new Set(["mainFrame", "subFrame"]);
 // High-entropy client hints: version, OS build, CPU and device details.
 const HIGH_ENTROPY_HINTS = [

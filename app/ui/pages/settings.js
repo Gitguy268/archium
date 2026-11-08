@@ -1,4 +1,4 @@
-// hillium://settings
+// archium://settings
 import { api, h, $ } from "./api.js";
 
 let data = null;
@@ -164,7 +164,7 @@ function archivebox() {
 }
 
 function agents() {
-  const cli = data.platform === "linux" ? "hillium-cli" : "node cli/hillium.mjs";
+  const cli = data.platform === "linux" ? "archium-cli" : "node cli/archium.mjs";
   return h(
     "div",
     { class: "card" },
@@ -279,7 +279,7 @@ async function main() {
       "div",
       { class: "card" },
       select("archiveAfterHours", "Archive Today tabs after", "Pinned tabs and favourites stay. Archived tabs are in the Library.", [[12, "12 hours"], [24, "24 hours"], [168, "7 days"], [0, "Never"]]),
-      select("linkSpace", "Links from other apps open in", "Space rules below come first.", [["", "Little Hillium"], ...data.spaces.map((x) => [x.id, `${x.icon} ${x.name}`])]),
+      select("linkSpace", "Links from other apps open in", "Space rules below come first.", [["", "Little Archium"], ...data.spaces.map((x) => [x.id, `${x.icon} ${x.name}`])]),
       toggle("downloadsAsk", "Ask where to save each download"),
     ),
 
@@ -317,11 +317,11 @@ async function main() {
       { class: "card" },
       row(
         "Default browser",
-        data.isDefault ? "Hillium opens your links." : "Links from other apps open in another browser.",
+        data.isDefault ? "Archium opens your links." : "Links from other apps open in another browser.",
         data.isDefault ? h("span", { class: "muted" }, "✓") : h("button", { class: "small", onclick: async () => toast((await api("default.set")) ? "Done" : "Your system didn't accept it; set it in its settings.") }, "Make default"),
       ),
       clearData(),
-      row("About", `Hillium ${data.version} · Electron ${data.electron} · Chromium ${data.chrome}. There's no fingerprint noise like Helium's or Brave's; use Tor Browser when you need to be anonymous.`, null),
+      row("About", `Archium ${data.version} · Electron ${data.electron} · Chromium ${data.chrome}. There's no fingerprint noise like Helium's or Brave's; use Tor Browser when you need to be anonymous.`, null),
     ),
   );
   if (location.hash === "#import") $("#import")?.scrollIntoView();

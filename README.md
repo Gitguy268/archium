@@ -1,19 +1,19 @@
-<p align="center"><img src="branding/hillium.svg" width="96" alt="Hillium logo"></p>
+<p align="center"><img src="branding/archium.svg" width="96" alt="Archium logo"></p>
 
-<h1 align="center">Hillium</h1>
+<h1 align="center">Archium</h1>
 
 <p align="center">An Arc and Zen style browser with Helium's privacy defaults, for Linux (Arch) and macOS.</p>
 
-<p align="center"><img src="docs/img/arc.png" alt="Hillium with the Arc look: a purple space gradient, the sidebar with favourites, pinned and Today tabs, and a page as a rounded card" width="900"></p>
+<p align="center"><img src="docs/img/arc.png" alt="Archium with the Arc look: a purple space gradient, the sidebar with favourites, pinned and Today tabs, and a page as a rounded card" width="900"></p>
 
-Hillium puts your tabs in a sidebar on a coloured space, the way Arc and Zen do. Favourites sit on top, pinned tabs and folders under them, and today's tabs below; those clear themselves after a while. ⌘T opens a liquid-glass command bar that searches every tab in every space. Privacy works like Helium: ads and trackers are blocked, nothing goes to Google, HTTPS comes first, and third parties get no cookies.
+Archium puts your tabs in a sidebar on a coloured space, the way Arc and Zen do. Favourites sit on top, pinned tabs and folders under them, and today's tabs below; those clear themselves after a while. ⌘T opens a liquid-glass command bar that searches every tab in every space. Privacy works like Helium: ads and trackers are blocked, nothing goes to Google, HTTPS comes first, and third parties get no cookies.
 
 It runs on Electron's Chromium rather than a Helium build. [docs/helium-parity.md](docs/helium-parity.md) lists which Helium defaults that covers and which it doesn't.
 
 <p align="center"><img src="docs/img/demo.gif" alt="Animated demo: the command bar finds a tab in another space, a link opens in Glance, two pages go side by side" width="900"></p>
 
 <!-- live-links -->
-**Live:** [gitguy268.github.io/hillium](https://gitguy268.github.io/hillium/) · [hillium.vercel.app](https://hillium.vercel.app)
+**Live:** [gitguy268.github.io/archium](https://gitguy268.github.io/archium/) · [archium-pied.vercel.app](https://archium-pied.vercel.app)
 <!-- /live-links -->
 
 <!-- run-steps:start -->
@@ -24,8 +24,8 @@ It runs on Electron's Chromium rather than a Helium build. [docs/helium-parity.m
 2. **Get the code:**
 
    ```sh
-   git clone https://github.com/Gitguy268/hillium.git
-   cd hillium
+   git clone https://github.com/Gitguy268/archium.git
+   cd archium
    ```
 
 3. **Start it:**
@@ -46,17 +46,17 @@ It runs on Electron's Chromium rather than a Helium build. [docs/helium-parity.m
 **Arch Linux**
 
 ```sh
-git clone https://github.com/Gitguy268/hillium && cd hillium/app
-npm ci && npm run dist:linux                 # dist/hillium-0.1.0-x64.tar.gz (and -arm64)
-cp dist/hillium-*.tar.gz ../packaging/arch/ && cd ../packaging/arch
-makepkg -si                                  # installs hillium-bin: /usr/bin/hillium, hillium-cli
+git clone https://github.com/Gitguy268/archium && cd archium/app
+npm ci && npm run dist:linux                 # dist/archium-0.1.0-x64.tar.gz (and -arm64)
+cp dist/archium-*.tar.gz ../packaging/arch/ && cd ../packaging/arch
+makepkg -si                                  # installs archium-bin: /usr/bin/archium, archium-cli
 ```
 
-Hillium starts on Wayland when there is one and on X11 otherwise. Extra Chromium flags go in `~/.config/hillium-flags.conf`, one per line. To make it the default browser: Settings › System › Make default, or `xdg-settings set default-web-browser hillium.desktop`.
+Archium starts on Wayland when there is one and on X11 otherwise. Extra Chromium flags go in `~/.config/archium-flags.conf`, one per line. To make it the default browser: Settings › System › Make default, or `xdg-settings set default-web-browser archium.desktop`.
 
 **macOS**
 
-Double-click `app/start.command`, or run `cd app && npm ci && npm start` (Node 24). The first run installs Electron and the ad blocker, about 350 MB. `npm run dist:mac` builds an unsigned `Hillium.app` in `app/dist/`.
+Double-click `app/start.command`, or run `cd app && npm ci && npm start` (Node 24). The first run installs Electron and the ad blocker, about 350 MB. `npm run dist:mac` builds an unsigned `Archium.app` in `app/dist/`.
 
 **Import** your spaces from Arc or Zen, or bookmarks from Chrome, Brave, Helium, Vivaldi or Chromium, in Settings › Import.
 
@@ -72,10 +72,10 @@ Double-click `app/start.command`, or run `cd app && npm ci && npm start` (Node 2
 | **Split view** | Up to four pages side by side. Drag a tab onto the page, or ⌃⇧= |
 | **Compact mode** | ⌘S hides the sidebar; move to the left edge and it slides over the page |
 | **Boosts and Zap** | Your own CSS, JavaScript and font per site, and click-to-hide for anything on a page |
-| **Little Hillium** | Links from other apps open in a small window; one click moves the page into your main window. Space rules send matching links straight to a space |
+| **Little Archium** | Links from other apps open in a small window; one click moves the page into your main window. Space rules send matching links straight to a space |
 | **Library** | Archived tabs, history, downloads, ArchiveBox copies and Boosts |
 | **Looks** | Arc, Zen, Liquid Glass and Retro 98 |
-| **Agents** | The `hillium` CLI and an MCP server let AI apps list, open and read your tabs, if you turn it on. Private windows stay invisible |
+| **Agents** | The `archium` CLI and an MCP server let AI apps list, open and read your tabs, if you turn it on. Private windows stay invisible |
 
 <details>
 <summary><b>The four looks</b></summary>
@@ -103,7 +103,7 @@ The glass is real refraction: an SVG displacement map computed for each panel's 
 
 - **Partitioning:** caches, connections and storage are kept per site, so a tracker embedded on two sites can't recognise you through them.
 
-On a subset of [privacytests.org](https://privacytests.org)'s tests Hillium passes 67 of 76; Electron with its defaults passes 11 of 63. [docs/privacy-results.md](docs/privacy-results.md) has the table, including what still fails: the CSS, font, image, script, prefetch and favicon caches, `document.referrer`, `window.name`, and "Tor enabled" (there's no Tor).
+On a subset of [privacytests.org](https://privacytests.org)'s tests Archium passes 67 of 76; Electron with its defaults passes 11 of 63. [docs/privacy-results.md](docs/privacy-results.md) has the table, including what still fails: the CSS, font, image, script, prefetch and favicon caches, `document.referrer`, `window.name`, and "Tor enabled" (there's no Tor).
 
 </details>
 
@@ -126,7 +126,7 @@ On Linux, ⌘ is Ctrl, ⌥ is Alt, and spaces use Alt+1–9.
 | Copy address | ⇧⌘C |
 | Archive page in ArchiveBox | ⇧⌘S |
 | Zap an element / boost this site | ⌥⌘Z / ⌥⌘B |
-| New window / private window / Little Hillium | ⌘N / ⇧⌘N / ⌥⌘N |
+| New window / private window / Little Archium | ⌘N / ⇧⌘N / ⌥⌘N |
 | Library / settings | ⌘Y / ⌘, |
 
 </details>
@@ -134,16 +134,16 @@ On Linux, ⌘ is Ctrl, ⌥ is Alt, and spaces use Alt+1–9.
 <details>
 <summary><b>The CLI and AI agents</b></summary>
 
-Turn on Settings › Agents › "Allow the CLI and AI agents". Hillium then listens on a Unix socket in its profile folder that only you can open.
+Turn on Settings › Agents › "Allow the CLI and AI agents". Archium then listens on a Unix socket in its profile folder that only you can open.
 
 ```sh
-hillium-cli tabs                      # (node cli/hillium.mjs on macOS)
-hillium-cli open https://example.com --space Work
-hillium-cli text                      # the active page's text
-hillium-cli tabs --json               # everything has --json
+archium-cli tabs                      # (node cli/archium.mjs on macOS)
+archium-cli open https://example.com --space Work
+archium-cli text                      # the active page's text
+archium-cli tabs --json               # everything has --json
 ```
 
-For Claude, Cursor or another MCP client, add a stdio server that runs `hillium-cli mcp`. It offers `list_tabs`, `open_tab`, `get_page_text`, `get_page_links`, `click`, `type_text`, `screenshot`, `search_history`, `archive_page` and a few more.
+For Claude, Cursor or another MCP client, add a stdio server that runs `archium-cli mcp`. It offers `list_tabs`, `open_tab`, `get_page_text`, `get_page_links`, `click`, `type_text`, `screenshot`, `search_history`, `archive_page` and a few more.
 
 </details>
 
@@ -157,7 +157,7 @@ Point Settings › ArchiveBox at your [ArchiveBox](https://github.com/ArchiveBox
 <details>
 <summary><b>How it fits together</b></summary>
 
-See [docs/architecture.md](docs/architecture.md). In short: a transparent window UI, one Chromium view per visible tab placed in the card, a single request filter per session, `hillium://` pages with a token-checked API, and a plain-data model of spaces and tabs that the tests drive directly. Security: [docs/security.md](docs/security.md).
+See [docs/architecture.md](docs/architecture.md). In short: a transparent window UI, one Chromium view per visible tab placed in the card, a single request filter per session, `archium://` pages with a token-checked API, and a plain-data model of spaces and tabs that the tests drive directly. Security: [docs/security.md](docs/security.md).
 
 </details>
 
@@ -185,4 +185,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Credits and licence
 
-MIT, © Lucas Van De Weerd. The files in `app/ui/vendor/zen/` come from [Zen](https://github.com/zen-browser/desktop) and stay MPL-2.0; `app/ui/vendor/glass/` is MIT by Archis Vaze. [NOTICE](NOTICE) lists everything Hillium uses and every project it took ideas from. Hillium isn't affiliated with The Browser Company, Zen, imputnet (Helium), Brave or Ghostery.
+MIT, © Lucas Van De Weerd. The files in `app/ui/vendor/zen/` come from [Zen](https://github.com/zen-browser/desktop) and stay MPL-2.0; `app/ui/vendor/glass/` is MIT by Archis Vaze. [NOTICE](NOTICE) lists everything Archium uses and every project it took ideas from. Archium isn't affiliated with The Browser Company, Zen, imputnet (Helium), Brave or Ghostery.

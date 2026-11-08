@@ -2,7 +2,7 @@
 // From archisvaze/liquid-glass (MIT, Copyright (c) 2026 Archis Vaze, see LICENSE here),
 // index.html at commit fbeb99ef5e8dad2cbbc991ffc23e186a28dc01c4: the surface functions, the
 // refraction profile, the displacement and specular maps and the filter markup. Changed for
-// Hillium: wrapped as glass(element, options) with a ResizeObserver, one filter per element,
+// Archium: wrapped as glass(element, options) with a ResizeObserver, one filter per element,
 // and the controls' values as option defaults. Chromium only (SVG in backdrop-filter).
 
 const SURFACE_FNS = {
@@ -170,7 +170,7 @@ function svgDefs() {
 // Returns a function that removes it again.
 export function glass(element, options = {}) {
   const o = { ...DEFAULTS, ...options };
-  const id = `hillium-glass-${++count}`;
+  const id = `archium-glass-${++count}`;
   const holder = document.createElementNS("http://www.w3.org/2000/svg", "g");
   svgDefs().append(holder);
   let last = "";

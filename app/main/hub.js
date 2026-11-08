@@ -1,14 +1,14 @@
 // The running browser: the model, every loaded tab view, the windows, history and downloads.
-// The window UI (ipc.js), the menu, the hillium:// pages, the CLI and agents (control.js) all
+// The window UI (ipc.js), the menu, the archium:// pages, the CLI and agents (control.js) all
 // act through these methods, so they behave the same whichever one asks.
 import { app, Menu, clipboard, session as electronSession, shell } from "electron";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { existsSync } from "node:fs";
 import { Model, emptyState } from "./model.js";
-import { HilliumWindow } from "./window.js";
+import { ArchiumWindow } from "./window.js";
 import { createWebView, wasClicked, sameSite } from "./tabs.js";
-import { handleScheme, isHilliumUrl } from "./protocol.js";
+import { handleScheme, isArchiumUrl } from "./protocol.js";
 import { prepareSession, partitionFor } from "./privacy/sessions.js";
 import { hostOf } from "./privacy/filter.js";
 import { Boosts } from "./boosts.js";
@@ -36,7 +36,7 @@ export class Hub {
     this.privateCount = 0;
     this.pushTimer = null;
     this.boosts = new Boosts(stores.boosts);
-    this.uiSession = electronSession.fromPartition("hillium-ui");
+    this.uiSession = electronSession.fromPartition("archium-ui");
     handleScheme(this.uiSession, { chrome: true });
   }
 
@@ -82,10 +82,10 @@ export class Hub {
       Object.assign(model.data.spaces[0], { name: "Private", icon: "◐", colors: [[40, 40, 52], [88, 72, 140]] });
       model.data.lastTab = {};
       model.private = true;
-      model.partition = `hillium-private-${++this.privateCount}`;
+      model.partition = `archium-private-${++this.privateCount}`;
       model.onChange(() => this.schedulePush());
     }
-    const win = new HilliumWindow(this, { model, isPrivate, spaceId, bounds, uiSession: this.uiSession });
+    const win = new ArchiumWindow(this, { model, isPrivate, spaceId, bounds, uiSession: this.uiSession });
     this.windows.add(win);
     this.lastFocused = win;
     const last = model.data.lastTab?.[win.spaceId];
@@ -135,7 +135,7 @@ export class Hub {
 
   pushState(win) {
     if (win.closed) return;
-    win.send("hillium:state", this.viewModel(win));
+    win.send("archium:state", this.viewModel(win));
   }
 
   tabInfo(win, id) {
@@ -220,7 +220,7 @@ export class Hub {
       splitWith: (url) => win() && this.splitWith(win(), id, url),
       onNavigate: (url) => {
         const e = entry();
-        if (!e || url.startsWith("hillium://error")) return;
+        if (!e || url.startsWith("archium://error")) return;
         e.model.update(id, { url });
         e.runtime.blocked = 0;
         if (!e.model.private) this.addHistory(url, e.model.tab(id)?.title ?? "");
@@ -243,7 +243,7 @@ export class Hub {
         this.schedulePush();
       },
       onFail: ({ code, description, url }) => this.showError(entry()?.view.webContents, { code, description, url }),
-      onFound: (result) => win()?.send("hillium:found", result),
+      onFound: (result) => win()?.send("archium:found", result),
       onInput: (event, input) => win() && this.onInput(win(), event, input, entry().view.webContents),
       // Links clicked in a pinned tab or favourite that lead to another site open in Glance (Arc's Peek).
       guardNavigation: (target, wc) => {
@@ -254,7 +254,7 @@ export class Hub {
         return true;
       },
       menuExtras: () => [
-        { label: "Boost This Site…", click: () => win() && this.openPage(win(), `hillium://library/#boosts=${encodeURIComponent(hostOf(entry().view.webContents.getURL()))}`) },
+        { label: "Boost This Site…", click: () => win() && this.openPage(win(), `archium://library/#boosts=${encodeURIComponent(hostOf(entry().view.webContents.getURL()))}`) },
         { label: "Zap an Element", click: () => this.zap(id) },
         { type: "separator" },
       ],
@@ -418,7 +418,7 @@ export class Hub {
 
   openPage(win, url) {
     const m = win.model;
-    for (const id of m.allTabIds()) if (m.tab(id)?.url.split("#")[0] === url.split("#")[0] && isHilliumUrl(url)) {
+    for (const id of m.allTabIds()) if (m.tab(id)?.url.split("#")[0] === url.split("#")[0] && isArchiumUrl(url)) {
       this.activate(win, id);
       const wc = this.views.get(id)?.view.webContents;
       if (wc && wc.getURL() !== url) wc.loadURL(url);
@@ -552,7 +552,7 @@ export class Hub {
       return;
     }
     const sourceWc = this.webContentsOf(win, sourceId);
-    const ses = sourceWc?.session ?? this.session(win.model.private ? win.model.partition : "persist:hillium");
+    const ses = sourceWc?.session ?? this.session(win.model.private ? win.model.partition : "persist:archium");
     const hooks = {
       openTab: (target) => this.newTab(win, target),
       onNavigate: (target) => win.glance && (win.glance.url = target) && this.schedulePush(),
@@ -692,7 +692,7 @@ export class Hub {
     if (!this.settings.searchSuggestions || !query.trim()) return [];
     try {
       const url = `https://duckduckgo.com/ac/?type=list&q=${encodeURIComponent(query)}`;
-      const res = await this.session("persist:hillium").fetch(url, { headers: { accept: "application/json" } });
+      const res = await this.session("persist:archium").fetch(url, { headers: { accept: "application/json" } });
       const data = await res.json();
       return (data?.[1] ?? []).slice(0, 5);
     } catch {
@@ -703,10 +703,10 @@ export class Hub {
   // ---- errors ----
 
   showError(wc, { code, description, url }) {
-    if (!wc || wc.isDestroyed() || isHilliumUrl(url)) return;
+    if (!wc || wc.isDestroyed() || isArchiumUrl(url)) return;
     const upgraded = Boolean(wc.session.wasUpgraded?.(url));
     const q = new URLSearchParams({ code: String(code), desc: description ?? "", url: url ?? "", https: upgraded ? "1" : "" });
-    wc.loadURL(`hillium://error/?${q}`).catch(() => {});
+    wc.loadURL(`archium://error/?${q}`).catch(() => {});
   }
 
   allowHttp(host) {
@@ -732,7 +732,7 @@ export class Hub {
       const id = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
       this.pendingPermissions.set(id, { resolve, origin, permission, isPrivate: win.isPrivate });
       if (entry.id !== win.activeTab) this.activate(win, entry.id);
-      win.send("hillium:permission", { id, origin, permission });
+      win.send("archium:permission", { id, origin, permission });
     });
   }
 

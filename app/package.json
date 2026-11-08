@@ -1,11 +1,11 @@
 {
-  "name": "hillium",
+  "name": "archium",
   "version": "0.1.0",
   "private": true,
-  "description": "Hillium: an Arc and Zen style browser with Helium's privacy defaults, built on Electron.",
+  "description": "Archium: an Arc and Zen style browser with Helium's privacy defaults, built on Electron.",
   "license": "MIT",
   "author": "Lucas Van De Weerd",
-  "homepage": "https://github.com/Gitguy268/hillium",
+  "homepage": "https://github.com/Gitguy268/archium",
   "type": "module",
   "main": "main/main.js",
   "engines": {
@@ -30,11 +30,11 @@
     "electron-builder": "26.17.0"
   },
   "build": {
-    "appId": "org.hillium.browser",
-    "productName": "Hillium",
-    "executableName": "hillium",
+    "appId": "org.archium.browser",
+    "productName": "Archium",
+    "executableName": "archium",
     "copyright": "Copyright (c) 2026 Lucas Van De Weerd. MIT, with MPL-2.0 files from Zen in ui/vendor/zen.",
-    "artifactName": "hillium-${version}-${arch}.${ext}",
+    "artifactName": "archium-${version}-${arch}.${ext}",
     "asar": false,
     "npmRebuild": false,
     "directories": {
@@ -78,7 +78,7 @@
       }
     ],
     "mac": {
-      "icon": "../branding/hillium.icns",
+      "icon": "../branding/archium.icns",
       "category": "public.app-category.productivity",
       "identity": null,
       "target": [
@@ -112,11 +112,11 @@
       "maintainer": "Lucas Van De Weerd",
       "desktop": {
         "entry": {
-          "Name": "Hillium",
+          "Name": "Archium",
           "GenericName": "Web Browser",
           "Categories": "Network;WebBrowser;",
           "MimeType": "text/html;application/xhtml+xml;x-scheme-handler/http;x-scheme-handler/https;",
-          "StartupWMClass": "Hillium",
+          "StartupWMClass": "Archium",
           "Keywords": "web;browser;internet;arc;zen;"
         }
       }

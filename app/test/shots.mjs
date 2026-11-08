@@ -18,21 +18,21 @@ const { _electron } = require(process.env.PLAYWRIGHT ?? "playwright");
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 mkdirSync(OUT, { recursive: true });
-const userData = mkdtempSync(join(tmpdir(), "hillium-shots-"));
+const userData = mkdtempSync(join(tmpdir(), "archium-shots-"));
 writeFileSync(join(userData, "settings.json"), JSON.stringify({ sidebarWidth: 260 }));
 const app = await _electron.launch({
   executablePath: require("electron"),
   args: [APP],
-  env: { ...process.env, HILLIUM_TEST: "1", HILLIUM_USER_DATA: userData, HILLIUM_WAIT_ADBLOCK: "1" },
+  env: { ...process.env, ARCHIUM_TEST: "1", ARCHIUM_USER_DATA: userData, ARCHIUM_WAIT_ADBLOCK: "1" },
 });
 await app.firstWindow();
 await sleep(1500);
 const main = (fn, arg) => app.evaluate(fn, arg);
-const ui = app.windows().find((p) => p.url().startsWith("hillium://chrome"));
+const ui = app.windows().find((p) => p.url().startsWith("archium://chrome"));
 
 // The demo profile: three spaces, favourites, a folder of pinned tabs and some Today tabs.
 await main(async () => {
-  const hub = globalThis.__hillium;
+  const hub = globalThis.__archium;
   const w = [...hub.windows][0];
   w.base.setContentSize(1440, 900);
   const m = w.model;
@@ -72,21 +72,21 @@ const shot = async (name) => {
 };
 await shot("arc");
 for (const look of ["zen", "glass", "retro"]) {
-  await main((_, l) => globalThis.__hillium.saveSettings({ look: l }), look);
+  await main((_, l) => globalThis.__archium.saveSettings({ look: l }), look);
   await shot(`look-${look}`);
 }
-await main(() => globalThis.__hillium.saveSettings({ look: "arc" }));
+await main(() => globalThis.__archium.saveSettings({ look: "arc" }));
 await sleep(800);
 
 // The animated demo: frames composed from capturePage, joined by ffmpeg.
-const frames = mkdtempSync(join(tmpdir(), "hillium-frames-"));
+const frames = mkdtempSync(join(tmpdir(), "archium-frames-"));
 let n = 0;
 const frame = async (repeat = 1) => {
   const png = await composeWindow(app);
   for (let i = 0; i < repeat; i++) writeFileSync(join(frames, `f${String(n++).padStart(4, "0")}.png`), png);
 };
 await frame(6);
-await main(() => [...globalThis.__hillium.windows][0].send("hillium:command", { id: "new-tab" }));
+await main(() => [...globalThis.__archium.windows][0].send("archium:command", { id: "new-tab" }));
 await sleep(600);
 await frame(3);
 for (const ch of "electron") {
@@ -99,14 +99,14 @@ await ui.keyboard.press("Enter");
 await sleep(2500);
 await frame(6);
 await main(() => {
-  const hub = globalThis.__hillium;
+  const hub = globalThis.__archium;
   const w = [...hub.windows][0];
   hub.openGlance(w, "https://www.electronjs.org/docs/latest/api/base-window");
 });
 await sleep(3500);
 await frame(8);
 await main(() => {
-  const hub = globalThis.__hillium;
+  const hub = globalThis.__archium;
   const w = [...hub.windows][0];
   hub.expandGlance(w, { split: true });
 });

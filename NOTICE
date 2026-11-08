@@ -1,14 +1,14 @@
-Hillium
+Archium
 Copyright (c) 2026 Lucas Van De Weerd. MIT, see LICENSE.
 
-Hillium is an Arc and Zen style browser built on Electron, with Helium's privacy
+Archium is an Arc and Zen style browser built on Electron, with Helium's privacy
 defaults. It is not affiliated with The Browser Company (Arc, Dia), the Zen Browser
 project, imputnet (Helium), Brave, Vivaldi, Ghostery, Google or Microsoft. "Arc",
 "Zen", "Helium" and the other names here are their owners' trademarks and are used
 only to describe where ideas came from.
 
 Arc is closed source. Nothing from Arc's app was decompiled, copied or reused:
-Hillium's Arc-style features are rebuilt from how Arc behaves in public, and its Arc
+Archium's Arc-style features are rebuilt from how Arc behaves in public, and its Arc
 importer reads the user's own StorableSidebar.json, read-only.
 
 FILES COPIED FROM OTHER PROJECTS (each keeps its licence)
@@ -47,8 +47,8 @@ electron-builder (build only) — MIT — https://github.com/electron-userland/e
 
 IDEAS, NO CODE
 --------------
-These projects shaped Hillium, but none of their code or assets is in it.
-  Helium (imputnet/helium, helium-linux) — GPL-3.0: the privacy defaults Hillium
+These projects shaped Archium, but none of their code or assets is in it.
+  Helium (imputnet/helium, helium-linux) — GPL-3.0: the privacy defaults Archium
     copies at the Electron level (no Google services, built-in blocking, HTTPS first,
     DoH presets). docs/helium-parity.md lists them.
   ungoogled-chromium — BSD-3-Clause: Helium's base, and the idea of no Google traffic.

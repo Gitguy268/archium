@@ -11,7 +11,7 @@ test("the command bar tells addresses from searches", () => {
   assert.equal(toUrl("example.com"), "https://example.com");
   assert.equal(toUrl("localhost:3000/x"), "http://localhost:3000/x");
   assert.equal(toUrl("192.168.1.1"), "http://192.168.1.1");
-  assert.equal(toUrl("hillium://settings"), "hillium://settings");
+  assert.equal(toUrl("archium://settings"), "archium://settings");
   assert.equal(toUrl("what is arc"), searchUrl("what is arc"));
   assert.equal(toUrl("arc", "brave"), "https://search.brave.com/search?q=arc");
   assert.equal(toUrl("  "), null);
@@ -50,7 +50,7 @@ test("ArchiveBox: the add call, its key, and refusals", async () => {
   const denied = async () => ({ ok: false, status: 403, json: async () => ({}) });
   await assert.rejects(archive({ url: "http://x", token: "" }, "https://a.example/", { fetchImpl: denied }), /refused/);
   await assert.rejects(archive({ url: "" }, "https://a.example/"), /Settings/);
-  await assert.rejects(archive({ url: "http://x" }, "hillium://settings/"), /web pages/);
+  await assert.rejects(archive({ url: "http://x" }, "archium://settings/"), /web pages/);
   assert.throws(() => normalizeBase("ftp://x"));
 });
 
@@ -70,5 +70,5 @@ test("boosts: zapped elements, font and CSS become one stylesheet", () => {
 test("the user agent is plain Chrome", () => {
   const ua = chromeUserAgent("linux", "142.0.7444.59");
   assert.equal(ua, "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36");
-  assert.doesNotMatch(chromeUserAgent("darwin", "142.1"), /Electron|Hillium/);
+  assert.doesNotMatch(chromeUserAgent("darwin", "142.1"), /Electron|Archium/);
 });

@@ -1,12 +1,12 @@
 # Contributing
 
-Thanks for helping with Hillium.
+Thanks for helping with Archium.
 
 By taking part you agree to the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## Reporting a bug or asking for a feature
 
-Open an [issue](https://github.com/Gitguy268/hillium/issues/new/choose) and use the template. Say which look you use and your system.
+Open an [issue](https://github.com/Gitguy268/archium/issues/new/choose) and use the template. Say which look you use and your system.
 
 Report security problems privately: see [SECURITY.md](SECURITY.md).
 
@@ -32,10 +32,10 @@ CI runs lint, the unit tests, shellcheck and a Linux build. The end-to-end tests
 
 Ground rules:
 - **One webRequest listener per session.** Electron keeps only the last one, so everything goes through `main/privacy/filter.js`.
-- **Pages in tabs get no Node and no preload.** `hillium://` pages talk to main through the token-checked API in `main/protocol.js`.
+- **Pages in tabs get no Node and no preload.** `archium://` pages talk to main through the token-checked API in `main/protocol.js`.
 - **Agents never see private windows.** `main/agent.js` only reaches the normal model.
 - **No request to Google** in normal use. The e2e test checks the network log.
 
 ## Licences
 
-Hillium is MIT (see [LICENSE](LICENSE)), and your contribution is accepted under the same licence. Files in `app/ui/vendor/zen/` are MPL-2.0: changes to them stay MPL-2.0. Don't add libraries, fonts or images unless their licence allows redistribution, and list each one in [NOTICE](NOTICE) in the same pull request. Don't copy code from GPL or unlicensed projects; credit ideas under "Ideas, no code" in NOTICE.
+Archium is MIT (see [LICENSE](LICENSE)), and your contribution is accepted under the same licence. Files in `app/ui/vendor/zen/` are MPL-2.0: changes to them stay MPL-2.0. Don't add libraries, fonts or images unless their licence allows redistribution, and list each one in [NOTICE](NOTICE) in the same pull request. Don't copy code from GPL or unlicensed projects; credit ideas under "Ideas, no code" in NOTICE.

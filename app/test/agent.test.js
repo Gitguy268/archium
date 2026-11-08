@@ -46,7 +46,7 @@ test("tabs.open takes http(s) only", () => {
   const { hub } = fakeHub();
   const m = agentMethods(hub);
   assert.throws(() => m["tabs.open"]({ url: "file:///etc/passwd" }), /http/);
-  assert.throws(() => m["tabs.open"]({ url: "hillium://settings/" }), /http/);
+  assert.throws(() => m["tabs.open"]({ url: "archium://settings/" }), /http/);
   assert.equal(m["tabs.open"]({ url: "https://new.example/", background: true }).url, "https://new.example/");
 });
 

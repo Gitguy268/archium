@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-// hillium: drive a running Hillium from a terminal or an AI agent (the CLI-Anything idea:
-// every command has --json output). `hillium mcp` is a Model Context Protocol server on
-// stdio for Claude, Cursor and other MCP clients. Both talk to Hillium over its control
+// archium: drive a running Archium from a terminal or an AI agent (the CLI-Anything idea:
+// every command has --json output). `archium mcp` is a Model Context Protocol server on
+// stdio for Claude, Cursor and other MCP clients. Both talk to Archium over its control
 // socket, which is off until you turn on Settings › Agents › "Allow the CLI and AI agents".
-// Needs nothing but Node 20 (or Hillium's own binary with ELECTRON_RUN_AS_NODE=1).
+// Needs nothing but Node 20 (or Archium's own binary with ELECTRON_RUN_AS_NODE=1).
 import { connect } from "node:net";
 import { readFileSync } from "node:fs";
 import { homedir } from "node:os";
@@ -12,10 +12,10 @@ import { join } from "node:path";
 const VERSION = "0.1.0";
 
 export function userDataDir(env = process.env, platform = process.platform) {
-  if (env.HILLIUM_USER_DATA) return env.HILLIUM_USER_DATA;
-  if (platform === "darwin") return join(homedir(), "Library/Application Support/Hillium");
-  if (platform === "win32") return join(env.APPDATA ?? join(homedir(), "AppData/Roaming"), "Hillium");
-  return join(env.XDG_CONFIG_HOME || join(homedir(), ".config"), "Hillium");
+  if (env.ARCHIUM_USER_DATA) return env.ARCHIUM_USER_DATA;
+  if (platform === "darwin") return join(homedir(), "Library/Application Support/Archium");
+  if (platform === "win32") return join(env.APPDATA ?? join(homedir(), "AppData/Roaming"), "Archium");
+  return join(env.XDG_CONFIG_HOME || join(homedir(), ".config"), "Archium");
 }
 
 // One request over the socket; resolves with the result or rejects with the error text.
@@ -24,9 +24,9 @@ export function request(method, params = {}, { dir = userDataDir() } = {}) {
   try {
     token = readFileSync(join(dir, "control.token"), "utf8").trim();
   } catch {
-    return Promise.reject(new Error("Hillium's agent access is off. Turn it on in Settings › Agents (and keep Hillium running)."));
+    return Promise.reject(new Error("Archium's agent access is off. Turn it on in Settings › Agents (and keep Archium running)."));
   }
-  const path = process.platform === "win32" ? "\\\\.\\pipe\\hillium-control" : join(dir, "control.sock");
+  const path = process.platform === "win32" ? "\\\\.\\pipe\\archium-control" : join(dir, "control.sock");
   return new Promise((resolve, reject) => {
     const socket = connect(path);
     let buffer = "";
@@ -41,7 +41,7 @@ export function request(method, params = {}, { dir = userDataDir() } = {}) {
       reply.error ? reject(new Error(reply.error)) : resolve(reply.result);
     });
     socket.on("error", (e) =>
-      reject(new Error(e.code === "ENOENT" || e.code === "ECONNREFUSED" ? "Hillium isn't running, or agent access is off (Settings › Agents)." : e.message)),
+      reject(new Error(e.code === "ENOENT" || e.code === "ECONNREFUSED" ? "Archium isn't running, or agent access is off (Settings › Agents)." : e.message)),
     );
   });
 }
@@ -49,7 +49,7 @@ export function request(method, params = {}, { dir = userDataDir() } = {}) {
 // ---- MCP over stdio (JSON-RPC 2.0, one message per line) ----
 
 const TOOLS = [
-  { name: "list_spaces", method: "spaces.list", description: "List Hillium's spaces (like Arc spaces) with their tab counts.", props: {} },
+  { name: "list_spaces", method: "spaces.list", description: "List Archium's spaces (like Arc spaces) with their tab counts.", props: {} },
   { name: "list_tabs", method: "tabs.list", description: "List open, pinned and favourite tabs: id, title, url, space, whether it's loaded and active.", props: { space: { type: "string", description: "Only this space (name or id)" } } },
   { name: "open_tab", method: "tabs.open", description: "Open a web address in a new tab.", props: { url: { type: "string" }, space: { type: "string" }, background: { type: "boolean" } }, required: ["url"] },
   { name: "focus_tab", method: "tabs.focus", description: "Switch to a tab.", props: { id: { type: "string" } }, required: ["id"] },
@@ -81,8 +81,8 @@ export async function handleMcp(msg, send = request) {
       return reply({
         protocolVersion: msg.params?.protocolVersion ?? "2025-06-18",
         capabilities: { tools: {} },
-        serverInfo: { name: "hillium", version: VERSION },
-        instructions: "Controls the user's Hillium browser. Private windows are never visible. Ask before closing tabs.",
+        serverInfo: { name: "archium", version: VERSION },
+        instructions: "Controls the user's Archium browser. Private windows are never visible. Ask before closing tabs.",
       });
     case "ping":
       return reply({});
@@ -129,21 +129,21 @@ function serveMcp() {
 
 // ---- the command line ----
 
-const HELP = `hillium ${VERSION}: drive a running Hillium
+const HELP = `archium ${VERSION}: drive a running Archium
 
-  hillium spaces                      list spaces
-  hillium tabs [--space NAME]         list tabs
-  hillium open URL [--space NAME] [--background]
-  hillium focus ID | close ID
-  hillium text [ID]                   the page's text
-  hillium links [ID]                  the page's links
-  hillium history [QUERY]
-  hillium archive [URL]               save to your ArchiveBox
-  hillium import arc|zen|chrome|brave|helium|vivaldi [--today]
-  hillium mcp                         MCP server on stdio, for AI agents
+  archium spaces                      list spaces
+  archium tabs [--space NAME]         list tabs
+  archium open URL [--space NAME] [--background]
+  archium focus ID | close ID
+  archium text [ID]                   the page's text
+  archium links [ID]                  the page's links
+  archium history [QUERY]
+  archium archive [URL]               save to your ArchiveBox
+  archium import arc|zen|chrome|brave|helium|vivaldi [--today]
+  archium mcp                         MCP server on stdio, for AI agents
 
   --json   machine-readable output
-Needs Settings › Agents › "Allow the CLI and AI agents" in Hillium.`;
+Needs Settings › Agents › "Allow the CLI and AI agents" in Archium.`;
 
 function parse(argv) {
   const flags = {};
@@ -209,9 +209,9 @@ export async function main(argv = process.argv.slice(2)) {
   try {
     print(await run(), flags.json);
   } catch (e) {
-    console.error(`hillium: ${e.message}`);
+    console.error(`archium: ${e.message}`);
     process.exitCode = 1;
   }
 }
 
-if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.endsWith("hillium.mjs")) main();
+if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.endsWith("archium.mjs")) main();

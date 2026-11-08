@@ -214,7 +214,7 @@ export class Model {
     if (!tab) return;
     this.detach(id);
     this.unsplit(id);
-    if (tab.url && !tab.url.startsWith("hillium://")) {
+    if (tab.url && !tab.url.startsWith("archium://")) {
       this.data.archive.unshift({ url: tab.url, title: tab.title, favicon: tab.favicon, spaceId, archivedAt: this.now() });
       this.data.archive.length = Math.min(this.data.archive.length, ARCHIVE_LIMIT);
     }

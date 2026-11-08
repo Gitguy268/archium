@@ -1,20 +1,20 @@
-// hillium:// pages. Each page is its own host (hillium://settings, hillium://library, …) and
+// archium:// pages. Each page is its own host (archium://settings, archium://library, …) and
 // gets the files under ui/ at /_/, so everything it loads is same-origin: custom schemes get
 // no CORS. Pages that open in tabs run in the web session without Node or a preload; they
 // reach main through /api/<name>, which needs the per-launch token written into their HTML.
 // Web pages can't read that token (cross-origin), and window.js stops them from opening,
-// navigating to or framing hillium:// at all.
+// navigating to or framing archium:// at all.
 import { protocol, net } from "electron";
 import { readFile } from "node:fs/promises";
 import { randomBytes } from "node:crypto";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { join, normalize, extname } from "node:path";
 
-export const SCHEME = "hillium";
+export const SCHEME = "archium";
 const UI = fileURLToPath(new URL("../ui/", import.meta.url));
 export const TOKEN = randomBytes(24).toString("hex");
 
-// Pages that can open in a tab, and the chrome-only pages (window UI, Little Hillium).
+// Pages that can open in a tab, and the chrome-only pages (window UI, Little Archium).
 export const TAB_PAGES = { settings: "pages/settings.html", library: "pages/library.html", error: "pages/error.html" };
 const CHROME_PAGES = { chrome: "chrome.html", mini: "mini.html" };
 
@@ -91,4 +91,4 @@ export function handleScheme(ses, { chrome = false } = {}) {
   });
 }
 
-export const isHilliumUrl = (url) => typeof url === "string" && url.startsWith(`${SCHEME}:`);
+export const isArchiumUrl = (url) => typeof url === "string" && url.startsWith(`${SCHEME}:`);

@@ -56,4 +56,4 @@ jobs:
       - run: npm ci
       - run: npx electron-builder --linux tar.gz --x64 --publish never
       - name: The tarball has the app, the CLI and the icons
-        run: tar -tzf dist/hillium-*-x64.tar.gz | grep -E 'hillium$|resources/cli/hillium.mjs|resources/icons/512x512.png' | wc -l | grep -qx 3
+        run: tar -tzf dist/archium-*-x64.tar.gz | grep -E 'archium$|resources/cli/archium.mjs|resources/icons/512x512.png' | wc -l | grep -qx 3

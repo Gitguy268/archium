@@ -1,4 +1,4 @@
-// Little Hillium: a small window for links from other apps (Arc's Little Arc). A slim bar on
+// Little Archium: a small window for links from other apps (Arc's Little Arc). A slim bar on
 // top, the page below, and one click moves the page into your main window as a tab.
 import { BaseWindow, WebContentsView, clipboard } from "electron";
 import { fileURLToPath } from "node:url";
@@ -17,13 +17,13 @@ export class MiniWindow {
       minWidth: 420,
       minHeight: 300,
       show: false,
-      title: "Little Hillium",
+      title: "Little Archium",
       ...(mac ? { titleBarStyle: "hidden", trafficLightPosition: { x: 14, y: 15 } } : { frame: false }),
       autoHideMenuBar: true,
     });
     this.ui = new WebContentsView({ webPreferences: { session: hub.uiSession, preload: PRELOAD, sandbox: true, contextIsolation: true } });
     this.ui.setBackgroundColor("#00000000");
-    this.ui.webContents.loadURL("hillium://mini/");
+    this.ui.webContents.loadURL("archium://mini/");
     this.ui.webContents.on("will-navigate", (e) => e.preventDefault());
     this.base.contentView.addChildView(this.ui);
 
@@ -35,7 +35,7 @@ export class MiniWindow {
       onFail: (info) => hub.showError(this.view.webContents, info),
     };
     this.hooks = hooks;
-    this.view = createWebView({ session: hub.session("persist:hillium"), url: url || "about:blank", hooks });
+    this.view = createWebView({ session: hub.session("persist:archium"), url: url || "about:blank", hooks });
     hub.watchBoosts(this.view.webContents);
     this.base.contentView.addChildView(this.view);
     this.fit();
@@ -59,7 +59,7 @@ export class MiniWindow {
   }
 
   push(patch) {
-    if (!this.ui.webContents.isDestroyed()) this.ui.webContents.send("hillium:mini-state", { ...patch, platform: process.platform });
+    if (!this.ui.webContents.isDestroyed()) this.ui.webContents.send("archium:mini-state", { ...patch, platform: process.platform });
   }
 
   nav(action) {

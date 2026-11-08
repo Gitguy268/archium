@@ -1,12 +1,12 @@
 # Privacy test results
 
-A subset of [privacytests.org](https://privacytests.org)'s tests, run on 2026-10-19 with `app/test/privacy/run.mjs` against Hillium and against Electron with its defaults (the same Chromium, without Hillium). ✅ passed, ❌ failed, – not applicable or not supported.
+A subset of [privacytests.org](https://privacytests.org)'s tests, run on 2026-10-19 with `app/test/privacy/run.mjs` against Archium and against Electron with its defaults (the same Chromium, without Archium). ✅ passed, ❌ failed, – not applicable or not supported.
 
-**Passed:** Hillium 67/76 · Stock Electron 11/63
+**Passed:** Archium 67/76 · Stock Electron 11/63
 
-Run: the main state-partitioning, navigation, query-parameter and misc page; the top-level GPC check; HTTPS upgrade and the insecure-site check. Not run: cross-session state, HSTS cache, tracking cookies (it needs privacytests' cookie proxy), font fingerprinting and IP tests. Hillium adds no fingerprint noise, so no fingerprinting results are claimed here.
+Run: the main state-partitioning, navigation, query-parameter and misc page; the top-level GPC check; HTTPS upgrade and the insecure-site check. Not run: cross-session state, HSTS cache, tracking cookies (it needs privacytests' cookie proxy), font fingerprinting and IP tests. Archium adds no fingerprint noise, so no fingerprinting results are claimed here.
 
-| Category | Test | Hillium | Stock Electron |
+| Category | Test | Archium | Stock Electron |
 |---|---|:-:|:-:|
 | misc | Tor enabled | ❌ | ❌ |
 | misc | GPC enabled third-party | ✅ | ❌ |

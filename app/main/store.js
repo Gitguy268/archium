@@ -55,7 +55,7 @@ export const DEFAULT_SETTINGS = {
   sidebarWidth: 248,
   archivebox: { url: "", token: "" },
   agentAccess: false,
-  linkSpace: "", // space id for links from other apps, or "" for Little Hillium
+  linkSpace: "", // space id for links from other apps, or "" for Little Archium
 };
 
 export function openStores(userData) {

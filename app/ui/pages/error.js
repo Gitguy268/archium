@@ -1,4 +1,4 @@
-// hillium://error?code=&desc=&url=&https=1
+// archium://error?code=&desc=&url=&https=1
 import { api, $ } from "./api.js";
 
 const q = new URLSearchParams(location.search);
@@ -17,13 +17,13 @@ const MESSAGES = {
   "-118": `${host || "The site"} took too long to answer.`,
   "-109": `${host || "The site"} can't be reached.`,
   "-137": "Secure DNS couldn't find the site. Your network may block it; you can pick another provider in Settings.",
-  "-20": "Hillium blocked this page.",
+  "-20": "Archium blocked this page.",
 };
 
 document.title = host ? `${host} – can't open` : "Can't open this page";
 if (upgraded) {
   $("#title").textContent = `${host} doesn't do HTTPS`;
-  $("#detail").textContent = "Hillium tried the secure address first and it didn't answer. On http, others on your network can see and change what you send and get.";
+  $("#detail").textContent = "Archium tried the secure address first and it didn't answer. On http, others on your network can see and change what you send and get.";
   $("#http").hidden = false;
 } else {
   $("#detail").textContent = MESSAGES[String(code)] ?? q.get("desc") ?? "Something went wrong loading the page.";

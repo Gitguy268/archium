@@ -1,9 +1,9 @@
-// Test helper: a picture of a whole Hillium window without macOS screen-recording rights.
+// Test helper: a picture of a whole Archium window without macOS screen-recording rights.
 // Captures every view with capturePage and paints them in stacking order on a neutral
 // "desktop". Native window effects are an OS layer and can't appear.
 export async function composeWindow(app, which = 0) {
   const dataUrl = await app.evaluate(async ({ BrowserWindow }, which) => {
-    const win = [...globalThis.__hillium.windows][which];
+    const win = [...globalThis.__archium.windows][which];
     const { width, height } = win.base.getContentBounds();
     const parts = [];
     for (const view of win.base.contentView.children) {

@@ -6,7 +6,7 @@ import { COMMANDS, runCommand } from "./commands.js";
 const mac = process.platform === "darwin";
 
 export function buildMenu(hub) {
-  const run = (id, arg) => () => runCommand(hub, hub.focusedWindow(), id, arg).catch((e) => console.warn(`[hillium] ${id}: ${e.message}`));
+  const run = (id, arg) => () => runCommand(hub, hub.focusedWindow(), id, arg).catch((e) => console.warn(`[archium] ${id}: ${e.message}`));
   const cmd = (id) => {
     const c = COMMANDS.find((x) => x.id === id);
     return { label: c.label, accelerator: c.keys || undefined, click: run(id) };

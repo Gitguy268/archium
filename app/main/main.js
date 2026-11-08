@@ -1,5 +1,5 @@
-// Hillium's entry point: Helium-style switches before the app is ready, then stores, the
-// privacy layer, the hillium:// pages, the menu and the first window.
+// Archium's entry point: Helium-style switches before the app is ready, then stores, the
+// privacy layer, the archium:// pages, the menu and the first window.
 import { app, nativeTheme } from "electron";
 import { join } from "node:path";
 import { openStores } from "./store.js";
@@ -14,14 +14,14 @@ import { buildMenu } from "./menu.js";
 import { MiniWindow } from "./mini.js";
 import { startAgents } from "./agents-switch.js";
 
-app.setName("Hillium");
-// HILLIUM_USER_DATA keeps tests and the CLI pointed at the same folder.
-app.setPath("userData", process.env.HILLIUM_USER_DATA || join(app.getPath("appData"), "Hillium"));
+app.setName("Archium");
+// ARCHIUM_USER_DATA keeps tests and the CLI pointed at the same folder.
+app.setPath("userData", process.env.ARCHIUM_USER_DATA || join(app.getPath("appData"), "Archium"));
 
 // Helium-style defaults Electron doesn't set itself.
 const sw = app.commandLine;
 // Adds to a feature list instead of replacing it, so flags from the Arch wrapper or the user's
-// hillium-flags.conf survive (a second appendSwitch would overwrite the first).
+// archium-flags.conf survive (a second appendSwitch would overwrite the first).
 const addFeatures = (name, list) => {
   const existing = sw.getSwitchValue(name).split(",").filter(Boolean);
   sw.appendSwitch(name, [...new Set([...existing, ...list])].join(","));
@@ -47,7 +47,7 @@ sw.appendSwitch("no-pings");
 sw.appendSwitch("disable-background-networking");
 sw.appendSwitch("webrtc-ip-handling-policy", "default_public_interface_only");
 if (process.platform === "linux" && !sw.hasSwitch("ozone-platform-hint")) sw.appendSwitch("ozone-platform-hint", "auto");
-if (process.env.HILLIUM_NETLOG) sw.appendSwitch("log-net-log", process.env.HILLIUM_NETLOG);
+if (process.env.ARCHIUM_NETLOG) sw.appendSwitch("log-net-log", process.env.ARCHIUM_NETLOG);
 app.userAgentFallback = chromeUserAgent();
 registerScheme();
 
@@ -84,7 +84,7 @@ if (!app.requestSingleInstanceLock()) {
     const stores = openStores(app.getPath("userData"));
     hub = new Hub({ stores });
     hub.openMini = (url) => new MiniWindow(hub, url);
-    if (process.env.HILLIUM_TEST) globalThis.__hillium = hub;
+    if (process.env.ARCHIUM_TEST) globalThis.__archium = hub;
     nativeTheme.themeSource = stores.settings.data.appearance;
     configureDns(stores.settings.data);
     registerIpc(hub);
@@ -94,7 +94,7 @@ if (!app.requestSingleInstanceLock()) {
     const adblock = startAdblock({
       allowCosmetics: (url) => hub.settings.adblock && hub.settings.siteExceptions[hostOf(url)]?.adblock !== false,
     });
-    if (process.env.HILLIUM_WAIT_ADBLOCK) await adblock;
+    if (process.env.ARCHIUM_WAIT_ADBLOCK) await adblock;
     if (stores.settings.data.agentAccess) startAgents(hub);
 
     hub.createWindow();

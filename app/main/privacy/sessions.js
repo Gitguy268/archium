@@ -1,4 +1,4 @@
-// Helium's defaults, applied to every web session Hillium creates: the request filter,
+// Helium's defaults, applied to every web session Archium creates: the request filter,
 // a plain Chrome user agent, no spellcheck downloads from Google, permission prompts,
 // WebRTC kept to the public interface, and DNS over HTTPS.
 import { app, session } from "electron";
@@ -74,6 +74,6 @@ function mediaKey(details) {
 }
 
 // Spaces with their own profile get their own cookie jar; private windows get one in memory.
-export const partitionFor = (space) => (space?.profile ? `persist:space-${space.id}` : "persist:hillium");
+export const partitionFor = (space) => (space?.profile ? `persist:space-${space.id}` : "persist:archium");
 
 export const sessionFor = (partition, opts) => prepareSession(session.fromPartition(partition), opts);

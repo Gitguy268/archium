@@ -8,7 +8,7 @@ const UI_SETTINGS = { look: ["arc", "zen", "glass", "retro"], appearance: ["syst
 
 export function registerIpc(hub) {
   const on = (channel, fn) =>
-    ipcMain.handle(`hillium:${channel}`, (event, ...args) => {
+    ipcMain.handle(`archium:${channel}`, (event, ...args) => {
       const win = hub.windowForUi(event.sender);
       if (!win) return null;
       return fn(win, ...args);
@@ -87,16 +87,16 @@ export function registerIpc(hub) {
   });
 
   // From the web preload: ⌥-click opens Glance; every trusted link click is noted for pinned-tab Peek.
-  ipcMain.on("hillium:glance-link", (event, url) => {
+  ipcMain.on("archium:glance-link", (event, url) => {
     const entry = hub.entryForWebContents(event.sender);
     if (entry && /^https?:/.test(url)) hub.openGlance(entry.win, url, entry.id);
   });
-  ipcMain.on("hillium:link-click", (event, url) => typeof url === "string" && noteLinkClick(event.sender, url));
+  ipcMain.on("archium:link-click", (event, url) => typeof url === "string" && noteLinkClick(event.sender, url));
 
-  // Little Hillium windows.
+  // Little Archium windows.
   const mini = (event) => [...hub.minis].find((m) => m.ui.webContents === event.sender);
-  ipcMain.handle("hillium:mini-move", (event) => mini(event)?.moveToMain());
-  ipcMain.handle("hillium:mini-close", (event) => mini(event)?.base.close());
-  ipcMain.handle("hillium:mini-nav", (event, action) => mini(event)?.nav(action));
-  ipcMain.handle("hillium:mini-copy", (event) => mini(event)?.copy());
+  ipcMain.handle("archium:mini-move", (event) => mini(event)?.moveToMain());
+  ipcMain.handle("archium:mini-close", (event) => mini(event)?.base.close());
+  ipcMain.handle("archium:mini-nav", (event, action) => mini(event)?.nav(action));
+  ipcMain.handle("archium:mini-copy", (event) => mini(event)?.copy());
 }

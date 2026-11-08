@@ -4,7 +4,7 @@
 
 // From Zen Browser's src/zen/spaces/ZenGradientGenerator.mjs
 // (https://github.com/zen-browser/desktop, commit 6609acd4cc87e8ceaecb405df335d99f6ad8b2e7).
-// Modified for Hillium: the colour maths taken out of the XUL theme picker as plain
+// Modified for Archium: the colour maths taken out of the XUL theme picker as plain
 // functions (HSL conversion, blending, contrast, the space gradient, colour harmonies and
 // the picker's position-to-colour mapping), with Gecko-only parts (prefs, windowUtils,
 // Mica, transparency detection) replaced by parameters. This file stays under the MPL-2.0.

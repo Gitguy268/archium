@@ -13,7 +13,7 @@ export const ENGINES = {
 export const searchUrl = (query, engine = "duckduckgo") =>
   (ENGINES[engine] ?? ENGINES.duckduckgo).url.replace("%s", encodeURIComponent(query.trim()));
 
-const SCHEME = /^(https?|hillium|file|about|data|view-source):/i;
+const SCHEME = /^(https?|archium|file|about|data|view-source):/i;
 const LOCAL = /^(localhost|\[[0-9a-f:]+\]|\d{1,3}(\.\d{1,3}){3})(:\d+)?(\/|$)/i;
 // A dot, no spaces, and something that looks like a top-level domain.
 const DOMAIN = /^[^\s/?#]+\.[a-z][a-z0-9-]{1,62}\.?(:\d+)?([/?#]\S*)?$/i;
@@ -39,7 +39,7 @@ export const looksLikeUrl = (input) => {
 export function prettyUrl(url) {
   try {
     const u = new URL(url);
-    if (u.protocol === "hillium:") return `hillium://${u.hostname}`;
+    if (u.protocol === "archium:") return `archium://${u.hostname}`;
     const path = u.pathname === "/" ? "" : u.pathname;
     return `${u.hostname.replace(/^www\./, "")}${path}`;
   } catch {

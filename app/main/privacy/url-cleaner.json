@@ -1,5 +1,5 @@
 {
-  "comment": "Tracking query parameters removed from every request. Exact names, plus prefixes ending in *. Hillium's own list of widely documented names.",
+  "comment": "Tracking query parameters removed from every request. Exact names, plus prefixes ending in *. Archium's own list of widely documented names.",
   "params": [
     "utm_*",
     "fbclid",

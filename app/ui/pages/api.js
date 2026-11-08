@@ -1,6 +1,6 @@
-// Pages in tabs reach main through hillium://<page>/api/<name>, with the per-launch token
+// Pages in tabs reach main through archium://<page>/api/<name>, with the per-launch token
 // main wrote into the page. Web pages can't read it: they're on another origin.
-const token = document.querySelector('meta[name="hillium-token"]')?.content ?? "";
+const token = document.querySelector('meta[name="archium-token"]')?.content ?? "";
 
 export async function api(name, body = {}) {
   const res = await fetch(`/api/${name}?t=${encodeURIComponent(token)}`, {

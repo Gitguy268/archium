@@ -10,7 +10,7 @@
  *   src/zen/split-view/zen-split-view.css    split view gaps, outline and drop zone
  *   src/zen/compact-mode/zen-compact-mode.css the floating sidebar background
  *   src/zen/spaces/zen-workspaces.css        the current space indicator
- * Modified for Hillium: XUL selectors and -moz- features replaced with Hillium's HTML
+ * Modified for Archium: XUL selectors and -moz- features replaced with Archium's HTML
  * elements and standard CSS; values kept. This file stays under the MPL-2.0. */
 
 :root {

@@ -1,9 +1,9 @@
 #!/bin/sh
-# Double-click to run Hillium from this folder (macOS). The first run installs Electron
+# Double-click to run Archium from this folder (macOS). The first run installs Electron
 # and the ad blocker (about 350 MB, needs Node.js 20 or later).
 cd "$(dirname "$0")" || exit 1
 if ! command -v npm >/dev/null 2>&1; then
-  echo "Hillium needs Node.js 20 or later: https://nodejs.org" >&2
+  echo "Archium needs Node.js 20 or later: https://nodejs.org" >&2
   exit 1
 fi
 if [ ! -d node_modules/@ghostery ]; then

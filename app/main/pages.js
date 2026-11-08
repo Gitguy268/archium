@@ -1,4 +1,4 @@
-// The data behind hillium://settings, hillium://library and hillium://error (token-checked
+// The data behind archium://settings, archium://library and archium://error (token-checked
 // in protocol.js). Settings writes go through one allow-list with a check per key.
 import { app, session as electronSession } from "electron";
 import { execFile } from "node:child_process";
@@ -42,14 +42,14 @@ function isDefaultBrowser() {
 
 function makeDefaultBrowser() {
   if (process.platform === "linux") {
-    return new Promise((resolve) => execFile("xdg-settings", ["set", "default-web-browser", "hillium.desktop"], (err) => resolve(!err)));
+    return new Promise((resolve) => execFile("xdg-settings", ["set", "default-web-browser", "archium.desktop"], (err) => resolve(!err)));
   }
   return app.setAsDefaultProtocolClient("http") && app.setAsDefaultProtocolClient("https");
 }
 
 export function registerPages(hub) {
   const m = hub.model;
-  const fetchVia = (u, init) => hub.session("persist:hillium").fetch(u, init);
+  const fetchVia = (u, init) => hub.session("persist:archium").fetch(u, init);
 
   registerApi("settings.get", async () => ({
     settings: { ...hub.settings, archivebox: { url: hub.settings.archivebox.url, token: hub.settings.archivebox.token ? "••••" : "" } },
@@ -93,7 +93,7 @@ export function registerPages(hub) {
   });
 
   registerApi("data.clear", async ({ what }) => {
-    const partitions = ["persist:hillium", ...m.spaces.filter((s) => s.profile).map((s) => `persist:space-${s.id}`)];
+    const partitions = ["persist:archium", ...m.spaces.filter((s) => s.profile).map((s) => `persist:space-${s.id}`)];
     if (what === "history" || what === "all") {
       hub.stores.history.data.visits = [];
       hub.stores.history.save();

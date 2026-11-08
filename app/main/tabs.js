@@ -1,8 +1,8 @@
-// Web views: one WebContentsView per loaded tab (and one for Glance or a Little Hillium window).
+// Web views: one WebContentsView per loaded tab (and one for Glance or a Little Archium window).
 // Every view gets the same guards: no Node, a sandbox, WebRTC kept to the public interface,
-// no way to open, navigate to or frame hillium:// pages, and popups only for real popups.
+// no way to open, navigate to or frame archium:// pages, and popups only for real popups.
 import { WebContentsView, Menu, clipboard, shell } from "electron";
-import { isHilliumUrl } from "./protocol.js";
+import { isArchiumUrl } from "./protocol.js";
 import { siteOf } from "./privacy/filter.js";
 
 const lastClicks = new WeakMap(); // webContents → { url, at } from the web preload
@@ -66,11 +66,11 @@ export function createWebView({ session, url, hooks = {} }) {
       event.preventDefault();
       return openExternal(target);
     }
-    if (isHilliumUrl(target) && !isHilliumUrl(wc.getURL())) return event.preventDefault();
+    if (isArchiumUrl(target) && !isArchiumUrl(wc.getURL())) return event.preventDefault();
     if (hooks.guardNavigation?.(target, wc)) event.preventDefault();
   });
   wc.on("will-frame-navigate", (event) => {
-    if (!event.isMainFrame && isHilliumUrl(event.url)) event.preventDefault();
+    if (!event.isMainFrame && isArchiumUrl(event.url)) event.preventDefault();
   });
   wc.on("will-attach-webview", (event) => event.preventDefault());
 

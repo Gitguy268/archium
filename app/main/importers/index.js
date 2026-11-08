@@ -84,7 +84,7 @@ export function parseArc(data) {
     const url = t?.savedURL;
     return url && /^https?:/.test(url) ? { title: item.title || t.savedTitle || url, url } : null;
   };
-  // Folders can nest in Arc; Hillium has one level, so inner folders become siblings ("Outer › Inner").
+  // Folders can nest in Arc; Archium has one level, so inner folders become siblings ("Outer › Inner").
   const entries = (ids, prefix = "") => {
     const out = [];
     for (const id of ids ?? []) {

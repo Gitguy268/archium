@@ -1,5 +1,5 @@
 // A subset of privacytests.org's tests (MIT, https://github.com/privacytests/privacytests),
-// run against Hillium and against stock Electron. It opens privacytests' own test pages
+// run against Archium and against stock Electron. It opens privacytests' own test pages
 // and collects their results through privacytests' results server, the way their runner
 // does. Results go to test/privacy/results/ and docs/privacy-results.md.
 //   PLAYWRIGHT=/path/to/node_modules/playwright node test/privacy/run.mjs
@@ -55,16 +55,16 @@ function results() {
 
 async function launch(browser) {
   const userData = mkdtempSync(join(tmpdir(), `pt-${browser}-`));
-  if (browser === "hillium") {
+  if (browser === "archium") {
     const app = await _electron.launch({
       executablePath: require("electron"),
       args: [APP],
-      env: { ...process.env, HILLIUM_TEST: "1", HILLIUM_USER_DATA: userData, HILLIUM_WAIT_ADBLOCK: "1" },
+      env: { ...process.env, ARCHIUM_TEST: "1", ARCHIUM_USER_DATA: userData, ARCHIUM_WAIT_ADBLOCK: "1" },
     });
     await app.firstWindow();
     const open = (url) =>
       app.evaluate((_, u) => {
-        const hub = globalThis.__hillium;
+        const hub = globalThis.__archium;
         hub.newTab([...hub.windows][0], u);
       }, url);
     return { app, open };
@@ -124,7 +124,7 @@ function verdict(r) {
   return null;
 }
 
-const browsers = (process.env.BROWSERS ?? "hillium,electron").split(",");
+const browsers = (process.env.BROWSERS ?? "archium,electron").split(",");
 const all = {};
 for (const b of browsers) {
   console.log(`running ${b}…`);
@@ -144,17 +144,17 @@ const score = (i) => `${rows.filter((r) => r[i] === true).length}/${rows.filter(
 const md = [
   "# Privacy test results",
   "",
-  `A subset of [privacytests.org](https://privacytests.org)'s tests, run on ${new Date().toISOString().slice(0, 10)} with \`app/test/privacy/run.mjs\` against Hillium and against Electron with its defaults (the same Chromium, without Hillium). ✅ passed, ❌ failed, – not applicable or not supported.`,
+  `A subset of [privacytests.org](https://privacytests.org)'s tests, run on ${new Date().toISOString().slice(0, 10)} with \`app/test/privacy/run.mjs\` against Archium and against Electron with its defaults (the same Chromium, without Archium). ✅ passed, ❌ failed, – not applicable or not supported.`,
   "",
-  `**Passed:** ${browsers.map((b, i) => `${b === "hillium" ? "Hillium" : "Stock Electron"} ${score(i + 2)}`).join(" · ")}`,
+  `**Passed:** ${browsers.map((b, i) => `${b === "archium" ? "Archium" : "Stock Electron"} ${score(i + 2)}`).join(" · ")}`,
   "",
-  "Run: the main state-partitioning, navigation, query-parameter and misc page; the top-level GPC check; HTTPS upgrade and the insecure-site check. Not run: cross-session state, HSTS cache, tracking cookies (it needs privacytests' cookie proxy), font fingerprinting and IP tests. Hillium adds no fingerprint noise, so no fingerprinting results are claimed here.",
+  "Run: the main state-partitioning, navigation, query-parameter and misc page; the top-level GPC check; HTTPS upgrade and the insecure-site check. Not run: cross-session state, HSTS cache, tracking cookies (it needs privacytests' cookie proxy), font fingerprinting and IP tests. Archium adds no fingerprint noise, so no fingerprinting results are claimed here.",
   "",
-  `| Category | Test | ${browsers.map((b) => (b === "hillium" ? "Hillium" : "Stock Electron")).join(" | ")} |`,
+  `| Category | Test | ${browsers.map((b) => (b === "archium" ? "Archium" : "Stock Electron")).join(" | ")} |`,
   `|---|---|${browsers.map(() => ":-:").join("|")}|`,
   ...rows.map(([c, n, ...v]) => `| ${c} | ${n} | ${v.map(mark).join(" | ")} |`),
   "",
 ];
 writeFileSync(join(APP, "../docs/privacy-results.md"), md.join("\n"));
-console.log(`Hillium ${score(2)}${browsers.length > 1 ? `, stock Electron ${score(3)}` : ""}`);
+console.log(`Archium ${score(2)}${browsers.length > 1 ? `, stock Electron ${score(3)}` : ""}`);
 process.exit(0);

@@ -11,7 +11,7 @@ export const COMMANDS = [
   { id: "reopen-tab", label: "Reopen Closed Tab", keys: "CmdOrCtrl+Shift+T" },
   { id: "new-window", label: "New Window", keys: "CmdOrCtrl+N" },
   { id: "private-window", label: "New Private Window", keys: "CmdOrCtrl+Shift+N" },
-  { id: "little", label: "New Little Hillium Window", keys: "CmdOrCtrl+Alt+N" },
+  { id: "little", label: "New Little Archium Window", keys: "CmdOrCtrl+Alt+N" },
   { id: "toggle-sidebar", label: "Toggle Sidebar", keys: "CmdOrCtrl+S" },
   { id: "pin-tab", label: "Pin or Unpin Tab", keys: "CmdOrCtrl+D" },
   { id: "favourite-tab", label: "Add to Favourites", keys: "CmdOrCtrl+Shift+D" },
@@ -52,7 +52,7 @@ export async function runCommand(hub, win, id, arg) {
     case "new-tab":
     case "edit-url":
     case "find":
-      win.send("hillium:command", { id });
+      win.send("archium:command", { id });
       return;
     case "close-tab":
       if (win.glance) return hub.closeGlance(win);
@@ -104,22 +104,22 @@ export async function runCommand(hub, win, id, arg) {
     case "previous-space":
       return hub.switchSpace(win, -1);
     case "new-space":
-      return win.send("hillium:command", { id: "new-space" });
+      return win.send("archium:command", { id: "new-space" });
     case "copy-url": {
       const url = hub.copyUrl(win);
-      if (url) win.send("hillium:toast", { text: "Address copied" });
+      if (url) win.send("archium:toast", { text: "Address copied" });
       return;
     }
     case "archive-page": {
       const tab = active && m.tab(active);
       if (!tab) return;
       try {
-        const result = await archive(hub.settings.archivebox, tab.url, { fetchImpl: (u, init) => hub.session("persist:hillium").fetch(u, init) });
+        const result = await archive(hub.settings.archivebox, tab.url, { fetchImpl: (u, init) => hub.session("persist:archium").fetch(u, init) });
         hub.stores.library.data.snapshots.unshift({ ...result, title: tab.title });
         hub.stores.library.save();
-        win.send("hillium:toast", { text: "Sent to ArchiveBox" });
+        win.send("archium:toast", { text: "Sent to ArchiveBox" });
       } catch (e) {
-        win.send("hillium:toast", { text: e.message, error: true });
+        win.send("archium:toast", { text: e.message, error: true });
       }
       return;
     }
@@ -127,14 +127,14 @@ export async function runCommand(hub, win, id, arg) {
       return active && hub.zap(active);
     case "boost": {
       const tab = active && m.tab(active);
-      return hub.openPage(win, `hillium://library/#boosts${tab ? `=${encodeURIComponent(hostOf(tab.url))}` : ""}`);
+      return hub.openPage(win, `archium://library/#boosts${tab ? `=${encodeURIComponent(hostOf(tab.url))}` : ""}`);
     }
     case "library":
-      return hub.openPage(win, "hillium://library/");
+      return hub.openPage(win, "archium://library/");
     case "settings":
-      return hub.openPage(win, "hillium://settings/");
+      return hub.openPage(win, "archium://settings/");
     case "import":
-      return hub.openPage(win, "hillium://settings/#import");
+      return hub.openPage(win, "archium://settings/#import");
     case "look-arc":
     case "look-zen":
     case "look-glass":

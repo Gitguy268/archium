@@ -1,5 +1,5 @@
 // Boosts: your own CSS, JavaScript and font for a site, plus Zap (click an element to hide it
-// for good). Arc's Boosts and Zen's boosts/ are the model; the code here is Hillium's own.
+// for good). Arc's Boosts and Zen's boosts/ are the model; the code here is Archium's own.
 // Boost scripts run in an isolated world: they see the page's DOM, not its JavaScript.
 import { hostOf } from "./privacy/filter.js";
 

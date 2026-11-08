@@ -1,4 +1,4 @@
-// End-to-end: Playwright drives the real Hillium against a local test server.
+// End-to-end: Playwright drives the real Archium against a local test server.
 // Fake hostnames map to 127.0.0.1 (Ghostery skips cosmetic filters on bare IPs).
 //   npm run e2e          (PLAYWRIGHT=/path/to/node_modules/playwright if it isn't installed here)
 //   SHOTS=1 npm run e2e  also writes README screenshots to test/screenshots/
@@ -14,9 +14,9 @@ import { composeWindow } from "./compose.mjs";
 const require = createRequire(import.meta.url);
 const HERE = dirname(fileURLToPath(import.meta.url));
 const APP = join(HERE, "..");
-// HILLIUM_BINARY runs an installed build (the Arch test) instead of this source folder.
-const PACKAGED = process.env.HILLIUM_BINARY;
-const CLI = process.env.HILLIUM_CLI ?? join(APP, "../cli/hillium.mjs");
+// ARCHIUM_BINARY runs an installed build (the Arch test) instead of this source folder.
+const PACKAGED = process.env.ARCHIUM_BINARY;
+const CLI = process.env.ARCHIUM_CLI ?? join(APP, "../cli/archium.mjs");
 const { _electron } = require(process.env.PLAYWRIGHT ?? "playwright");
 const SHOTS = process.env.SHOTS === "1";
 const SHOT_DIR = join(HERE, "screenshots");
@@ -39,7 +39,7 @@ const server = createServer((req, res) => {
     return res.end(Buffer.from("R0lGODlhAQABAAAAACw=", "base64"));
   }
   if (req.url.startsWith("/file.bin")) {
-    res.writeHead(200, { "content-type": "application/octet-stream", "content-disposition": 'attachment; filename="hillium-test.bin"' });
+    res.writeHead(200, { "content-type": "application/octet-stream", "content-disposition": 'attachment; filename="archium-test.bin"' });
     return res.end(Buffer.alloc(2048, 1));
   }
   if (req.url.startsWith("/permission")) {
@@ -61,8 +61,8 @@ const port = server.address().port;
 const NEWS = `http://news.example.com:${port}/article?id=4&utm_source=e2e&fbclid=x`;
 
 // ---- a fresh profile ----
-const userData = mkdtempSync(join(tmpdir(), "hillium-e2e-"));
-const downloads = mkdtempSync(join(tmpdir(), "hillium-dl-"));
+const userData = mkdtempSync(join(tmpdir(), "archium-e2e-"));
+const downloads = mkdtempSync(join(tmpdir(), "archium-dl-"));
 writeFileSync(
   join(userData, "settings.json"),
   JSON.stringify({ httpAllowed: ["news.example.com", "tracker.example.org", "other.example.net"], agentAccess: true, archiveAfterHours: 12 }),
@@ -72,7 +72,7 @@ const netlog = join(userData, "netlog.json");
 const app = await _electron.launch({
   executablePath: PACKAGED ?? require("electron"),
   args: [...(PACKAGED ? [] : [APP]), ...(process.env.E2E_NO_SANDBOX ? ["--no-sandbox"] : []), "--host-resolver-rules=MAP *.example.com 127.0.0.1, MAP *.example.org 127.0.0.1, MAP *.example.net 127.0.0.1"],
-  env: { ...process.env, HILLIUM_TEST: "1", HILLIUM_USER_DATA: userData, HILLIUM_WAIT_ADBLOCK: "1", HILLIUM_NETLOG: netlog },
+  env: { ...process.env, ARCHIUM_TEST: "1", ARCHIUM_USER_DATA: userData, ARCHIUM_WAIT_ADBLOCK: "1", ARCHIUM_NETLOG: netlog },
 });
 app.process().stderr.on("data", (d) => {
   const s = String(d);
@@ -122,13 +122,13 @@ async function shot(name) {
   writeFileSync(join(SHOT_DIR, `${name}.png`), await composeWindow(app));
 }
 
-const ui = await pageFor("hillium://chrome");
+const ui = await pageFor("archium://chrome");
 await main(({ app: a }, dir) => a.setPath("downloads", dir), downloads);
 const state = () => ui.evaluate(() => document.body.className);
 
-// The Arch test starts Hillium through /usr/bin/hillium, which adds its own features.
+// The Arch test starts Archium through /usr/bin/archium, which adds its own features.
 if (process.env.E2E_EXPECT_FEATURE) {
-  await check("features from the launcher are kept next to Hillium's", async () => {
+  await check("features from the launcher are kept next to Archium's", async () => {
     const value = await main(({ app: a }) => a.commandLine.getSwitchValue("enable-features"));
     assert(value.includes(process.env.E2E_EXPECT_FEATURE) && value.includes("SplitCacheByNetworkIsolationKey"), value);
   });
@@ -141,7 +141,7 @@ await check("the window opens on the empty card", async () => {
 
 await check("a page loads, tracking parameters are gone and GPC is on", async () => {
   await main(({}, url) => {
-    const hub = globalThis.__hillium;
+    const hub = globalThis.__archium;
     hub.newTab([...hub.windows][0], url);
   }, NEWS);
   const page = await pageFor(`http://news.example.com:${port}/article`);
@@ -150,14 +150,14 @@ await check("a page loads, tracking parameters are gone and GPC is on", async ()
   assert(page.url().includes("id=4"), "kept the real parameter");
   const req = seen.find((s) => s.host === "news.example.com" && s.path.startsWith("/article"));
   assert(req.headers["sec-gpc"] === "1", "Sec-GPC header");
-  assert(!/Electron|Hillium/.test(req.headers["user-agent"]), `user agent: ${req.headers["user-agent"]}`);
+  assert(!/Electron|Archium/.test(req.headers["user-agent"]), `user agent: ${req.headers["user-agent"]}`);
   assert(!/Electron/.test(await page.evaluate(() => window.__ua)), "navigator.userAgent");
 });
 
 await check("ads are blocked: the tracker script never loads and the ad slot is hidden", async () => {
   const page = await pageFor(`http://news.example.com:${port}/article`);
   await until(() => page.evaluate(() => getComputedStyle(document.getElementById("ad-slot")).display === "none"), "cosmetic filter on .adsbygoogle");
-  const blocked = await main(() => [...globalThis.__hillium.views.values()].reduce((n, e) => n + (e.runtime.blocked ?? 0), 0));
+  const blocked = await main(() => [...globalThis.__archium.views.values()].reduce((n, e) => n + (e.runtime.blocked ?? 0), 0));
   assert(blocked >= 1, `blocked count ${blocked}`);
   await until(() => ui.evaluate(() => document.querySelector("#url-site").dataset.blocked), "blocked badge");
 });
@@ -165,14 +165,14 @@ await check("ads are blocked: the tracker script never loads and the ad slot is 
 await check("third parties get no cookies and only the referring site", async () => {
   // A first-party visit sets the tracker's cookie…
   await main(({}, url) => {
-    const hub = globalThis.__hillium;
+    const hub = globalThis.__archium;
     hub.newTab([...hub.windows][0], url);
   }, `http://tracker.example.org:${port}/set`);
   await pageFor(`http://tracker.example.org:${port}/set`);
   await sleep(300);
   // …which it doesn't get back when embedded in the news page.
   await main(() => {
-    const hub = globalThis.__hillium;
+    const hub = globalThis.__archium;
     const w = [...hub.windows][0];
     const id = w.model.allTabIds().find((t) => w.model.tab(t).url.includes("news.example.com"));
     hub.activate(w, id);
@@ -187,55 +187,55 @@ await check("third parties get no cookies and only the referring site", async ()
 
 await check("HTTPS first: a site without HTTPS gets the fallback page, and http works after", async () => {
   await main(({}, url) => {
-    const hub = globalThis.__hillium;
+    const hub = globalThis.__archium;
     hub.newTab([...hub.windows][0], url);
   }, `http://plain.example.com:${port}/`);
-  const err = await pageFor("hillium://error");
+  const err = await pageFor("archium://error");
   await until(() => err.evaluate(() => !document.getElementById("http").hidden), "Continue on http button");
   await err.click("#http", { force: true });
   await pageFor(`http://plain.example.com:${port}/`);
-  const allowed = await main(() => globalThis.__hillium.settings.httpAllowed);
+  const allowed = await main(() => globalThis.__archium.settings.httpAllowed);
   assert(allowed.includes("plain.example.com"), "host remembered");
 });
 
-await check("web pages can't open or call hillium:// pages", async () => {
+await check("web pages can't open or call archium:// pages", async () => {
   const page = await pageFor(`http://news.example.com:${port}/article`);
   const r = await page.evaluate(async () => {
     const out = {};
     try {
-      await fetch("hillium://settings/api/settings.get?t=x", { method: "POST" });
+      await fetch("archium://settings/api/settings.get?t=x", { method: "POST" });
       out.fetch = "allowed";
     } catch {
       out.fetch = "blocked";
     }
-    location.href = "hillium://settings/";
+    location.href = "archium://settings/";
     await new Promise((res) => setTimeout(res, 500));
     out.url = location.href;
     return out;
   });
-  assert(r.fetch === "blocked", "fetch to hillium:// went through");
+  assert(r.fetch === "blocked", "fetch to archium:// went through");
   assert(r.url.startsWith("http://news.example.com"), `navigated to ${r.url}`);
 });
 
 await check("Settings and Library open as tabs and their data loads", async () => {
   await main(() => {
-    const hub = globalThis.__hillium;
-    hub.openPage([...hub.windows][0], "hillium://settings/");
+    const hub = globalThis.__archium;
+    hub.openPage([...hub.windows][0], "archium://settings/");
   });
-  const settings = await pageFor("hillium://settings");
+  const settings = await pageFor("archium://settings");
   await until(() => settings.evaluate(() => document.querySelectorAll(".row").length > 10), "settings rows");
   await shot("settings");
   await main(() => {
-    const hub = globalThis.__hillium;
-    hub.openPage([...hub.windows][0], "hillium://library/");
+    const hub = globalThis.__archium;
+    hub.openPage([...hub.windows][0], "archium://library/");
   });
-  const library = await pageFor("hillium://library");
+  const library = await pageFor("archium://library");
   await until(() => library.evaluate(() => document.querySelector(".tabs-nav button.on")?.textContent === "Archived tabs"), "library");
 });
 
 await check("spaces: a new space, switching, pinning, favourites", async () => {
   const r = await main(() => {
-    const hub = globalThis.__hillium;
+    const hub = globalThis.__archium;
     const w = [...hub.windows][0];
     const m = w.model;
     const first = w.spaceId;
@@ -256,24 +256,24 @@ await check("spaces: a new space, switching, pinning, favourites", async () => {
 
 await check("the command bar finds a tab in another space and switches to it", async () => {
   await main(({}, port) => {
-    const hub = globalThis.__hillium;
+    const hub = globalThis.__archium;
     const w = [...hub.windows][0];
     const work = w.model.spaces.find((s) => s.name === "Work");
     hub.newTab(w, `http://news.example.com:${port}/other`, { spaceId: work.id, background: true });
-    w.send("hillium:command", { id: "new-tab" });
+    w.send("archium:command", { id: "new-tab" });
   }, port);
   await until(() => ui.evaluate(() => !document.getElementById("command").hidden), "command bar");
   await ui.keyboard.type("/other");
   await until(() => ui.evaluate(() => document.querySelector("#results .item.selected .badge")?.textContent.includes("Work")), "tab result in Work");
   await shot("command-bar");
   await ui.keyboard.press("Enter");
-  await until(() => main(() => [...globalThis.__hillium.windows][0].model.space([...globalThis.__hillium.windows][0].spaceId).name === "Work"), "switched to Work");
+  await until(() => main(() => [...globalThis.__archium.windows][0].model.space([...globalThis.__archium.windows][0].spaceId).name === "Work"), "switched to Work");
   await until(() => ui.evaluate(() => document.getElementById("command").hidden), "command bar closed");
 });
 
 await check("⌥-click opens Glance; it expands into a tab", async () => {
   await main(() => {
-    const hub = globalThis.__hillium;
+    const hub = globalThis.__archium;
     const w = [...hub.windows][0];
     hub.switchSpace(w, w.model.spaces[0].id);
     const news = w.model.allTabIds().find((t) => w.model.tab(t).url.includes("/article"));
@@ -281,34 +281,34 @@ await check("⌥-click opens Glance; it expands into a tab", async () => {
   });
   const page = await pageFor(`http://news.example.com:${port}/article`);
   await page.click("#link", { modifiers: ["Alt"], force: true });
-  await until(() => main(() => Boolean([...globalThis.__hillium.windows][0].glance)), "glance open");
+  await until(() => main(() => Boolean([...globalThis.__archium.windows][0].glance)), "glance open");
   await until(() => ui.evaluate(() => !document.getElementById("glance-buttons").hidden), "glance buttons");
   await sleep(800);
   await shot("glance");
-  const before = await main(() => [...globalThis.__hillium.windows][0].model.allTabIds().length);
+  const before = await main(() => [...globalThis.__archium.windows][0].model.allTabIds().length);
   await ui.click("#glance-expand", { force: true });
-  await until(() => main(() => ![...globalThis.__hillium.windows][0].glance), "glance closed");
-  const after = await main(() => [...globalThis.__hillium.windows][0].model.allTabIds().length);
+  await until(() => main(() => ![...globalThis.__archium.windows][0].glance), "glance closed");
+  const after = await main(() => [...globalThis.__archium.windows][0].model.allTabIds().length);
   assert(after === before + 1, `tabs ${before} → ${after}`);
 });
 
 await check("links from a pinned tab to another site open in Glance (Peek)", async () => {
   await main(() => {
-    const hub = globalThis.__hillium;
+    const hub = globalThis.__archium;
     const w = [...hub.windows][0];
     const news = w.model.allTabIds().find((t) => w.model.tab(t).url.includes("/article"));
     hub.activate(w, news);
   });
   const page = await pageFor(`http://news.example.com:${port}/article`);
   await page.click("#away", { force: true, noWaitAfter: true });
-  await until(() => main(() => [...globalThis.__hillium.windows][0].glance?.url?.includes("other.example.net")), "peek");
+  await until(() => main(() => [...globalThis.__archium.windows][0].glance?.url?.includes("other.example.net")), "peek");
   assert(page.url().includes("news.example.com"), "the pinned tab stayed");
-  await main(() => globalThis.__hillium.closeGlance([...globalThis.__hillium.windows][0]));
+  await main(() => globalThis.__archium.closeGlance([...globalThis.__archium.windows][0]));
 });
 
 await check("split view shows two pages side by side", async () => {
   const r = await main(() => {
-    const hub = globalThis.__hillium;
+    const hub = globalThis.__archium;
     const w = [...hub.windows][0];
     const m = w.model;
     const ids = m.tabsIn(m.space(w.spaceId)).filter((t) => /example\.com/.test(m.tab(t).url)).slice(0, 2);
@@ -319,7 +319,7 @@ await check("split view shows two pages side by side", async () => {
   await until(() => ui.evaluate(() => document.querySelectorAll(".zen-split-view-splitter").length === 1), "splitter");
   await shot("split");
   await main(() => {
-    const hub = globalThis.__hillium;
+    const hub = globalThis.__archium;
     const w = [...hub.windows][0];
     hub.unsplit(w, w.activeTab);
   });
@@ -327,7 +327,7 @@ await check("split view shows two pages side by side", async () => {
 
 await check("Today tabs are archived after the set time; pinned ones stay", async () => {
   const r = await main(() => {
-    const hub = globalThis.__hillium;
+    const hub = globalThis.__archium;
     const m = hub.model;
     const w = [...hub.windows][0];
     const today = m.spaces.flatMap((s) => s.today).filter((t) => !w.visibleTabs().includes(t));
@@ -343,7 +343,7 @@ await check("Today tabs are archived after the set time; pinned ones stay", asyn
 
 await check("boosts restyle a site; Zap hides an element", async () => {
   await main(({}, sel) => {
-    const hub = globalThis.__hillium;
+    const hub = globalThis.__archium;
     hub.boosts.set("news.example.com", { css: "h1 { color: rgb(1, 2, 3) !important; }" });
     hub.boosts.addZap("news.example.com", sel);
     const w = [...hub.windows][0];
@@ -358,7 +358,7 @@ await check("boosts restyle a site; Zap hides an element", async () => {
 
 await check("site permissions ask in the window", async () => {
   await main(({}, url) => {
-    const hub = globalThis.__hillium;
+    const hub = globalThis.__archium;
     hub.newTab([...hub.windows][0], url);
   }, `http://news.example.com:${port}/permission`);
   await until(() => ui.evaluate(() => !document.getElementById("permission").hidden), "prompt");
@@ -367,25 +367,25 @@ await check("site permissions ask in the window", async () => {
   const page = await pageFor(`http://news.example.com:${port}/permission`);
   // Chromium answers a blocked request with "denied" (or "default" when the prompt is dismissed).
   await until(() => page.evaluate(() => /^perm:(denied|default)$/.test(document.title) && document.title), "answered");
-  const saved = await main(() => globalThis.__hillium.settings.permissions);
+  const saved = await main(() => globalThis.__archium.settings.permissions);
   assert(Object.entries(saved).some(([k, v]) => k.endsWith("|notifications") && v === false), JSON.stringify(saved));
 });
 
 await check("downloads go to the downloads folder", async () => {
   const page = await pageFor(`http://news.example.com:${port}/article`);
   await page.click("#download", { force: true });
-  await until(() => existsSync(join(downloads, "hillium-test.bin")), "file");
-  await until(() => main(() => globalThis.__hillium.stores.library.data.downloads[0]?.state === "completed"), "recorded");
+  await until(() => existsSync(join(downloads, "archium-test.bin")), "file");
+  await until(() => main(() => globalThis.__archium.stores.library.data.downloads[0]?.state === "completed"), "recorded");
 });
 
 await check("compact mode hides the sidebar; the left edge brings it back", async () => {
-  await main(() => globalThis.__hillium.saveSettings({ compact: true }));
+  await main(() => globalThis.__archium.saveSettings({ compact: true }));
   await until(() => state().then((c) => c.includes("compact")), "compact");
   // The page follows the UI's layout a frame later.
   await until(
     () =>
       main(() => {
-        const hub = globalThis.__hillium;
+        const hub = globalThis.__archium;
         const w = [...hub.windows][0];
         return hub.views.get(w.activeTab).view.getBounds().x < 30;
       }),
@@ -394,42 +394,42 @@ await check("compact mode hides the sidebar; the left edge brings it back", asyn
   await ui.dispatchEvent("#edge", "mouseenter");
   await until(() => state().then((c) => c.includes("reveal") && c.includes("overlay")), "revealed over the page");
   await shot("compact");
-  await main(() => globalThis.__hillium.saveSettings({ compact: false }));
+  await main(() => globalThis.__archium.saveSettings({ compact: false }));
   await ui.dispatchEvent("#sidebar", "mouseleave");
 });
 
 for (const look of ["zen", "glass", "retro"]) {
   await check(`the ${look} look applies`, async () => {
-    await main(({}, look) => globalThis.__hillium.saveSettings({ look }), look);
+    await main(({}, look) => globalThis.__archium.saveSettings({ look }), look);
     await until(() => ui.evaluate((l) => document.body.dataset.look === l && !document.querySelector(`link[data-look="${l}"]`).disabled, look), look);
     await shot(`look-${look}`);
   });
 }
-await main(() => globalThis.__hillium.saveSettings({ look: "arc" }));
+await main(() => globalThis.__archium.saveSettings({ look: "arc" }));
 
 await check("private windows stay out of agents' sight", async () => {
   await main(({}, url) => {
-    const hub = globalThis.__hillium;
+    const hub = globalThis.__archium;
     const w = hub.createWindow({ isPrivate: true });
     hub.newTab(w, url);
   }, `http://news.example.com:${port}/other?private`);
   // Asked of the app itself: Playwright doesn't always list pages opened after a window closed.
   await until(
-    () => main(() => [...globalThis.__hillium.views.values()].some((e) => e.model.private && /\?private$/.test(e.view.webContents.getURL()) && !e.view.webContents.isLoading())),
+    () => main(() => [...globalThis.__archium.views.values()].some((e) => e.model.private && /\?private$/.test(e.view.webContents.getURL()) && !e.view.webContents.isLoading())),
     "the private tab",
   );
-  const out = execFileSync(process.execPath, [CLI, "tabs", "--json"], { env: { ...process.env, HILLIUM_USER_DATA: userData } }).toString();
+  const out = execFileSync(process.execPath, [CLI, "tabs", "--json"], { env: { ...process.env, ARCHIUM_USER_DATA: userData } }).toString();
   const tabs = JSON.parse(out);
   assert(tabs.length > 0, "the CLI sees tabs");
   assert(!out.includes("?private"), "a private tab showed up");
   await main(() => {
-    const hub = globalThis.__hillium;
+    const hub = globalThis.__archium;
     for (const w of hub.windows) if (w.isPrivate) w.base.close();
   });
 });
 
-await check("an MCP client reads a page through `hillium mcp`", async () => {
-  const child = spawn(process.execPath, [CLI, "mcp"], { env: { ...process.env, HILLIUM_USER_DATA: userData } });
+await check("an MCP client reads a page through `archium mcp`", async () => {
+  const child = spawn(process.execPath, [CLI, "mcp"], { env: { ...process.env, ARCHIUM_USER_DATA: userData } });
   const replies = [];
   let buf = "";
   child.stdout.on("data", (d) => {
@@ -444,7 +444,7 @@ await check("an MCP client reads a page through `hillium mcp`", async () => {
   send({ jsonrpc: "2.0", id: 1, method: "initialize", params: { protocolVersion: "2025-06-18", capabilities: {}, clientInfo: { name: "e2e", version: "1" } } });
   send({ jsonrpc: "2.0", method: "notifications/initialized" });
   await main(() => {
-    const hub = globalThis.__hillium;
+    const hub = globalThis.__archium;
     const w = [...hub.windows][0];
     const id = w.model.allTabIds().find((t) => w.model.tab(t).url.includes("/article"));
     hub.activate(w, id);
@@ -453,21 +453,21 @@ await check("an MCP client reads a page through `hillium mcp`", async () => {
   await until(() => replies.find((r) => r.id === 2), "tool reply");
   child.kill();
   const text = replies.find((r) => r.id === 2).result.content[0].text;
-  assert(replies[0].result.serverInfo.name === "hillium", "initialize");
+  assert(replies[0].result.serverInfo.name === "archium", "initialize");
   assert(text.includes("News article"), text.slice(0, 200));
 });
 
 // Last: after a window closes, Playwright can lose track of new pages on Linux.
-await check("Little Hillium opens a link and moves it into the main window", async () => {
+await check("Little Archium opens a link and moves it into the main window", async () => {
   const n = await main(({}, url) => {
-    const hub = globalThis.__hillium;
+    const hub = globalThis.__archium;
     hub.openMini(url);
     return hub.model.allTabIds().length;
   }, `http://news.example.com:${port}/other`);
-  await pageFor("hillium://mini");
-  await until(() => main(() => [...globalThis.__hillium.minis][0]?.view.webContents.getURL().includes("/other")), "mini loaded");
-  await main(() => [...globalThis.__hillium.minis][0].moveToMain());
-  await until(() => main((_, n) => globalThis.__hillium.model.allTabIds().length === n + 1 && globalThis.__hillium.minis.size === 0, n), "moved");
+  await pageFor("archium://mini");
+  await until(() => main(() => [...globalThis.__archium.minis][0]?.view.webContents.getURL().includes("/other")), "mini loaded");
+  await main(() => [...globalThis.__archium.minis][0].moveToMain());
+  await until(() => main((_, n) => globalThis.__archium.model.allTabIds().length === n + 1 && globalThis.__archium.minis.size === 0, n), "moved");
 });
 
 const arcFile = join(process.env.HOME ?? "", "Library/Application Support/Arc/StorableSidebar.json");
@@ -475,10 +475,10 @@ await check("Arc's sidebar imports (read-only)", async () => {
   if (!existsSync(arcFile)) return console.log("    (Arc isn't installed here: skipped)");
   const before = readFileSync(arcFile, "utf8");
   await main(() => {
-    const hub = globalThis.__hillium;
-    hub.openPage([...hub.windows][0], "hillium://settings/");
+    const hub = globalThis.__archium;
+    hub.openPage([...hub.windows][0], "archium://settings/");
   });
-  const settings = await pageFor("hillium://settings");
+  const settings = await pageFor("archium://settings");
   const r = await settings.evaluate(async () => {
     const { api } = await import("/_/pages/api.js");
     return api("import.run", { source: "arc" });

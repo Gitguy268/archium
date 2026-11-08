@@ -1,4 +1,4 @@
-// The local control channel for the `hillium` CLI and AI agents (`hillium mcp`).
+// The local control channel for the `archium` CLI and AI agents (`archium mcp`).
 // Off until you turn on "Allow the CLI and AI agents" in Settings. It's a Unix socket in
 // userData, readable only by you (0600), and every request carries a token from a 0600 file
 // next to it. There's no TCP port, so web pages (and DNS rebinding) can't reach it.
@@ -8,7 +8,7 @@ import { chmodSync, existsSync, readFileSync, unlinkSync, writeFileSync } from "
 import { randomBytes, timingSafeEqual } from "node:crypto";
 import { join } from "node:path";
 
-export const socketPath = (userData) => (process.platform === "win32" ? "\\\\.\\pipe\\hillium-control" : join(userData, "control.sock"));
+export const socketPath = (userData) => (process.platform === "win32" ? "\\\\.\\pipe\\archium-control" : join(userData, "control.sock"));
 export const tokenPath = (userData) => join(userData, "control.token");
 
 export function loadToken(userData) {
@@ -62,7 +62,7 @@ export function startControl({ userData, methods, log = () => {} }) {
         try {
           reply({ result: (await method(req.params ?? {})) ?? null });
         } catch (e) {
-          log(`[hillium] control ${req.method}: ${e.message}`);
+          log(`[archium] control ${req.method}: ${e.message}`);
           reply({ error: e.message });
         }
       }
