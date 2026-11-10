@@ -99,7 +99,7 @@ jobs:
           flatpak install --user -y --noninteractive --bundle io.github.gitguy268.archium.flatpak
           flatpak info --user io.github.gitguy268.archium
           set +e
-          timeout 25 xvfb-run -a flatpak run --user io.github.gitguy268.archium --no-sandbox > run.log 2>&1
+          timeout 25 dbus-run-session -- xvfb-run -a flatpak run --user io.github.gitguy268.archium --no-sandbox > run.log 2>&1
           code=$?
           set -e
           tail -20 run.log
