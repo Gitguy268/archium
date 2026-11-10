@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0 (unreleased)
+## 0.1.0 (2026-11-10)
 
 First version.
 
@@ -10,3 +10,5 @@ First version.
 - Import from Arc, Zen, Chrome, Brave, Helium, Vivaldi and Chromium.
 - ArchiveBox integration, the `archium` CLI and an MCP server for AI agents.
 - Arch Linux package (`packaging/arch`), tested in an Arch container.
+- Glass window buttons on macOS (Settings › Look › Window buttons; Native brings back the system ones).
+- Homebrew cask (`brew install --cask gitguy268/tap/archium`) and a self-hosted Flatpak, both built by the release workflow.

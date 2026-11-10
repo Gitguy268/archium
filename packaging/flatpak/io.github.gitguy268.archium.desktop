@@ -1,0 +1,22 @@
+[Desktop Entry]
+Type=Application
+Name=Archium
+GenericName=Web Browser
+Comment=Arc and Zen style browser with Helium's privacy defaults
+Exec=archium %U
+Icon=io.github.gitguy268.archium
+Terminal=false
+Categories=Network;WebBrowser;
+MimeType=text/html;application/xhtml+xml;x-scheme-handler/http;x-scheme-handler/https;
+StartupWMClass=Archium
+StartupNotify=true
+Keywords=web;browser;internet;arc;zen;
+Actions=new-window;private-window;
+
+[Desktop Action new-window]
+Name=New Window
+Exec=archium
+
+[Desktop Action private-window]
+Name=New Private Window
+Exec=archium --private

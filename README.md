@@ -43,6 +43,30 @@ It runs on Electron's Chromium rather than a Helium build. [docs/helium-parity.m
 
 ## Install
 
+**macOS (Homebrew)**
+
+```sh
+brew trust gitguy268/tap
+brew install --cask gitguy268/tap/archium
+```
+
+The cask installs the release build of `Archium.app` (Apple silicon). It's signed ad hoc, not notarised, so the cask clears the quarantine flag.
+
+<details>
+<summary><b>Linux (Flatpak)</b></summary>
+
+Download `io.github.gitguy268.archium.flatpak` from the [latest release](https://github.com/Gitguy268/archium/releases/latest), then:
+
+```sh
+flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+flatpak install --user ./io.github.gitguy268.archium.flatpak
+flatpak run io.github.gitguy268.archium
+```
+
+This Flatpak is built by this repo's release workflow; it isn't on Flathub. How to build it yourself is in [packaging/flatpak](packaging/flatpak/README.md).
+
+</details>
+
 **Arch Linux**
 
 ```sh
@@ -74,7 +98,7 @@ Double-click `app/start.command`, or run `cd app && npm ci && npm start` (Node 2
 | **Boosts and Zap** | Your own CSS, JavaScript and font per site, and click-to-hide for anything on a page |
 | **Little Archium** | Links from other apps open in a small window; one click moves the page into your main window. Space rules send matching links straight to a space |
 | **Library** | Archived tabs, history, downloads, ArchiveBox copies and Boosts |
-| **Looks** | Arc, Zen, Liquid Glass and Retro 98 |
+| **Looks** | Arc, Zen, Liquid Glass and Retro 98. On macOS the window buttons are frosted glass discs with coloured rings; Settings › Look › Window buttons › Native brings back the system ones (the glass green button has no tiling menu) |
 | **Agents** | The `archium` CLI and an MCP server let AI apps list, open and read your tabs, if you turn it on. Private windows stay invisible |
 
 <details>

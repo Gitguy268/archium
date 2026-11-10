@@ -52,6 +52,7 @@ export const DEFAULT_SETTINGS = {
   permissions: {}, // "origin|permission" → true | false
   downloadsAsk: false,
   compact: false,
+  windowButtons: "glass", // glass | native (macOS window buttons)
   sidebarWidth: 248,
   archivebox: { url: "", token: "" },
   agentAccess: false,

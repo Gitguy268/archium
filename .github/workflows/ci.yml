@@ -34,7 +34,7 @@ jobs:
       - run: npm ci --ignore-scripts
       - run: npm run lint
       - run: npm test
-      - run: shellcheck ../packaging/arch/*.sh test/arch/*.sh start.command
+      - run: shellcheck ../packaging/arch/*.sh ../packaging/flatpak/*.sh test/arch/*.sh start.command
 
   linux:
     name: Linux build

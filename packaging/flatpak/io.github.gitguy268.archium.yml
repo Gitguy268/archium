@@ -1,0 +1,44 @@
+# Self-hosted Flatpak for Archium. It repackages the Linux tarball that electron-builder makes,
+# so build that first (see README.md here). CI does both in .github/workflows/release.yml.
+app-id: io.github.gitguy268.archium
+runtime: org.freedesktop.Platform
+runtime-version: '26.08'
+sdk: org.freedesktop.Sdk
+base: org.electronjs.Electron2.BaseApp
+base-version: '26.08'
+command: archium
+separate-locales: false
+finish-args:
+  - --share=ipc
+  - --share=network
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --socket=pulseaudio
+  - --device=dri
+  - --filesystem=xdg-download
+  - --talk-name=org.freedesktop.Notifications
+  - --env=ELECTRON_OZONE_PLATFORM_HINT=auto
+modules:
+  - name: archium
+    buildsystem: simple
+    build-commands:
+      - cp -a archium /app/archium
+      - install -Dm755 archium.sh /app/bin/archium
+      - install -Dm644 io.github.gitguy268.archium.desktop /app/share/applications/io.github.gitguy268.archium.desktop
+      - install -Dm644 io.github.gitguy268.archium.metainfo.xml /app/share/metainfo/io.github.gitguy268.archium.metainfo.xml
+      - install -Dm644 archium/resources/icons/512x512.png /app/share/icons/hicolor/512x512/apps/io.github.gitguy268.archium.png
+      - install -Dm644 archium/resources/icons/256x256.png /app/share/icons/hicolor/256x256/apps/io.github.gitguy268.archium.png
+      - install -Dm644 archium/resources/icons/128x128.png /app/share/icons/hicolor/128x128/apps/io.github.gitguy268.archium.png
+      - install -Dm644 archium/resources/LICENSE /app/share/licenses/io.github.gitguy268.archium/LICENSE
+      - install -Dm644 archium/resources/NOTICE /app/share/licenses/io.github.gitguy268.archium/NOTICE
+    sources:
+      - type: archive
+        path: archium-linux-x64.tar.gz
+        dest: archium
+        strip-components: 1
+      - type: file
+        path: archium.sh
+      - type: file
+        path: io.github.gitguy268.archium.desktop
+      - type: file
+        path: io.github.gitguy268.archium.metainfo.xml

@@ -42,6 +42,8 @@ export class ArchiumWindow {
       autoHideMenuBar: true,
     });
     this.base.setMenuBarVisibility?.(false);
+    // Glass window buttons are drawn by the UI; hide the system ones before the first paint.
+    if (mac && hub.settings.windowButtons !== "native") this.base.setWindowButtonVisibility(false);
 
     this.ui = new WebContentsView({
       webPreferences: { session: uiSession, preload: PRELOAD, sandbox: true, contextIsolation: true, nodeIntegration: false, spellcheck: false },
@@ -61,7 +63,11 @@ export class ArchiumWindow {
     this.base.on("resize", () => this.fitUi());
     this.base.on("enter-full-screen", () => hub.pushState(this));
     this.base.on("leave-full-screen", () => hub.pushState(this));
-    this.base.on("focus", () => hub.onFocus(this));
+    this.base.on("focus", () => {
+      hub.onFocus(this);
+      hub.pushState(this);
+    });
+    this.base.on("blur", () => hub.pushState(this));
     this.base.on("closed", () => hub.onClosed(this));
   }
 

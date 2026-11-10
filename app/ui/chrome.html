@@ -6,6 +6,7 @@
     <title>Archium</title>
     <link rel="stylesheet" href="/_/vendor/zen/zen.css" />
     <link rel="stylesheet" href="/_/chrome.css" />
+    <link rel="stylesheet" href="/_/shared/window-buttons.css" />
     <link rel="stylesheet" href="/_/themes/zen.css" data-look="zen" disabled />
     <link rel="stylesheet" href="/_/themes/glass.css" data-look="glass" disabled />
     <link rel="stylesheet" href="/_/themes/retro.css" data-look="retro" disabled />
@@ -55,10 +56,10 @@
 
     <aside id="sidebar" aria-label="Sidebar">
       <div class="top drag">
-        <div class="window-controls no-drag">
-          <button class="wc close" data-window="close" title="Close"><svg><use href="#i-x" /></svg></button>
-          <button class="wc min" data-window="minimize" title="Minimize"><svg><use href="#i-min" /></svg></button>
-          <button class="wc max" data-window="maximize" title="Maximize"><svg><use href="#i-max" /></svg></button>
+        <div class="window-controls no-drag" role="group" aria-label="Window">
+          <button class="wc gl gl-close close" data-window="close" title="Close" aria-label="Close"><svg><use href="#i-x" /></svg></button>
+          <button class="wc gl gl-min min" data-window="minimize" title="Minimize" aria-label="Minimize"><svg><use href="#i-min" /></svg></button>
+          <button class="wc gl gl-zoom max" data-window="maximize" title="Maximize" aria-label="Maximize"><svg><use href="#i-max" /></svg></button>
         </div>
         <span class="grow"></span>
         <button class="icon-btn no-drag" id="btn-sidebar" title="Toggle sidebar (⌘S)"><svg><use href="#i-sidebar" /></svg></button>

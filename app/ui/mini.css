@@ -30,6 +30,17 @@ body:not(.mac) .lights {
   display: none;
 }
 
+.lights {
+  display: flex;
+  align-items: center;
+  padding-left: 6px;
+}
+
+body:not(.glass) .lights .glass-lights,
+body.fullscreen .lights {
+  display: none;
+}
+
 button,
 input {
   -webkit-app-region: no-drag;

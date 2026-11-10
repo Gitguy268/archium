@@ -264,7 +264,9 @@ async function main() {
   app.append(
     h("h2", {}, "Look"),
     looks(),
-    h("div", { class: "card", style: "margin-top:12px" }, select("appearance", "Appearance", null, [["system", "Match the system"], ["light", "Light"], ["dark", "Dark"]])),
+    h("div", { class: "card", style: "margin-top:12px" }, select("appearance", "Appearance", null, [["system", "Match the system"], ["light", "Light"], ["dark", "Dark"]]),
+      select("windowButtons", "Window buttons", "macOS only. Glass draws frosted buttons with coloured rings; Native uses the system ones. Retro 98 always uses the system ones.", [["glass", "Glass"], ["native", "Native"]]),
+    ),
 
     h("h2", {}, "Search"),
     h(

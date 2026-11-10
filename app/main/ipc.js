@@ -84,6 +84,7 @@ export function registerIpc(hub) {
     if (action === "close") win.base.close();
     else if (action === "minimize") win.base.minimize();
     else if (action === "maximize") (win.base.isMaximized() ? win.base.unmaximize() : win.base.maximize());
+    else if (action === "fullscreen") win.base.setFullScreen(!win.base.isFullScreen());
   });
 
   // From the web preload: ⌥-click opens Glance; every trusted link click is noted for pinned-tab Peek.
@@ -97,6 +98,13 @@ export function registerIpc(hub) {
   const mini = (event) => [...hub.minis].find((m) => m.ui.webContents === event.sender);
   ipcMain.handle("archium:mini-move", (event) => mini(event)?.moveToMain());
   ipcMain.handle("archium:mini-close", (event) => mini(event)?.base.close());
+  ipcMain.handle("archium:mini-window", (event, action) => {
+    const m = mini(event);
+    if (!m) return;
+    if (action === "minimize") m.base.minimize();
+    else if (action === "maximize") (m.base.isMaximized() ? m.base.unmaximize() : m.base.maximize());
+    else if (action === "fullscreen") m.base.setFullScreen(!m.base.isFullScreen());
+  });
   ipcMain.handle("archium:mini-nav", (event, action) => mini(event)?.nav(action));
   ipcMain.handle("archium:mini-copy", (event) => mini(event)?.copy());
 }
