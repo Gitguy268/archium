@@ -471,31 +471,6 @@ await check("Little Archium opens a link and moves it into the main window", asy
 });
 
 const arcFile = join(process.env.HOME ?? "", "Library/Application Support/Arc/StorableSidebar.json");
-await check("macOS: glass window buttons stand in for the system ones and work", async () => {
-  if (process.platform !== "darwin") return console.log("    (not macOS: skipped)");
-  await until(() => ui.evaluate(() => document.body.dataset.wb === "glass" && document.querySelector(".window-controls.glass-lights")?.offsetWidth > 0), "glass buttons");
-  const look = await ui.evaluate(() => {
-    const ring = getComputedStyle(document.querySelector(".gl-close")).getPropertyValue("--ring").trim();
-    const box = document.querySelector(".window-controls").getBoundingClientRect();
-    return { ring, x: Math.round(box.x), y: Math.round(box.y) };
-  });
-  assert(look.ring === "#5a2530" && look.x < 40 && look.y < 40, JSON.stringify(look));
-  await shot("window-buttons");
-  await ui.click(".gl-min");
-  await until(() => main(() => [...globalThis.__archium.windows][0].base.isMinimized()), "minimised");
-  await main(() => [...globalThis.__archium.windows][0].base.restore());
-  await ui.click(".gl-zoom");
-  await until(() => main(() => [...globalThis.__archium.windows][0].base.isFullScreen()), "full screen", 15000);
-  await until(() => ui.evaluate(() => document.querySelector(".window-controls").offsetWidth === 0), "hidden in full screen");
-  await main(() => [...globalThis.__archium.windows][0].base.setFullScreen(false));
-  await until(() => main(() => ![...globalThis.__archium.windows][0].base.isFullScreen()), "left full screen", 15000);
-  await sleep(1500);
-  // The Native setting brings the system buttons back.
-  await main(() => globalThis.__archium.saveSettings({ windowButtons: "native" }));
-  await until(() => ui.evaluate(() => document.body.dataset.wb === "native" && document.querySelector(".window-controls").offsetWidth === 0), "native buttons");
-  await main(() => globalThis.__archium.saveSettings({ windowButtons: "glass" }));
-});
-
 await check("Arc's sidebar imports (read-only)", async () => {
   if (!existsSync(arcFile)) return console.log("    (Arc isn't installed here: skipped)");
   const before = readFileSync(arcFile, "utf8");

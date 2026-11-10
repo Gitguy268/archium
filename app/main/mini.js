@@ -21,8 +21,6 @@ export class MiniWindow {
       ...(mac ? { titleBarStyle: "hidden", trafficLightPosition: { x: 14, y: 15 } } : { frame: false }),
       autoHideMenuBar: true,
     });
-    this.glassLights = mac && hub.settings.windowButtons !== "native";
-    if (this.glassLights) this.base.setWindowButtonVisibility(false);
     this.ui = new WebContentsView({ webPreferences: { session: hub.uiSession, preload: PRELOAD, sandbox: true, contextIsolation: true } });
     this.ui.setBackgroundColor("#00000000");
     this.ui.webContents.loadURL("archium://mini/");
@@ -42,17 +40,13 @@ export class MiniWindow {
     this.base.contentView.addChildView(this.view);
     this.fit();
     this.base.on("resize", () => this.fit());
-    this.base.on("focus", () => this.push({ focused: true }));
-    this.base.on("blur", () => this.push({ focused: false }));
-    this.base.on("enter-full-screen", () => this.push({ fullscreen: true }));
-    this.base.on("leave-full-screen", () => this.push({ fullscreen: false }));
     this.base.on("closed", () => {
       hub.minis.delete(this);
       if (this.view && !this.view.webContents.isDestroyed()) this.view.webContents.close();
     });
     this.ui.webContents.once("did-finish-load", () => {
       this.base.show();
-      this.push({ url: this.view.webContents.getURL() || url, glassLights: this.glassLights, focused: this.base.isFocused() });
+      this.push({ url: this.view.webContents.getURL() || url });
     });
     hub.minis.add(this);
   }

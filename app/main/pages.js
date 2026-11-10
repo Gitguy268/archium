@@ -28,7 +28,6 @@ const SETTINGS = {
   blockPings: bool,
   downloadsAsk: bool,
   compact: bool,
-  windowButtons: oneOf("glass", "native"),
   agentAccess: bool,
   linkSpace: (v) => typeof v === "string",
   archivebox: (v) => v && typeof v.url === "string" && typeof v.token === "string" && (!v.url || /^https?:\/\//.test(v.url)),

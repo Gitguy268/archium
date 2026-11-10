@@ -204,20 +204,6 @@ body[data-fullscreen="true"] .top {
   padding-left: 0;
 }
 
-/* macOS glass window buttons (Settings → Look → Window buttons). They sit where the system
-   ones were; full screen still hides them. */
-body[data-platform="darwin"][data-wb="glass"]:not([data-fullscreen="true"]) .window-controls {
-  display: flex;
-}
-
-body[data-platform="darwin"][data-wb="glass"] .top {
-  padding-left: 10px;
-}
-
-body[data-platform="darwin"][data-wb="glass"] .window-controls {
-  padding-right: 8px;
-}
-
 .window-controls {
   display: flex;
   gap: 8px;

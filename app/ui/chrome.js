@@ -224,27 +224,10 @@ function setLook(look) {
   requestAnimationFrame(reportLayout);
 }
 
-// The system traffic lights show only with the "native" window-buttons setting, and in compact
-// mode only while the sidebar is out. The glass ones live in the sidebar and come along with it.
-// Retro 98 has its own title bar, so it keeps the system buttons.
-let nativeLights = null;
-function syncTrafficLights() {
-  if (!mac || !state) return;
-  const glassLights = document.body.dataset.wb === "glass";
-  const visible = !glassLights && (ui.reveal || !state.settings.compact);
-  if (visible === nativeLights) return;
-  nativeLights = visible;
-  call("traffic-lights", visible);
-}
-
 function render(prevSpace) {
   const s = state.settings;
   setLook(s.look);
   document.body.dataset.fullscreen = String(state.fullscreen);
-  document.body.dataset.wb = mac && s.windowButtons !== "native" && s.look !== "retro" ? "glass" : "native";
-  $(".window-controls").classList.toggle("glass-lights", document.body.dataset.wb === "glass");
-  $(".window-controls").classList.toggle("is-blurred", state.focused === false);
-  syncTrafficLights();
   document.body.classList.toggle("compact", s.compact);
   if (!ui.resizing) document.body.style.setProperty("--sidebar-w", `${s.sidebarWidth}px`);
   const space = activeSpace();
@@ -487,12 +470,7 @@ $("#btn-downloads").addEventListener("click", () => call("command", { id: "libra
 $("#btn-new-space").addEventListener("click", () => newSpace());
 $("#space-menu").addEventListener("click", (e) => openSpaceEditor(state.spaceId, e.currentTarget));
 $("#clear-today").addEventListener("click", () => call("clear-today"));
-for (const b of document.querySelectorAll("[data-window]"))
-  b.addEventListener("click", (e) => {
-    // macOS green button: full screen, or zoom with ⌥, like the system button.
-    const glassZoom = b.dataset.window === "maximize" && document.body.dataset.wb === "glass";
-    call("window", glassZoom && !e.altKey ? "fullscreen" : b.dataset.window);
-  });
+for (const b of document.querySelectorAll("[data-window]")) b.addEventListener("click", () => call("window", b.dataset.window));
 
 // A two-finger swipe across the sidebar changes space.
 let swipe = 0;
@@ -538,7 +516,7 @@ function reveal(on) {
   ui.reveal = on;
   document.body.classList.toggle("reveal", on);
   $("#sidebar").classList.toggle("zen-toolbar-background", on);
-  syncTrafficLights();
+  if (mac) call("traffic-lights", on || !state.settings.compact);
   updateOverlay();
 }
 

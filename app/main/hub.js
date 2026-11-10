@@ -167,7 +167,6 @@ export class Hub {
       private: win.isPrivate,
       platform: process.platform,
       fullscreen: win.base.isFullScreen(),
-      focused: win.base.isFocused(),
       spaces: m.spaces.map((sp) => ({
         id: sp.id,
         name: sp.name,
@@ -195,7 +194,6 @@ export class Hub {
         look: s.look,
         appearance: s.appearance,
         compact: s.compact,
-        windowButtons: s.windowButtons,
         sidebarWidth: s.sidebarWidth,
         searchEngine: s.searchEngine,
         archiveAfterHours: s.archiveAfterHours,

@@ -5,18 +5,11 @@
     <meta name="color-scheme" content="light dark" />
     <title>Little Archium</title>
     <link rel="stylesheet" href="/_/mini.css" />
-    <link rel="stylesheet" href="/_/shared/window-buttons.css" />
     <script type="module" src="/_/mini.js"></script>
   </head>
   <body>
     <header class="bar">
-      <span class="lights">
-        <span class="glass-lights" role="group" aria-label="Window">
-          <button class="gl gl-close" data-window="close" title="Close" aria-label="Close"></button>
-          <button class="gl gl-min" data-window="minimize" title="Minimize" aria-label="Minimize"></button>
-          <button class="gl gl-zoom" data-window="maximize" title="Full screen (⌥ to zoom)" aria-label="Full screen"></button>
-        </span>
-      </span>
+      <span class="lights"></span>
       <button id="back" title="Back"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" /></svg></button>
       <form id="address"><input id="url" spellcheck="false" placeholder="Search or enter address" /></form>
       <button id="copy" title="Copy address"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="10.5" height="10.5" rx="2" /><path d="M5.5 15V6.5a2 2 0 0 1 2-2H15" /></svg></button>

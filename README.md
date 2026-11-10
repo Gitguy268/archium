@@ -98,7 +98,7 @@ Double-click `app/start.command`, or run `cd app && npm ci && npm start` (Node 2
 | **Boosts and Zap** | Your own CSS, JavaScript and font per site, and click-to-hide for anything on a page |
 | **Little Archium** | Links from other apps open in a small window; one click moves the page into your main window. Space rules send matching links straight to a space |
 | **Library** | Archived tabs, history, downloads, ArchiveBox copies and Boosts |
-| **Looks** | Arc, Zen, Liquid Glass and Retro 98. On macOS the window buttons are frosted glass discs with coloured rings; Settings › Look › Window buttons › Native brings back the system ones (the glass green button has no tiling menu) |
+| **Looks** | Arc, Zen, Liquid Glass and Retro 98. |
 | **Agents** | The `archium` CLI and an MCP server let AI apps list, open and read your tabs, if you turn it on. Private windows stay invisible |
 
 <details>
