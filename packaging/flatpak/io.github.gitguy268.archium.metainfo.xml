@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.gitguy268.archium</id>
+  <name>Archium</name>
+  <summary>Arc and Zen style browser with Helium's privacy defaults</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT AND MPL-2.0</project_license>
+  <developer id="io.github.gitguy268">
+    <name>Lucas Van De Weerd</name>
+  </developer>
+  <description>
+    <p>Archium is a web browser with Arc's sidebar and Zen's colours, built on Electron, with privacy defaults in the style of Helium.</p>
+    <ul>
+      <li>Spaces with colour gradients, favourites, pinned tabs and Today tabs that archive themselves</li>
+      <li>A command bar, Glance, split view, compact mode, Boosts and Little Archium</li>
+      <li>Ghostery blocking, URL cleaning, HTTPS first, no third-party cookies and DNS over HTTPS</li>
+      <li>Four looks: Arc, Zen, Liquid Glass and Retro 98</li>
+    </ul>
+  </description>
+  <launchable type="desktop-id">io.github.gitguy268.archium.desktop</launchable>
+  <url type="homepage">https://github.com/Gitguy268/archium</url>
+  <url type="bugtracker">https://github.com/Gitguy268/archium/issues</url>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/Gitguy268/archium/main/app/test/screenshots/arc.png</image>
+      <caption>The sidebar with spaces, pinned tabs and Today tabs</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/Gitguy268/archium/main/app/test/screenshots/look-glass.png</image>
+      <caption>The Liquid Glass look</caption>
+    </screenshot>
+  </screenshots>
+  <categories>
+    <category>Network</category>
+    <category>WebBrowser</category>
+  </categories>
+  <content_rating type="oars-1.1"/>
+  <releases>
+    <release version="0.1.0" date="2026-11-10"/>
+  </releases>
+</component>
